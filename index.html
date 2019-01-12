@@ -818,7 +818,7 @@ async function GetLikesGr (date)
   gr.sync = false;
   try 
   {
-    console.log (GetLikesCode(group.id,group.offset,gr.f));
+    console.log (GetLikesCode(group.id,group.offset,gr.f)));
     const response = await VKapi ('execute', {"code": GetLikesCode(group.id,group.offset,gr.f)});
     let likes = [];
     let res = response.res;
