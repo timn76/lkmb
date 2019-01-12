@@ -818,6 +818,7 @@ async function GetLikesGr (date)
   gr.sync = false;
   try 
   {
+    console.log (GetLikesCode(group.id,group.offset,gr.f));
     const response = await VKapi ('execute', {"code": GetLikesCode(group.id,group.offset,gr.f)});
     let likes = [];
     let res = response.res;
@@ -968,7 +969,7 @@ function Select (evt, TabName, id)
 {
     let i, tabcontent, tablinks;
 	
-	if (id=="friends" && document.getElementById(id).className == "tablinks active")
+	if ((id=="friends" or id=="likes") && document.getElementById(id).className == "tablinks active")
 	{
 		let c = document.getElementById(TabName).children;
 		if (c.length) 
