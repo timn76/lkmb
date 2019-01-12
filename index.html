@@ -768,6 +768,7 @@ function GetLikesCodeNF (id,offset,f,fo=1,CheckedID)
 				+ nl + ' var posts = p; '
 				+ nl + ' var c = p.count; '
 				+ nl + ' var res={};  '
+				+ nl + ' var all={};  '
 				+ nl + ' var i=1;   '
 				+ nl + ' var j=-1; '
 				+ nl + ' var e = 1; '
@@ -778,6 +779,7 @@ function GetLikesCodeNF (id,offset,f,fo=1,CheckedID)
 				+ nl + '   while (ls<posts[i].likes.length && j<0) '
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+fo+', count:1000, skip_own:0, offset:ls }); '
+				+ nl + '     all.push ({"post":posts[i],"likes":' + (fo?'likes':'{}') + '}); '
 				+ nl + '     j = -1; '
 				+ nl + '     if (likes.items.length>=0) j = likes.items.indexOf (' + CheckedID + '); '
 				+ nl + '     if(j>=0) res.push ({"post":posts[i],"likes":' + (fo?'likes':'{}') + '}); '
@@ -786,7 +788,7 @@ function GetLikesCodeNF (id,offset,f,fo=1,CheckedID)
 				+ nl + '   } '
 				+ nl + '   i = i + 1;  '
 				+ nl + ' }   '
-				+ nl + ' return { "e":e,"i":i,"j":j,"date":posts[i-1].date, "count":c, "res":res }; ';
+				+ nl + ' return { "e":e,"i":i,"j":j,"date":posts[i-1].date, "count":c, "res":res, "all":all }; ';
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -951,7 +953,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.5');
+  console.log('InitOk.v1.1.6');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
