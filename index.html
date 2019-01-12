@@ -405,12 +405,12 @@ function Create(type,attr)
 	if (attr.html		!== undefined) elm.innerHTML 	= attr.html;
 	if (attr.href		!== undefined) elm.href 		= attr.href;
 	if (attr.width		!== undefined) elm.width 		= attr.width;
-	if (attr.height	!== undefined) elm.height 		= attr.height;
+	if (attr.height		!== undefined) elm.height 		= attr.height;
 	if (attr.src		!== undefined) elm.src 			= attr.src;
 	if (attr.title		!== undefined) elm.title		= attr.title;
 	if (attr.alt		!== undefined) elm.alt			= attr.alt;
 	if (attr.child		!== undefined) elm.appendChild (attr.child);
-	if (attr.target	!== undefined) elm.target		= attr.target;
+	if (attr.target		!== undefined) elm.target		= attr.target;
 	if (attr.type	   !== undefined) elm.type		   = attr.type;
 	if (attr.name	   !== undefined) elm.name		   = attr.name;
 	if (attr.value	   !== undefined) elm.value		= attr.value;
@@ -967,6 +967,13 @@ async function Start (state)
 function Select (evt, TabName, id) 
 {
     let i, tabcontent, tablinks;
+	
+	if (id=="friends" && document.getElementById(id).className == "tablinks active")
+	{
+		let c = document.getElementById(TabName).children;
+		let s = !c[0].children[0].children[0].checked;
+		for (i = 0; i < c.length; i++) c[0].children[0].children[0].checked = s;
+	}
 
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
