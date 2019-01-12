@@ -778,7 +778,7 @@ function GetLikesCodeNF (id,offset,f,fo='1',CheckedID)
 				+ '\n   { '
 				+ '\n     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+fo+', count:1000, skip_own:0, offset:ls }); '
 				+ '\n     j = likes.items.indexOf (' + CheckedID + '); '
-				+ '\n     if(j>0) res.push ({"post":posts[i],"likes":' + (fo?'likes','{}') + '}); '
+				+ '\n     if(j>0) res.push ({"post":posts[i],"likes":' + (fo=='1'?'likes','{}') + '}); '
 				+ '\n     ls = ls + 1000; '
 				+ '\n     e = e + 1; '
 				+ '\n   } '
@@ -846,8 +846,8 @@ async function GetLikesGr (date)
   gr.sync = false;
   try 
   {
-    console.log (GetLikesCodeNF(group.id,group.offset,gr.f,1,User.id));
-    const response = await VKapi ('execute', {"code": GetLikesCodeNF(group.id,group.offset,gr.f,1,User.id)});
+    console.log (GetLikesCodeNF(group.id,group.offset,gr.f,'1',User.id));
+    const response = await VKapi ('execute', {"code": GetLikesCodeNF(group.id,group.offset,gr.f,'1',User.id)});
     let likes = [];
     let res = response.res;
     for (let i=0; i<res.length; i++) if (res[i].post.date>=date) for(let l=0; l<res[i].likes.items.length; l++) if(res[i].likes.items[l]==User.id)
