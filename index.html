@@ -974,7 +974,7 @@ function Select (evt, TabName, id)
 		if (c.length) 
 		{
 			let s = !c[0].children[0].checked;
-			for (i = 0; i < c.length; i++) c[0].children[0].checked = s;
+			for (i = 0; i < c.length; i++) c[i].children[0].checked = s;
 		}
 	}
 
