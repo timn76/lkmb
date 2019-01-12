@@ -919,7 +919,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v30');
+  console.log('InitOk.v31');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -971,8 +971,11 @@ function Select (evt, TabName, id)
 	if (id=="friends" && document.getElementById(id).className == "tablinks active")
 	{
 		let c = document.getElementById(TabName).children;
-		let s = !c[0].children[0].children[0].checked;
-		for (i = 0; i < c.length; i++) c[0].children[0].children[0].checked = s;
+		if (c.length) 
+		{
+			let s = !c[0].children[0].children[0].checked;
+			for (i = 0; i < c.length; i++) c[0].children[0].children[0].checked = s;
+		}
 	}
 
     tabcontent = document.getElementsByClassName("tabcontent");
