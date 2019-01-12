@@ -778,7 +778,7 @@ function GetLikesCodeNF (id,offset,f,fo='1',CheckedID)
 				+ nl + '   while (ls<posts[i].likes.count && j<=0) '
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+fo+', count:1000, skip_own:0, offset:ls }); '
-				+ nl + '     j = 0 '
+				+ nl + '     j = 0; '
 				+ nl + '     if (likes.items.count>0) j = likes.items.indexOf (' + CheckedID + '); '
 				+ nl + '     if(j>0) res.push ({"post":posts[i],"likes":' + (fo=='1'?'likes':'{}') + '}); '
 				+ nl + '     ls = ls + 1000; '
@@ -950,7 +950,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.1');
+  console.log('InitOk.v1.1.2');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
