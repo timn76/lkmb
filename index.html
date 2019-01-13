@@ -811,7 +811,7 @@ function GetLikesCodeNF (id,offset,count,ls=0)
 				+ nl + (!gr.fo?'   while (ls<posts[i].likes.count && j<0 && e<25) ':'')
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+gr.fo+', count:1000, skip_own:0, offset:ls }); '
-				+ nl + '     all.push ({"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); '
+				+ nl + '     all.push ({"i":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); '
 				+ nl + '     if (likes.items.length>=0) j = likes.items.indexOf (' + gr.uid + '); '
 				+ nl + '     if(j>=0) res.push ({"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); '
 				+ nl + '     ls = ls + 1000; '
@@ -820,7 +820,8 @@ function GetLikesCodeNF (id,offset,count,ls=0)
 				+ nl + '   i = i + 1; '
 				+ nl + ' }  '
 				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
-				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"date":posts[i-1].date, "count":c, "res":res, "all":all }; ';
+				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}); ':'')
+				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"id":posts[i-1].from_id,"date":posts[i-1].date, "count":c, "res":res, "all":all }; ';
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -970,7 +971,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.21');
+  console.log('InitOk.v1.1.22');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
