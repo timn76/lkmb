@@ -820,7 +820,7 @@ function GetLikesCodeNF (id,offset,count,ls=0)
 				+ nl + '   i = i + 1; '
 				+ nl + ' }  '
 				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
-				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}); ':'')
+				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
 				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"id":posts[i-1].from_id,"date":posts[i-1].date, "count":c, "res":res, "all":all }; ';
 	return Code;
 }
