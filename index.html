@@ -818,7 +818,8 @@ function GetLikesCodeNF (id,offset,count=24,ls=0)
 				+ nl + '     e = e + 1; '
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
-				+ nl + ' }   '
+				+ nl + ' }  '
+				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
 				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"date":posts[i-1].date, "count":c, "res":res, "all":all }; ';
 	return Code;
 }
@@ -877,11 +878,11 @@ async function GetLikesGr ()
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
       gr.sync2 = false;
     }
-    if(!gr.fo && response.i<25)
+    if(!gr.fo && response.i<24)
     {
       console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
-      group.offset += response.i - 1;
-      group.count = 24 - response.i + 1;
+      group.offset += response.i;
+      group.count = 24 - response.i;
       group.ls = response.ls;
       gr.err_groups.push (group);
     }
@@ -969,7 +970,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.16');
+  console.log('InitOk.v1.1.17');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
