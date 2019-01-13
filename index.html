@@ -802,22 +802,22 @@ function GetLikesCodeNF (id,offset,count,ls=0)
 				+ nl + ' var i=1;   '
 				+ nl + ' var j=-1; '
 				+ nl + ' var e=1; '
-				+ nl + ' var ls; '
+				+ nl + ' var ls = ' + ls + '; '
 				+ nl + ' if (p.items.length>=0) { posts = p.items; i=0; } '
 				+ nl + ' while (i<posts.length && e<25)' // + (!gr.fo?' && (posts[i].likes.count/1000+e<=25)':'') + ') '
 				+ nl + ' { '
-				+ nl + '   ls=' + ls + '; '
 				+ nl + '   j = -1; '
 				+ nl + (!gr.fo?'   while (ls<posts[i].likes.count && j<0 && e<25) ':'')
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+gr.fo+', count:1000, skip_own:0, offset:ls }); '
 				+ nl + '     all.push ({"i":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); '
 				+ nl + '     if (likes.items.length>=0) j = likes.items.indexOf (' + gr.uid + '); '
-				+ nl + '     if(j>=0) res.push ({"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); '
-				+ nl + '     ls = ls + 1000; '
+				+ nl + '     if(j>=0) { res.push ({"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); ls=0; }'
+				+ nl + '     else ls = ls + 1000; '
 				+ nl + '     e = e + 1; '
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
+				+ nl + (!gr.fo?' if (ls<posts[i].likes.count && e<25) ls = 0;':'')
 				+ nl + ' }  '
 				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
 				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
