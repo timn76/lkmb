@@ -883,7 +883,7 @@ async function GetLikesGr ()
     {
       console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
       group.offset += response.i;
-      group.c -= response.i;
+      group.c -= (response.i - 1);
       group.ls = response.ls;
       gr.err_groups.push (group);
       console.log ("PUSH: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
@@ -971,7 +971,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.23');
+  console.log('InitOk.v1.1.24');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
