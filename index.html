@@ -829,7 +829,7 @@ async function GetLikesGr ()
 {
   let group = {};
   let i;
-  while (gr.sync1) { await Promise.all ([console.log ("gr.sync1");, ASleep (10)]); }
+  while (gr.sync1) { await Promise.all ([console.log ("gr.sync1"), ASleep (10)]); }
   gr.sync1 = true;
   if (gr.err_groups.length >0) 
   {
@@ -863,7 +863,7 @@ async function GetLikesGr ()
       Likes.push (like);
     }
     if (likes.length > 0) ShowLikes (likes);
-    while (gr.sync2) { await Promise.all ([console.log ("gr.sync2");, ASleep (10)]); }
+    while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
     gr.sync2 = true;
     if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
     { 
