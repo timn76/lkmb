@@ -832,18 +832,18 @@ async function GetLikesGr ()
   let i;
   while (gr.sync1) { await Promise.all ([console.log ("gr.sync1"), ASleep (10)]); }
   gr.sync1 = true;
-  if (gr.err_groups.length >0) 
+  if (gr.err_groups.length > 0) 
   {
     group = gr.err_groups[0];
-    //console.log ("gr.err_groups[0].offset: " + group.offset + "; gr.err_groups[0].id: " + group.id);
+    console.log ("POP: groups[0].g: " + group.g + "; groups[0].offset: " + group.offset + "; groups[0].id: " + group.id + "; groups[0].i: " + group.i + "; groups[0].ls: " + group.ls);
     gr.err_groups.splice(0,1);
   }
   else
   {
-    if (SearchList.length==0) return;
+    if (SearchList.length == 0) { gr.sync1 = false; return; }
     gr.g ++;
     if (gr.g>=SearchList.length) gr.g = 0;
-    if (SearchList[gr.g] == null) { console.log ("!!!(START) SearchList[gr.g] == null; gr.g: " + gr.g); return; }
+    if (SearchList[gr.g] == null) { console.log ("!!!(START) SearchList[gr.g] == null; gr.g: " + gr.g); gr.sync1 = false; return; }
     SearchList[gr.g].offset += 24;
     SearchList[gr.g].g = gr.g; 
     group = SearchList[gr.g];
@@ -872,7 +872,7 @@ async function GetLikesGr ()
       while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
       gr.sync2 = true;
       if (group.g<0) group.g=2;
-      while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<3) group.g --, i ++;
+      while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<5) group.g --, i ++;
       if (SearchList[group.g] == null) { console.log ("!!!(RESP) SearchList[group.g] == null; group.g: " + group.g); gr.sync2 = false; return; } 
       if (SearchList[group.g].id == group.id) SearchList.splice (group.g,1);
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
@@ -885,6 +885,7 @@ async function GetLikesGr ()
       group.count = 24 - response.i;
       group.ls = response.ls;
       gr.err_groups.push (group);
+      console.log ("PUSH: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.i: " + group.i + "; groups.ls: " + group.ls);
     }
   }
   catch (e) 
@@ -894,8 +895,6 @@ async function GetLikesGr ()
     console.log (GetLikesCodeNF(group.id,group.offset,group.count,group.ls));
     console.log ("group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + ((SearchList[group.g]!=null) ? SearchList[group.g].id:"null"));
     console.log ('------------------------------------------------------------------------------');
-	gr.sync1 = false;
-	gr.sync2 = false;
   }
 }
 //------------------------------------------------------
@@ -970,7 +969,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.17');
+  console.log('InitOk.v1.1.18');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
