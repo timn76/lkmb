@@ -863,31 +863,28 @@ async function GetLikesGr ()
       Likes.push (like);
     }
     if (likes.length > 0) ShowLikes (likes);
-    while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
-    gr.sync2 = true;
+
     if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
     { 
       let i=0;
-      if (SearchList.length==0) return;
+      if (SearchList.length == 0) return;
+      while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
+      gr.sync2 = true;
       if (group.g<0) group.g=2;
       while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<3) group.g --, i ++;
       if (SearchList[group.g] == null) { console.log ("!!!(RESP) SearchList[group.g] == null; group.g: " + group.g); return; } 
-      if (SearchList[group.g].id == group.id)
-      {	
-        //console.log ("DEL! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
-        SearchList.splice (group.g,1);
-      } 
+      if (SearchList[group.g].id == group.id) SearchList.splice (group.g,1);
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
+      gr.sync2 = false;
     }
-	if(!gr.fo && response.i<25)
-	{
-	  console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
+    if(!gr.fo && response.i<25)
+    {
+      console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
       group.offset += response.i - 1;
       group.count = 24 - response.i + 1;
-	  group.ls = response.ls;
-	  gr.err_groups.push (group);
-	}
-	gr.sync2 = false;
+      group.ls = response.ls;
+      gr.err_groups.push (group);
+    }
   }
   catch (e) 
   {
@@ -913,7 +910,7 @@ async function GetGroupLikes (date,f=false)
   gr.f = f;
   gr.date = date;
   gr.uid = User.id;
-  gr.fo = 1;
+  gr.fo = 0;
   gr.err_groups = [];
   gr.sync1 = false;
   gr.sync2 = false;  
@@ -972,7 +969,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.14');
+  console.log('InitOk.v1.1.15');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
