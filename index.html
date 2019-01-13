@@ -909,7 +909,7 @@ async function GetGroupLikes (date,f=false)
   gr.g = -1;
   gr.l = SearchList.length;
   gr.f = f;
-  gr.d = date;
+  gr.date = date;
   gr.uid = User.id;
   gr.fo = 1;
   gr.err_groups = [];
@@ -970,7 +970,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.12');
+  console.log('InitOk.v1.1.13');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
