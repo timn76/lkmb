@@ -878,7 +878,7 @@ async function GetLikesGr ()
       if (group.g<0) group.g = 2;
       while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<3) group.g --, i ++;
       if (SearchList[group.g] == null) { console.log ("!!!(RESP) SearchList[group.g] == null; group.g: " + group.g); gr.sync2 = false; return; } 
-      if (SearchList[group.g].id == group.id) SearchList.splice (group.g,1);
+      if (SearchList[group.g].id == group.id) { console.log ("DEL: groups.g: " + group.g + "; (SearchList[group.g].id: " + SearchList[group.g].id); SearchList.splice (group.g,1); console.log ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
       gr.sync2 = false;
 	  return;
@@ -887,7 +887,7 @@ async function GetLikesGr ()
     {
       //console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
       group.offset += response.i;
-      group.c -= (response.i - 1);
+      group.c -= response.i;
       group.ls = response.ls;
       gr.err_groups.push (group);
       console.log ("PUSH: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
@@ -975,7 +975,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.27');
+  console.log('InitOk.v1.1.28');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
