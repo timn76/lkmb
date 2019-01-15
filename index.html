@@ -821,7 +821,7 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 				+ nl + ' }  '
 				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
 				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
-				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"id":'+ (gr.f?'':'-') + id + ',"date":posts[i-1].date, "count":c, "res":res, "all":all, "posts": p, "cnt":' + cnt + '}; ';
+				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"id":' + (gr.f?'':'-') + id + ',"date":posts[i-1].date, "count":c, "res":res, "all":all, "posts": p, "cnt":' + cnt + '}; ';
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -849,7 +849,7 @@ async function GetLikesGr ()
     SearchList[gr.g].g = gr.g;
     SearchList[gr.g].c = gr.c;
     SearchList[gr.g].ls = 0;
-    SearchList[gr.g].IsFriendsWall = f;
+    SearchList[gr.g].IsFriendsWall = gr.f;
     group = SearchList[gr.g];
     console.log ("NEW: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
     //console.log ("gr.g: " + group.g + "; SearchList[gr.g].offset: " + SearchList[group.g].offset + "; SearchList[gr.g].id: " + SearchList[group.g].id);
