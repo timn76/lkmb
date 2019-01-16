@@ -503,8 +503,8 @@ async function AddFriends (ids)
       for (let j=0; j<Friends.length; j++) if (response[i].id == Friends[j].id) { s = j; break; }
       if (s == -1)
       {
-	    response[i].IsFriend = 0;
-        Friends.push    ( response[i] );
+	    //response[i].IsFriend = 0;
+        Friends.push ( response[i] );
         AppendFriend ( response[i] );
 		//Data.Friends.Count ++;
       }
@@ -527,7 +527,7 @@ async function GetFriends (id,offset=0)
     //if (offset==0) 
     Data.Friends.Count = uvl (response.count,friends.length);
     //friends.sort( function (a, b) { if (a.first_name > b.first_name) return 1; if (a.first_name < b.first_name) return -1; return 0; } );
-    for (let i = 0; i < friends.length; i++) { friends[i].id = uvl(friends[i].uid,friends[i].id); friends[i].IsFriend = 1; }
+    for (let i = 0; i < friends.length; i++) { friends[i].id = uvl(friends[i].uid,friends[i].id); /* friends[i].IsFriend = 1; */ }
     return friends;
   }
   catch (e) { console.log (e); return e; }
@@ -536,7 +536,7 @@ async function GetFriends (id,offset=0)
 async function ShowFriends (id,flush=false)
 {
   document.getElementById("ml").style.display = "block";
-  let fd = document.getElementById('friends_data');
+  let fd = document.getElementById ('friends_data');
   fd.innerHTML = '';
   Friends = [];	
   Select(null, 'friends_data','friends');
@@ -547,7 +547,7 @@ async function ShowFriends (id,flush=false)
     for (let i = 0; i < f.length; i++)
     { 
       AppendFriend (f[i]);
-      Friends.push(f[i]);
+      Friends.push (f[i]);
     }
     offset += Data.Friends.Step;
     document.getElementById('count').innerHTML = Friends.length + '/' + Data.Friends.Count;
@@ -568,7 +568,7 @@ function ShowUser (user)
 	tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+user.domain, child:  Create('img',{src:user.photo_50, title:user.first_name+' '+user.last_name })})}));
 	tr.appendChild(Create('td', {width:140, html:'<p class="name">'+user.first_name + '<br/>' + user.last_name+'</p>'}));
 	tr.appendChild(Create('td', {width:70,  html:'<p>'+uvl(user.bdate,"n/a")+'</p>'}));
-	tr.appendChild(Create('td', {class:'counter', html:'<button onclick="ShowFriends('+user.id+')" >Друзей</button><p>' + user.counters.friends + '</p>'}));
+	tr.appendChild(Create('td', {class:'counter', html:'<button onclick="ShowFriends('+user.id+')">Друзей</button><p>' + user.counters.friends + '</p>'}));
 	tr.appendChild(Create('td', {class:'counter', html:'<button onclick="GetGroups('+user.id+',1)">Групп</button><p>'  + ((typeof user.groups)!='undefined'?user.counters.groups:user.counters.pages) + '</p>'}));
 	tr.appendChild(Create('td', {class:'counter', html:'<header>Аудио</header><p>'  + uvl(user.counters.audios,'-') + '</p>'}));
 	tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><p>'  + uvl(user.counters.videos,'-') + '</p>'}));
@@ -959,7 +959,8 @@ async function GetGroupLikes (date,f=false)
   gr.f = f;
   gr.date = date;
   gr.uid = User.id;
-  gr.fo = User.IsFriend;
+  //console.log (User.IsFriend);
+  gr.fo = User.is_friend;
   gr.c = 24;
   gr.err_groups = [];
   gr.sync1 = false;
@@ -1019,7 +1020,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.32');
+  console.log('InitOk.v1.1.33');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1102,15 +1103,23 @@ function KeyPress (event)
     (e.metaKey ? ' +meta' : '') + "\n";*/
 	if(event.charCode==43)
 	{
-		let txt = prompt ("Добавить группу:", "");
-		if(txt) AddGroups (txt);
+	  switch (document.getElementsByClassName("tablinks active").id)
+	  {
+	    case "friends":
+		  let txt = prompt ("Добавить аккаунт:", "");
+		  if (txt) AddFriends (txt);
+		    break;
+	    case "groups":
+		  let txt = prompt ("Добавить группу:", "");
+		  if (txt) AddGroups (txt);
+		    break;	  }
 	} 
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
  
 </script>
 
-<body>
+<body onkeypress="KeyPress(event)">
 
 <div id="user_data"></div>
 
@@ -1141,7 +1150,7 @@ function KeyPress (event)
 </div>
 
 <div id="friends_data" 	class="tabcontent"></div>
-<div id="groups_data" 	class="tabcontent" onkeypress="KeyPress(event)"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
+<div id="groups_data" 	class="tabcontent"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
 <div id="likes_data" 	class="tabcontent"><p>Выберете друга, затем период поиска и нажмите "Искать", для поиска его лайков.</p></div>
 
 </body>
