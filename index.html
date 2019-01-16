@@ -1025,7 +1025,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.35');
+  console.log('InitOk.v1.1.36');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1095,7 +1095,7 @@ function Select (evt, TabName, id)
     document.getElementById(id).className += " active";
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function KeyPress (event) 
+function KeyPress (e) 
 {
   if (par.debug)
   {
@@ -1111,7 +1111,7 @@ function KeyPress (event)
 	Debug (text);
   }
 	let txt;
-	if(event.charCode==43)
+	if(e.charCode==43)
 	{
 	  switch (document.getElementsByClassName("tablinks active").id)
 	  {
