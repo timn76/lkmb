@@ -829,7 +829,7 @@ let gr = {};
 
 async function GetLikesGr ()
 {
-  let group = {};
+  let group;
   let i;
   while (gr.sync1) { await Promise.all ([console.log ("gr.sync1"), ASleep (10)]); }
   gr.sync1 = true;
@@ -871,7 +871,7 @@ async function GetLikesGr ()
     if (likes.length > 0) ShowLikes (likes);
     if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
     {
-      console.log ("DEL: groups.g: " + group.g + "; response.date: " + gr.date + "; groups.offset: " + group.offset + "; response.count: " + response.count);	
+      console.log ("DEL: groups.g: " + group.g + "; group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; groups.offset: " + group.offset + "; response.count: " + response.count);	
       let i=0;
       if (SearchList.length == 0) return;
       while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
@@ -976,7 +976,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.29');
+  console.log('InitOk.v1.1.30');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
