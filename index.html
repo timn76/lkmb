@@ -397,6 +397,11 @@ function uvl(v,d)
   return (v==undefined?d:v); 
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function Debug (msg)
+{
+  if (par.debug) console.log (msg);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 function Create(type,attr) 
 {
 	let elm = document.createElement(type);
@@ -846,18 +851,18 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 				+ nl + (!gr.fo?'   while (ls<posts[i].likes.count && j<0 && e<25) ':'')
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+gr.fo+', count:1000, skip_own:0, offset:ls }); '
-				+ nl + '     all.push ({"i":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); '
+				+ nl + (par.debug?'     all.push ({"i":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); ':'')
 				+ nl + '     if (likes.items.length>=0) j = likes.items.indexOf (' + gr.uid + '); '
 				+ nl + '     if(j>=0) { res.push ({"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); ls=0; }'
-				+ nl + '     else ls = ls + 1000; '
+				+ nl + (!gr.fo?'     else ls = ls + 1000; '':'')
 				+ nl + '     e = e + 1; '
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
-				+ nl + (!gr.fo?' if (i<posts.length && e<25) ls = 0;':'')
+				+ nl + (!gr.fo?'   if (i<posts.length && e<25) ls = 0; ':'')
 				+ nl + ' }  '
 				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
 				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
-				+ nl + ' return { "e":e,"i":i,"j":j,"ls":ls,"id":' + (gr.f?'':'-') + id + ',"date":posts[i-1].date, "count":c, "res":res, "all":all, "posts": p, "cnt":' + cnt + '}; ';
+				+ nl + ' return { "id":' + (gr.f?'':'-') + id + ',"date":posts[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "j":j, "all":all, "posts": p, "cnt":' + cnt:'') + '}; ';
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -878,7 +883,7 @@ async function GetLikesGr ()
   if (gr.err_groups.length > 0) 
   {
     group = gr.err_groups[0];
-    console.log ("POP: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
+    Debug ("POP: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
     gr.err_groups.splice(0,1);
   }
   else
@@ -893,15 +898,15 @@ async function GetLikesGr ()
     SearchList[gr.g].ls = 0;
     SearchList[gr.g].IsFriendsWall = gr.f;
     group = Copy(SearchList[gr.g]);
-    console.log ("NEW: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
-    console.log ("NEW: gr.g: " + gr.g + "; SearchList[gr.g].offset: " + SearchList[gr.g].offset + "; SearchList[gr.g].id: " + SearchList[gr.g].id + "; SearchList[gr.g].c: " + SearchList[gr.g].c + "; SearchList[gr.g].ls: " + SearchList[gr.g].ls);
+    Debug ("NEW: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
+    //console.log ("NEW: gr.g: " + gr.g + "; SearchList[gr.g].offset: " + SearchList[gr.g].offset + "; SearchList[gr.g].id: " + SearchList[gr.g].id + "; SearchList[gr.g].c: " + SearchList[gr.g].c + "; SearchList[gr.g].ls: " + SearchList[gr.g].ls);
   }
   gr.sync1 = false;
   try 
   {
     //console.log (GetLikesCodeNF(group.id,group.offset,gr.f,1,User.id));
     const response = await VKapi ('execute', {"code": GetLikesCodeNF(group.id,group.offset,group.c,group.ls)});
-    console.log (response);
+    Debug (response);
     let likes = [];
     let res = response.res;
     for (let i=0; i<res.length; i++) if (res[i].post.date >= gr.date) //for(let l=0; l<res[i].likes.items.length; l++) if(res[i].likes.items[l]==User.id)
@@ -913,7 +918,7 @@ async function GetLikesGr ()
     if (likes.length > 0) ShowLikes (likes);
     if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
     {
-      console.log ("DEL: groups.g: " + group.g + "; group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; groups.offset: " + group.offset + "; response.count: " + response.count);	
+      Debug ("DEL: groups.g: " + group.g + "; group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; groups.offset: " + group.offset + "; response.count: " + response.count);	
       let i=0;
       if (SearchList.length == 0) return;
       while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
@@ -921,7 +926,7 @@ async function GetLikesGr ()
       if (group.g<0) group.g = 2;
       while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<3) group.g --, i ++;
       if (SearchList[group.g] == null) { console.log ("!!!(RESP) SearchList[group.g] == null; group.g: " + group.g); gr.sync2 = false; return; } 
-      if (SearchList[group.g].id == group.id) { console.log ("DEL: groups.g: " + group.g + "; SearchList[group.g].id: " + SearchList[group.g].id); SearchList.splice (group.g,1); console.log ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
+      if (SearchList[group.g].id == group.id) { Debug ("DEL: groups.g: " + group.g + "; SearchList[group.g].id: " + SearchList[group.g].id); SearchList.splice (group.g,1); Debug ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
       gr.sync2 = false;
 	  return;
@@ -933,8 +938,8 @@ async function GetLikesGr ()
       group.c -= response.i;
       group.ls = response.ls;
       gr.err_groups.push (group);
-      console.log ("PUSH: group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
-      console.log ("PUSH: group.g: " + group.g + "; SearchList[group.g].offset: " + SearchList[group.g].offset + "; SearchList[group.g].id: " + SearchList[group.g].id + "; SearchList[group.g].c: " + SearchList[group.g].c + "; SearchList[group.g].ls: " + SearchList[group.g].ls);
+      Debug ("PUSH: group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
+      Debug ("PUSH: group.g: " + group.g + "; SearchList[group.g].offset: " + SearchList[group.g].offset + "; SearchList[group.g].id: " + SearchList[group.g].id + "; SearchList[group.g].c: " + SearchList[group.g].c + "; SearchList[group.g].ls: " + SearchList[group.g].ls);
     }
   }
   catch (e) 
@@ -1020,7 +1025,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.33');
+  console.log('InitOk.v1.1.35');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1092,15 +1097,19 @@ function Select (evt, TabName, id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function KeyPress (event) 
 {
-/*var text = e.type +
-    ' keyCode=' + e.keyCode +
-    ' which=' + e.which +
-    ' charCode=' + e.charCode +
-    ' char=' + String.fromCharCode(e.keyCode || e.charCode) +
-    (e.shiftKey ? ' +shift' : '') +
-    (e.ctrlKey ? ' +ctrl' : '') +
-    (e.altKey ? ' +alt' : '') +
-    (e.metaKey ? ' +meta' : '') + "\n";*/
+  if (par.debug)
+  {
+    var text = e.type +
+      ' keyCode=' + e.keyCode +
+      ' which=' + e.which +
+      ' charCode=' + e.charCode +
+      ' char=' + String.fromCharCode(e.keyCode || e.charCode) +
+      (e.shiftKey ? ' +shift' : '') +
+      (e.ctrlKey  ? ' +ctrl' : '') +
+      (e.altKey   ? ' +alt' : '') +
+      (e.metaKey  ? ' +meta' : '') + "\n";
+	Debug (text);
+  }
 	let txt;
 	if(event.charCode==43)
 	{
