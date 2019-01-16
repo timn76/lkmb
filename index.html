@@ -348,7 +348,7 @@ var Groups = [];
 var SearchList = [];
 var AllGroups = [];
 var Likes = [];
-var par = { id:false, me:false, others:false, debug:true, mobile:false };
+var par = { id:false, me:false, others:false, debug:false, mobile:false };
 var Data = {sgGroups:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -1025,7 +1025,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.36');
+  console.log('InitOk.v1.1.37');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1111,8 +1111,9 @@ function KeyPress (e)
 	Debug (text);
   }
 	let txt;
-	if(e.charCode==43)
+	if(e.charCode==43) //+
 	{
+	  debug (document.getElementsByClassName("tablinks active").id);
 	  switch (document.getElementsByClassName("tablinks active").id)
 	  {
 	    case "friends":
@@ -1122,8 +1123,13 @@ function KeyPress (e)
 	    case "groups":
 		  txt = prompt ("Добавить группу:", "");
 		  if (txt) AddGroups (txt);
-		    break;	  }
+		    break;	  
+	  }
 	} 
+	if(e.charCode==100 && e.ctrlKey && e.altKey) //d
+	{
+	  par.debug = true;
+	}
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
  
