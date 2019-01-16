@@ -852,7 +852,7 @@ async function GetLikesGr ()
     SearchList[gr.g].IsFriendsWall = gr.f;
     group = SearchList[gr.g];
     console.log ("NEW: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
-    //console.log ("gr.g: " + group.g + "; SearchList[gr.g].offset: " + SearchList[group.g].offset + "; SearchList[gr.g].id: " + SearchList[group.g].id);
+    console.log ("NEW: gr.g: " + gr.g + "; SearchList[gr.g].offset: " + SearchList[gr.g].offset + "; SearchList[gr.g].id: " + SearchList[gr.g].id + "; SearchList[gr.g].c: " + SearchList[gr.g].c + "; SearchList[gr.g].ls: " + SearchList[gr.g].ls);
   }
   gr.sync1 = false;
   try 
@@ -879,7 +879,7 @@ async function GetLikesGr ()
       if (group.g<0) group.g = 2;
       while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<3) group.g --, i ++;
       if (SearchList[group.g] == null) { console.log ("!!!(RESP) SearchList[group.g] == null; group.g: " + group.g); gr.sync2 = false; return; } 
-      if (SearchList[group.g].id == group.id) { console.log ("DEL: groups.g: " + group.g + "; (SearchList[group.g].id: " + SearchList[group.g].id); SearchList.splice (group.g,1); console.log ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
+      if (SearchList[group.g].id == group.id) { console.log ("DEL: groups.g: " + group.g + "; SearchList[group.g].id: " + SearchList[group.g].id); SearchList.splice (group.g,1); console.log ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + SearchList[group.g].id);
       gr.sync2 = false;
 	  return;
@@ -891,7 +891,8 @@ async function GetLikesGr ()
       group.c -= response.i;
       group.ls = response.ls;
       gr.err_groups.push (group);
-      console.log ("PUSH: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
+      console.log ("PUSH: group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
+      console.log ("PUSH: group.g: " + group.g + "; SearchList[group.g].offset: " + SearchList[group.g].offset + "; SearchList[group.g].id: " + SearchList[group.g].id + "; SearchList[group.g].c: " + SearchList[group.g].c + "; SearchList[group.g].ls: " + SearchList[group.g].ls);
     }
   }
   catch (e) 
