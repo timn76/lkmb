@@ -854,7 +854,7 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 				+ nl + (par.debug?'     all.push ({"i":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); ':'')
 				+ nl + '     if (likes.items.length>=0) j = likes.items.indexOf (' + gr.uid + '); '
 				+ nl + '     if(j>=0) { res.push ({"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); ls=0; }'
-				+ nl + (!gr.fo?'     else ls = ls + 1000; '':'')
+				+ nl + (!gr.fo?'     else ls = ls + 1000; ':'')
 				+ nl + '     e = e + 1; '
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
