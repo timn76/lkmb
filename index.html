@@ -825,6 +825,12 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function Copy (o)
+{
+  var copy = JSON.parse(JSON.stringify(o));
+  return copy;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 let gr = {};
 
 async function GetLikesGr ()
@@ -850,7 +856,7 @@ async function GetLikesGr ()
     SearchList[gr.g].c = gr.c;
     SearchList[gr.g].ls = 0;
     SearchList[gr.g].IsFriendsWall = gr.f;
-    group = SearchList[gr.g];
+    group = Copy(SearchList[gr.g]);
     console.log ("NEW: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
     console.log ("NEW: gr.g: " + gr.g + "; SearchList[gr.g].offset: " + SearchList[gr.g].offset + "; SearchList[gr.g].id: " + SearchList[gr.g].id + "; SearchList[gr.g].c: " + SearchList[gr.g].c + "; SearchList[gr.g].ls: " + SearchList[gr.g].ls);
   }
@@ -977,7 +983,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.30');
+  console.log('InitOk.v1.1.31');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
