@@ -486,6 +486,38 @@ let Group_fields = "id,name,screen_name,is_closed,deactivated,is_member,invited_
 let User_fields = "id,uid,user_id,first_name,last_name,domain,deactivated,hidden,bdate,city,common_count,connections,contacts,counters,country,crop_photo,followers_count,friend_status,games,has_mobile,has_photo,home_town,is_favorite,is_friend,is_hidden_from_feed,last_seen,lists,maiden_name,military,movies,music,nickname,occupation,online,online_mobile,online_app,personal,photo_50,quotes,relatives,relation,schools,screen_name,sex,site,status,timezone,tv,universities,verified,wall_comments"; 
 // 							,about,activities,blacklisted,blacklisted_by_me,books,can_post,can_see_all_posts,can_see_audio,can_send_friend_request,can_write_private_message,career,education,exports,first_name_nom,first_name_gen,first_name_dat,first_name_acc,first_name_ins,first_name_abl,interests,last_name_nom,last_name_gen,last_name_dat,last_name_acc,last_name_ins,last_name_abl,photo_100,photo_200_orig,photo_200,photo_400_orig,photo_id,photo_max,photo_max_orig,
 //------------------------------------------------------------------------------------------------------------------------------------------
+async function AddFriends (ids) 
+{
+  console.log ("AddFriends(ids["+ ids + "])");
+  if (!ids) return;
+  let fd = document.getElementById ('friends_data');
+  try
+  {
+    const response = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 10000);  	
+    //User = response[0];
+    //User.id = uvl (User.id, User.uid);
+    //let response = await VKapi ('groups.getById', { group_ids:ids, fields:Group_fields });
+    for (let i = 0; i < response.length; i++)
+    {
+      let s=-1;
+      for (let j=0; j<Friends.length; j++) if (response[i].id == Friends[j].id) { s = j; break; }
+      if (s == -1)
+      {
+	    response[i].IsFriend = 0;
+        Friends.push    ( response[i] );
+        AppendFriend ( response[i] );
+		//Data.Friends.Count ++;
+      }
+    }
+    StorageSet ('fr'+User.id, GroupsIds (Friends));
+  }
+  catch (e)
+  {
+    console.log (e);
+    if (e.error != undefined) fd.innerHTML = e.error.error_msg;
+  }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function GetFriends (id,offset=0)
 {
   try
@@ -495,13 +527,13 @@ async function GetFriends (id,offset=0)
     //if (offset==0) 
     Data.Friends.Count = uvl (response.count,friends.length);
     //friends.sort( function (a, b) { if (a.first_name > b.first_name) return 1; if (a.first_name < b.first_name) return -1; return 0; } );
-    for (let i = 0; i < friends.length; i++) friends[i].id = uvl(friends[i].uid,friends[i].id);
+    for (let i = 0; i < friends.length; i++) { friends[i].id = uvl(friends[i].uid,friends[i].id); friends[i].IsFriend = 1; }
     return friends;
   }
   catch (e) { console.log (e); return e; }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-async function ShowFriends (id)
+async function ShowFriends (id,flush=false)
 {
   document.getElementById("ml").style.display = "block";
   let fd = document.getElementById('friends_data');
@@ -520,6 +552,8 @@ async function ShowFriends (id)
     offset += Data.Friends.Step;
     document.getElementById('count').innerHTML = Friends.length + '/' + Data.Friends.Count;
   } while (Friends.length<Data.Friends.Count && offset<Data.Friends.Count)
+  if (flush) StorageSet ('fr'+id,"");
+  else AddFriends (Data.sgGroups = await StorageGet ('fr'+id));
   fd.style.display = "block";
   document.getElementById("ml").style.display = "none";
   document.getElementById('count').innerHTML = '0';
@@ -574,7 +608,7 @@ async function GetGroup (id)
 {
   try
   {
-    const response = await VKapi ('groups.getById', {group_id:id, fields:Group_fields}, 30000);
+    const response = await VKapi ('groups.getById', {group_id:id, fields:Group_fields}, 10000);
     for (let i = 0; i < response.length; i++)
     {
       Group = response[i];
@@ -659,7 +693,7 @@ async function GetGroups (id, flush=0)
     console.log (response);
     Group = null;
     Groups = response.items;
-    console.log ('GetGroups ('+id+'):'+GroupsIds (Groups));
+    console.log ('GetGroups ('+id+'):' + GroupsIds (Groups));
     for (let i = 0; i < Groups.length; i++) gd.appendChild ( ShowGroups (Groups[i]) );
     if (flush) StorageSet ('gr'+id,"");
     else AddGroups (Data.sgGroups = await StorageGet ('gr'+id));
@@ -772,6 +806,7 @@ async function VKapiS (method, params)
 function PSleep (ms) { return new Promise (resolve => setTimeout(resolve, ms)); }
 async function ASleep (ms,start) { await PSleep(ms); }
 //------------------------------------------------------------------------------------------------------------------------------------------
+/*
 function GetLikesCode (id,offset,f,fo='1')
 {
 	let Code =  'var p = API.wall.get ({ owner_id:'+ (f?'':'-') + id + ', count:24, offset:' + offset + ' }); '
@@ -789,6 +824,7 @@ function GetLikesCode (id,offset,f,fo='1')
 				+ ' return { "date":posts[i-1].date, "count":c, "res":res };';
 	return Code;
 }
+*/
 //------------------------------------------------------------------------------------------------------------------------------------------
 function GetLikesCodeNF (id,offset,cnt,ls=0)
 {
@@ -923,7 +959,7 @@ async function GetGroupLikes (date,f=false)
   gr.f = f;
   gr.date = date;
   gr.uid = User.id;
-  gr.fo = 0;
+  gr.fo = User.IsFriend;
   gr.c = 24;
   gr.err_groups = [];
   gr.sync1 = false;
@@ -983,7 +1019,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.31');
+  console.log('InitOk.v1.1.32');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1074,7 +1110,7 @@ function KeyPress (event)
  
 </script>
 
-<body onkeypress="KeyPress(event)">
+<body>
 
 <div id="user_data"></div>
 
@@ -1105,7 +1141,7 @@ function KeyPress (event)
 </div>
 
 <div id="friends_data" 	class="tabcontent"></div>
-<div id="groups_data" 	class="tabcontent"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
+<div id="groups_data" 	class="tabcontent" onkeypress="KeyPress(event)"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
 <div id="likes_data" 	class="tabcontent"><p>Выберете друга, затем период поиска и нажмите "Искать", для поиска его лайков.</p></div>
 
 </body>
