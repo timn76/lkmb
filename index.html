@@ -1101,16 +1101,17 @@ function KeyPress (event)
     (e.ctrlKey ? ' +ctrl' : '') +
     (e.altKey ? ' +alt' : '') +
     (e.metaKey ? ' +meta' : '') + "\n";*/
+	let txt;
 	if(event.charCode==43)
 	{
 	  switch (document.getElementsByClassName("tablinks active").id)
 	  {
 	    case "friends":
-		  let txt = prompt ("Добавить аккаунт:", "");
+		  txt = prompt ("Добавить аккаунт:", "");
 		  if (txt) AddFriends (txt);
 		    break;
 	    case "groups":
-		  let txt = prompt ("Добавить группу:", "");
+		  txt = prompt ("Добавить группу:", "");
 		  if (txt) AddGroups (txt);
 		    break;	  }
 	} 
