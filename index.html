@@ -999,7 +999,7 @@ async function GetUser (id)
   catch (e) { console.log (e); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-async function StorageGet (key,glob=0) 
+async function StorageGet (key, glob=0) 
 {
   try
   {
@@ -1025,7 +1025,7 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.37');
+  console.log('InitOk.v1.1.38');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1113,8 +1113,8 @@ function KeyPress (e)
 	let txt;
 	if(e.charCode==43) //+
 	{
-	  Debug (document.getElementsByClassName("tablinks active").id);
-	  switch (document.getElementsByClassName("tablinks active").id)
+	  Debug (document.getElementsByClassName("tablinks active")[0].id);
+	  switch (document.getElementsByClassName("tablinks active")[0].id)
 	  {
 	    case "friends":
 		  txt = prompt ("Добавить аккаунт:", "");
@@ -1128,7 +1128,8 @@ function KeyPress (e)
 	} 
 	if(e.charCode==100 && e.ctrlKey && e.altKey) //d
 	{
-	  par.debug = true;
+	  par.debug = !par.debug;
+	  console.log ('par.debug=' + par.debug);
 	}
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
