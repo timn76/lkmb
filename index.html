@@ -480,7 +480,7 @@ function CreateFriendElement (friend)
 	tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+friend.domain, child:  Create('img',{src:friend.photo_50, title:friend.first_name+' '+friend.last_name })})}));
 	tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
 	tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
-	
+	article.innerHTML += ( '<p onclick="DeleteFriend(this,event);" class="delete">&#10008;</p>' );	
 	article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.tag); GetUser(event.currentTarget.tag); }, false);
 
 	return (article);
@@ -499,22 +499,21 @@ async function AddFriends (ids)
   try
   {
     const response = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 10000);  	
-    //User = response[0];
-    //User.id = uvl (User.id, User.uid);
-    //let response = await VKapi ('groups.getById', { group_ids:ids, fields:Group_fields });
+
     for (let i = 0; i < response.length; i++)
     {
       let s=-1;
       for (let j=0; j<Friends.length; j++) if (response[i].id == Friends[j].id) { s = j; break; }
       if (s == -1)
       {
-	    //response[i].IsFriend = 0;
-        Friends.push ( response[i] );
-        AppendFriend ( response[i] );
+	    response[i].id = uvl (response[i].uid, response[i].id);
+        Friends.push 		( response[i] );
+        AppendFriend 		( response[i] );
+		Data.sgFriends.push ( response[i] );
 		//Data.Friends.Count ++;
       }
     }
-    StorageSet ('fr'+User.id, GroupsIds (Friends));
+    StorageSet ('friends', GroupsIds (Data.sgFriends));
   }
   catch (e)
   {
@@ -523,11 +522,21 @@ async function AddFriends (ids)
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function DeleteFriend (element,event)
+{
+  let i=-1;
+  for (let j=0; j<Friends.length; j++) if (element.id == Friends[j].id) { i = j; break; }
+  if (i>=0) Friends.splice (i,1);
+  if (Data.sgFriends) StorageSet ('friends', GroupsIds (Friends));
+  element.parentNode.remove();
+  StopEvent (event);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function GetFriends (id,offset=0)
 {
   try
   {
-    const response = await VKapi ('friends.get', {user_id:id, fields:User_fields , order:"name"/*"hints"*/, offset:offset, count:Data.Friends.Step, version:"5.8"}, 60000);
+    const response = await VKapi ('friends.get', {user_id:id, fields:User_fields , order:"name"/*"hints"*/, offset:offset, count:Data.Friends.Step /*, version:"5.8" */}, 60000);
     let friends = uvl (response.items,response);
     //if (offset==0) 
     Data.Friends.Count = uvl (response.count,friends.length);
@@ -557,8 +566,8 @@ async function ShowFriends (id,flush=false)
     offset += Data.Friends.Step;
     document.getElementById('count').innerHTML = Friends.length + '/' + Data.Friends.Count;
   } while (Friends.length<Data.Friends.Count && offset<Data.Friends.Count)
-  if (flush) StorageSet ('fr'+id,"");
-  else AddFriends (Data.sgGroups = await StorageGet ('fr'+id));
+  if (flush) StorageSet ('friends',"");
+  else AddFriends (Data.sgFriends = await StorageGet ('friends'));
   fd.style.display = "block";
   document.getElementById("ml").style.display = "none";
   document.getElementById('count').innerHTML = '0';
@@ -617,7 +626,7 @@ async function GetGroup (id)
     for (let i = 0; i < response.length; i++)
     {
       Group = response[i];
-      Group.id = uvl(response[i].id,response[i].gid);
+      Group.id = uvl (response[i].id, response[i].gid);
       Group.post_count = await GetPostsCount (Group.id);
       document.getElementById('user_data').innerHTML = ShowGroup(Group).outerHTML;;
     }
@@ -637,7 +646,7 @@ function DeleteGroup (element,event)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGroups (group) 
 {
-	let article = Create('article',{ id:group.id, class:'sel_item show_groups' });
+	let article = Create('article', { id:group.id, class:'sel_item show_groups' });
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width:180, html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
@@ -674,11 +683,12 @@ async function AddGroups (ids)
       for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
       if (s == -1)
       {
-        Groups.push    ( response[i] );
-        gd.appendChild ( ShowGroups (response[i]) );
+        Groups.push    		( response[i] );
+		Data.sgGroups.push 	( response[i] )
+        gd.appendChild 		( ShowGroups (response[i]) );
       }
     }
-    StorageSet ('gr'+User.id, GroupsIds (Groups));
+    StorageSet ('gr'+User.id, GroupsIds (Data.sgGroups));
   }
   catch (e)
   {
@@ -990,7 +1000,7 @@ async function GetUser (id)
     User.id = uvl (User.id, User.uid);
     if (id==undefined)
     {
-    	if (User.id==156808317) par.me = true;
+      if (User.id==156808317) par.me = true;
       SetRunCount (Owner.id);
     }
     document.getElementById('user_data').innerHTML = ShowUser(User).outerHTML;
@@ -1004,7 +1014,7 @@ async function StorageGet (key, glob=0)
   try
   {
     console.log ('StorageGet.' + key + ', id=' + Owner.id);
-    const response = await VKapi ('storage.get', {"key":key,"user_id":Owner.id,"global":glob,"v":'5.8'});
+    const response = await VKapi ('storage.get', {"key":key,"user_id":Owner.id,"global":glob});
     return (response);
   } 
   catch (e) { console.log (e); }
@@ -1012,7 +1022,8 @@ async function StorageGet (key, glob=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function StorageSet (key,val,glob=0)
 {
-  try { const response = VKapi ('storage.set', {"key":key,"value":val,"user_id":Owner.id,"global":glob,"v":'5.8'}); } 
+  console.log ('StorageSet.' + key + ', id=' + Owner.id + ', val=' + val);
+  try { const response = VKapi ('storage.set', {"key":key,"value":val,"user_id":Owner.id,"global":glob}); } 
   catch(e) { console.log (e); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1021,14 +1032,6 @@ async function SetRunCount (id)
   let rc = await StorageGet ('RunCount',1);
   console.log ('RunCount: ' + rc);
   if (!par.me) StorageSet ('RunCount',++rc,1);
-}
-//------------------------------------------------------------------------------------------------------------------------------------------
-function Init ()
-{
-  console.log('InitOk.v1.1.38');
-  if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
-  Owner = GetUser ();
-  ShowFriends ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function Start (state)
@@ -1131,6 +1134,14 @@ function KeyPress (e)
 	  par.debug = !par.debug;
 	  console.log ('par.debug=' + par.debug);
 	}
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function Init ()
+{
+  console.log('InitOk.v1.1.39');
+  if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
+  Owner = GetUser ();
+  ShowFriends ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
  
