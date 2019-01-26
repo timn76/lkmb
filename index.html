@@ -538,6 +538,7 @@ function DeleteFriend (element,event)
   let i=-1;
   for (let j=0; j<Friends.length; j++) if (element.id == Friends[j].id) { i = j; break; }
   if (i>=0) Friends.splice (i,1);
+  console.log (element);
   DelSubstr (Data.sgFriends, element.id);
   StorageSet ('friends', Data.sgFriends);
   element.parentNode.remove();
@@ -652,7 +653,6 @@ function DeleteGroup (element,event)
   for (let j=0; j<Groups.length; j++) if (element.id == Groups[j].id) { i = j; break; }
   if (i>=0) Groups.splice (i,1);
   DelSubstr (Data.sgGroups, element.id);
-  StorageSet ('friends', Data.sgFriends);
   StorageSet ('gr'+User.id, GroupsIds (Groups));
   element.parentNode.remove();
   StopEvent (event);
@@ -1153,7 +1153,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.42');
+  console.log('InitOk.v1.1.43');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
