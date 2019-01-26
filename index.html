@@ -771,7 +771,7 @@ function CreatePost (like)
           }
         }
   if (photo != null) td = tr.appendChild ( Create ('td', { width:180, child: Create ('img', {class:'post', src:photo}) }) );
-  else console.log (like);
+  else Debug (like);
   tr.appendChild (Create('td', { class:'text', child:Create('section', {height:td.offsetHeight, class:'text',html:'<p class="text">' + like.post.text + '</p>'})}));
   return (article);
 }
@@ -878,7 +878,7 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 				+ nl + ' while (i<posts.length && e<25)' // + (!gr.fo?' && (posts[i].likes.count/1000+e<=25)':'') + ') '
 				+ nl + ' { '
 				+ nl + '   j = -1; '
-				+ nl + (!gr.fo?'   while (ls<posts[i].likes.count && j<0 && e<25) ':'')
+				+ nl + (!gr.fo?'   while (ls<posts[i].likes.count && j<0 && e<25) ':'   if (posts[i].likes.count>0 && e<25)')
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+gr.fo+', count:1000, skip_own:0, offset:ls }); '
 				+ nl + (par.debug?'     all.push ({"i":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":' + (gr.fo?'likes':'{}') + '}); ':'')
@@ -976,7 +976,7 @@ async function GetLikesGr ()
   {
     gr.err_groups.push (group);
     console.log (e);
-    console.log (GetLikesCodeNF(group.id,group.offset,group.c,group.ls));
+    Debug (GetLikesCodeNF(group.id,group.offset,group.c,group.ls));
     console.log ("group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + ((SearchList[group.g]!=null) ? SearchList[group.g].id:"null"));
     console.log ('------------------------------------------------------------------------------');
   }
@@ -996,7 +996,7 @@ async function GetGroupLikes (date,f=false)
   gr.uid = User.id;
   //console.log (User.IsFriend);
   gr.fo = User.is_friend;
-  gr.c = 24;
+  gr.c = 96;
   gr.err_groups = [];
   gr.sync1 = false;
   gr.sync2 = false;  
@@ -1158,7 +1158,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.47');
+  console.log('InitOk.v1.1.48');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
