@@ -961,7 +961,7 @@ async function GetLikesGr ()
       gr.sync2 = false;
 	  return;
     }
-    if(!gr.fo && response.i < group.c)
+    if(/*!gr.fo && */response.i < group.c)
     {
       //console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
       group.offset += response.i;
@@ -1158,7 +1158,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.48');
+  console.log('InitOk.v1.1.49');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
