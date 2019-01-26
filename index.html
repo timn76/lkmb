@@ -506,10 +506,11 @@ async function AddFriends (ids)
       for (let j=0; j<Friends.length; j++) if (response[i].id == Friends[j].id) { s = j; break; }
       if (s == -1)
       {
-        response[i].id = uvl (response[i].uid, response[i].id);
+        response[i].id      = uvl (response[i].uid, response[i].id);
+		response[i].added   = true;
         Friends.push        ( response[i] );
         AppendFriend        ( response[i] );
-        Data.sgFriends   += ( (Data.sgFriends?",":"") + response[i].id );
+        if (Data.sgFriends.indexOf(response[i].id)<0) Data.sgFriends += ( (Data.sgFriends?",":"") + response[i].id );
         //Data.Friends.Count ++;
       }
     }
@@ -529,13 +530,14 @@ function DelSubstr (str,substr)
   for (let i = 0; i < m.length-1; i++) if (m[i] != substr) r += m[i] + ',';    
   r += m[m.length-1];
 }
-
+//------------------------------------------------------------------------------------------------------------------------------------------
 function DeleteFriend (element,event)
 {
   let i=-1;
   for (let j=0; j<Friends.length; j++) if (element.id == Friends[j].id) { i = j; break; }
   if (i>=0) Friends.splice (i,1);
-  if (Data.sgFriends) StorageSet ('friends', GroupsIds (Friends));
+  DelSubstr (Data.sgFriends, element.id);
+  StorageSet ('friends', Data.sgFriends);
   element.parentNode.remove();
   StopEvent (event);
 }
@@ -647,7 +649,9 @@ function DeleteGroup (element,event)
   let i=-1;
   for (let j=0; j<Groups.length; j++) if (element.id == Groups[j].id) { i = j; break; }
   if (i>=0) Groups.splice (i,1);
-  if (Data.sgGroups) StorageSet ('gr'+User.id, GroupsIds (Groups));
+  DelSubstr (Data.sgGroups, element.id);
+  StorageSet ('friends', Data.sgFriends);
+  StorageSet ('gr'+User.id, GroupsIds (Groups));
   element.parentNode.remove();
   StopEvent (event);
 }
@@ -691,9 +695,10 @@ async function AddGroups (ids)
       for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
       if (s == -1)
       {
+        response[i].added  = true;
         Groups.push        ( response[i] );
         gd.appendChild     ( ShowGroups (response[i]) );
-        Data.sgGroups   += ( (Data.sgGroups?",":"") + response[i].id );
+		if (Data.sgGroups.indexOf(response[i].id)<0) Data.sgGroups += ( (Data.sgGroups?",":"") + response[i].id );
       }
     }
     StorageSet ('gr'+User.id, Data.sgGroups);
@@ -1146,7 +1151,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.40');
+  console.log('InitOk.v1.1.41');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
