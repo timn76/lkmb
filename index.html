@@ -233,20 +233,20 @@ div.tab select
 		background-color: rgb(80, 114, 153);
 		cursor: pointer;    
 	}
-	.show_groups
+	.elem
 	{
 		position: relative;
 	}
-	.show_groups:hover .delete
+	.elem:hover .delete
 	{
 		display: block;
 	}
-	.show_groups .delete
+	.elem .delete
 	{
 		top: 1px;
 		right: 1px;
 	}	
-	.show_groups .delete
+	.elem .delete
 	{
 		position:absolute;
 		display:none;
@@ -473,7 +473,7 @@ function AppendFriend (friend)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreateFriendElement (friend)
 {
-	let article = Create('article',{id:friend.id, class:'sel_item', tag:friend.id });
+	let article = Create('article',{id:friend.id, class:'sel_item elem', tag:friend.id });
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width: 140, html:dm2html(friend.domain) + id2html(friend.id,friend.domain) + ls2html(friend.last_seen,friend.online)}));
@@ -646,7 +646,7 @@ function DeleteGroup (element,event)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGroups (group) 
 {
-	let article = Create('article', { id:group.id, class:'sel_item show_groups' });
+	let article = Create('article', { id:group.id, class:'sel_item elem' });
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width:180, html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
