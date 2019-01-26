@@ -376,7 +376,7 @@ if(screen.width<500||navigator.userAgent.match(/Android/i)||navigator.userAgent.
   loadScript ("https://vk.com/js/api/mobile_sdk.js" );
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-window.onload = ( function() { VK.init ( Init, function () { console.log('Error init VK API!!!'); }, '5.8'); } );
+window.onload = ( function() { VK.init ( Init, function () { console.log ('Error init VK API!!!'); }, '5.9'); } );
 //------------------------------------------------------------------------------------------------------------------------------------------
 function loadScript(url)
 {    
@@ -493,7 +493,7 @@ let User_fields = "id,uid,user_id,first_name,last_name,domain,deactivated,hidden
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function AddFriends (ids) 
 {
-  console.log ("AddFriends(ids["+ ids + "])");
+  Debug ("AddFriends(ids["+ ids + "])");
   if (!ids) return;
   let fd = document.getElementById ('friends_data');
   try
@@ -525,7 +525,7 @@ async function AddFriends (ids)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function DelSubstr (str,substr)
 {
-  console.log ("DelSubstr(str["+ str + "], substr=[" + substr + "])");
+  Debug ("DelSubstr(str["+ str + "], substr=[" + substr + "])");
   let m = str.split(",");
   let r = "";
   let i;
@@ -535,11 +535,11 @@ function DelSubstr (str,substr)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function DeleteFriend (element,event)
 {
+  Debug (element);
   let i=-1;
-  for (let j=0; j<Friends.length; j++) if (element.id == Friends[j].id) { i = j; break; }
+  for (let j=0; j<Friends.length; j++) if (element.parentNode.id == Friends[j].id) { i = j; break; }
   if (i>=0) Friends.splice (i,1);
-  console.log (element);
-  DelSubstr (Data.sgFriends, element.id);
+  DelSubstr (Data.sgFriends, element.parentNode.id);
   StorageSet ('friends', Data.sgFriends);
   element.parentNode.remove();
   StopEvent (event);
@@ -647,13 +647,13 @@ async function GetGroup (id)
   catch (e) { console.log (e); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function DeleteGroup (element,event)
+function DeleteGroup (element,event,id)
 {
   let i=-1;
-  console.log (element);
-  for (let j=0; j<Groups.length; j++) if (element.id == Groups[j].id) { i = j; break; }
+  Debug (element);
+  for (let j=0; j<Groups.length; j++) if (element.parentNode.id == Groups[j].id) { i = j; break; }
   if (i>=0) Groups.splice (i,1);
-  DelSubstr (Data.sgGroups, element.id);
+  DelSubstr  (Data.sgGroups, element.parentNode.id);
   StorageSet ('gr'+User.id, GroupsIds (Groups));
   element.parentNode.remove();
   StopEvent (event);
@@ -678,10 +678,13 @@ function ShowGroups (group)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function GroupsIds (g)
 {
-	let s = "";
-	for (let i=0; i<g.length-1; i++) s += (g[i].id + "," + ((i+1)%25==0?"\n":""));
-	s += g[g.length-1].id;
-	return (s);
+  let s = "";
+  if (g.length)
+  {
+    for (let i=0; i<g.length-1; i++) s += (g[i].id + "," + ((i+1)%25==0?"\n":""));
+    s += g[g.length-1].id;
+  }
+  return (s);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function AddGroups (ids) 
@@ -1154,7 +1157,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.44');
+  console.log('InitOk.v1.1.45');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
