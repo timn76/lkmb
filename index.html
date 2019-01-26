@@ -529,7 +529,9 @@ function DelSubstr (str,substr)
   let m = str.split(",");
   let r = "";
   let i;
-  for (i = 0; i < m.length-1; i++) if (m[i] != substr) r += m[i] + ","; 
+  console.log (m);
+  for (i = 0; i < m.length-1; i++) if (m[i] != substr) r += m[i] + ",";
+  console.log (i);
   if (m[i] != substr) r += m[i];
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1032,7 +1034,7 @@ async function StorageGet (key, glob=0)
 {
   try
   {
-    console.log ('StorageGet.' + key + ', id=' + Owner.id);
+    Debug ('StorageGet.' + key + ', id=' + Owner.id);
     const response = await VKapi ('storage.get', {"key":key,"user_id":Owner.id,"global":glob});
     return (response);
   } 
@@ -1157,7 +1159,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.45');
+  console.log('InitOk.v1.1.46');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
