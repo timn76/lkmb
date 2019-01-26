@@ -522,6 +522,14 @@ async function AddFriends (ids)
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function DelSubstr (str,substr)
+{
+  let m = str.split(',');
+  let r = '';
+  for (let i = 0; i < m.length-1; i++) if (m[i] != substr) r += m[i] + ',';    
+  r += m[m.length-1];
+}
+
 function DeleteFriend (element,event)
 {
   let i=-1;
@@ -1138,7 +1146,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.39');
+  console.log('InitOk.v1.1.40');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
