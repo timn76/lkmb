@@ -233,20 +233,20 @@ div.tab select
 		background-color: rgb(80, 114, 153);
 		cursor: pointer;    
 	}
-	.elem
+	.del_item
 	{
 		position: relative;
 	}
-	.elem:hover .delete
+	.del_item:hover .delete
 	{
 		display: block;
 	}
-	.elem .delete
+	.del_item .delete
 	{
 		top: 1px;
 		right: 1px;
 	}	
-	.elem .delete
+	.del_item .delete
 	{
 		position:absolute;
 		display:none;
@@ -349,7 +349,7 @@ var SearchList = [];
 var AllGroups = [];
 var Likes = [];
 var par = { id:false, me:false, others:false, debug:false, mobile:false };
-var Data = {sgGroups:'', Friends: {Count:0, Step:500}};
+var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
 {
@@ -362,7 +362,7 @@ if (!Date.prototype.toStr)
     }
     Date.prototype.toStr = function()
     {
-    	if(isNaN(this)) return 'n/a';
+      if(isNaN(this)) return 'n/a';
       return pad(this.getDate()) + '.' + pad(this.getMonth() + 1) + '.' + this.getFullYear() + ' ' + pad(this.getHours()) + ':' + pad(this.getMinutes());
     };
   }());
@@ -473,7 +473,7 @@ function AppendFriend (friend)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreateFriendElement (friend)
 {
-	let article = Create('article',{id:friend.id, class:'sel_item elem', tag:friend.id });
+	let article = Create('article',{id:friend.id, class:'sel_item del_item', tag:friend.id });
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width: 140, html:dm2html(friend.domain) + id2html(friend.id,friend.domain) + ls2html(friend.last_seen,friend.online)}));
@@ -506,14 +506,14 @@ async function AddFriends (ids)
       for (let j=0; j<Friends.length; j++) if (response[i].id == Friends[j].id) { s = j; break; }
       if (s == -1)
       {
-	    response[i].id = uvl (response[i].uid, response[i].id);
-        Friends.push 		( response[i] );
-        AppendFriend 		( response[i] );
-		Data.sgFriends.push ( response[i] );
-		//Data.Friends.Count ++;
+        response[i].id = uvl (response[i].uid, response[i].id);
+        Friends.push        ( response[i] );
+        AppendFriend        ( response[i] );
+        Data.sgFriends   += ( (Data.sgFriends?",":"") + response[i].id );
+        //Data.Friends.Count ++;
       }
     }
-    StorageSet ('friends', GroupsIds (Data.sgFriends));
+    StorageSet ('friends', Data.sgFriends);
   }
   catch (e)
   {
@@ -646,7 +646,7 @@ function DeleteGroup (element,event)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGroups (group) 
 {
-	let article = Create('article', { id:group.id, class:'sel_item elem' });
+	let article = Create('article', { id:group.id, class:'sel_item del_item' });
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width:180, html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
@@ -683,12 +683,12 @@ async function AddGroups (ids)
       for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
       if (s == -1)
       {
-        Groups.push    		( response[i] );
-		Data.sgGroups.push 	( response[i] )
-        gd.appendChild 		( ShowGroups (response[i]) );
+        Groups.push        ( response[i] );
+        gd.appendChild     ( ShowGroups (response[i]) );
+        Data.sgGroups   += ( (Data.sgGroups?",":"") + response[i].id );
       }
     }
-    StorageSet ('gr'+User.id, GroupsIds (Data.sgGroups));
+    StorageSet ('gr'+User.id, Data.sgGroups);
   }
   catch (e)
   {
