@@ -985,6 +985,7 @@ async function GetLikesGr ()
 async function GetGroupLikes (date,f=false)
 {
   let start;
+  let finish;
   if(User.id==156808317 && !par.me) { sleep(10000); return; }
   gr.g = -1;
   gr.l = SearchList.length;
@@ -1153,11 +1154,12 @@ function KeyPress (e)
 	  par.debug = !par.debug;
 	  console.log ('par.debug=' + par.debug);
 	}
+	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.52');
+  console.log('InitOk.v1.1.53');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
