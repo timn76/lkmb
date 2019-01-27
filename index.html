@@ -725,10 +725,10 @@ async function GetGroups (id, flush=0)
   try
   {
     let response = await VKapi ('groups.get', { user_id:id, extended:'1', fields:Group_fields }, 60000);
-    console.log (response);
+    Debug (response);
     Group = null;
     Groups = response.items;
-    console.log ('GetGroups ('+id+'):' + GroupsIds (Groups));
+    Debug ('GetGroups ('+id+'):' + GroupsIds (Groups));
     for (let i = 0; i < Groups.length; i++) gd.appendChild ( ShowGroups (Groups[i]) );
     if (flush) StorageSet ('gr'+id,"");
     else AddGroups (Data.sgGroups = await StorageGet ('gr'+id));
@@ -956,7 +956,7 @@ async function GetLikesGr ()
       if (group.g<0) group.g = 2;
       while ((SearchList[group.g] == null || SearchList[group.g].id != group.id) && i<3) group.g --, i ++;
       if (SearchList[group.g] == null) { console.log ("!!!(RESP) SearchList[group.g] == null; group.g: " + group.g); gr.sync2 = false; return; } 
-      if (SearchList[group.g] && SearchList[group.g].id == group.id) { Debug ("DEL: groups.g: " + group.g + "; SearchList[group.g].id: " + SearchList[group.g].id); SearchList.splice (group.g,1); Debug ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
+      if (SearchList[group.g] != null && SearchList[group.g].id == group.id) { Debug ("DEL: groups.g: " + group.g + "; SearchList[group.g].id: " + (SearchList[group.g]==null?"undefined":SearchList[group.g].id)); SearchList.splice (group.g,1); Debug ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + (SearchList[group.g]==null?"undefined":SearchList[group.g].id));
       gr.sync2 = false;
 	  return;
@@ -1157,7 +1157,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.51');
+  console.log('InitOk.v1.1.52');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
