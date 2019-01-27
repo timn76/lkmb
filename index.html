@@ -913,7 +913,7 @@ async function GetLikesGr ()
   if (gr.err_groups.length > 0) 
   {
     group = gr.err_groups[0];
-    Debug ("POP: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
+    Debug ("POP: group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
     gr.err_groups.splice(0,1);
   }
   else
@@ -928,7 +928,7 @@ async function GetLikesGr ()
     SearchList[gr.g].ls = 0;
     SearchList[gr.g].IsFriendsWall = gr.f;
     group = Copy(SearchList[gr.g]);
-    Debug ("NEW: groups.g: " + group.g + "; groups.offset: " + group.offset + "; groups.id: " + group.id + "; groups.c: " + group.c + "; groups.ls: " + group.ls);
+    Debug ("NEW: group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
     //console.log ("NEW: gr.g: " + gr.g + "; SearchList[gr.g].offset: " + SearchList[gr.g].offset + "; SearchList[gr.g].id: " + SearchList[gr.g].id + "; SearchList[gr.g].c: " + SearchList[gr.g].c + "; SearchList[gr.g].ls: " + SearchList[gr.g].ls);
   }
   gr.sync1 = false;
@@ -994,11 +994,13 @@ async function GetGroupLikes (date,f=false)
   gr.uid = User.id;
   //console.log (User.IsFriend);
   gr.fo = User.is_friend;
+  Debug ("par.cnt=" + par.cnt);
   gr.c = par.cnt;  // 24 // 96
+  Debug (-gr.c);
   gr.err_groups = [];
   gr.sync1 = false;
   gr.sync2 = false;  
-  for (let i=0; i<SearchList.length; i++) { SearchList[i].offset = -gr.c; /* SearchList[i].c = gr.c; SearchList[i].ls = 0; SearchList[i].IsFriendsWall = f; */ }
+  for (let i=0; i<SearchList.length; i++) SearchList[i].offset = -gr.c;
   console.log ((start = new Date()).toStr(true) + ": " + gr.g + " / " + SearchList.length);
   while (!Cancel && (SearchList.length>0 || gr.err_groups.length>0))
   {
@@ -1162,7 +1164,7 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.53');
+  console.log('InitOk.v1.1.54');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
