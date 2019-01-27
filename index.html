@@ -348,7 +348,7 @@ var Groups = [];
 var SearchList = [];
 var AllGroups = [];
 var Likes = [];
-var par = { id:false, me:false, others:false, debug:false, mobile:false };
+var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96 };
 var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -994,7 +994,7 @@ async function GetGroupLikes (date,f=false)
   gr.uid = User.id;
   //console.log (User.IsFriend);
   gr.fo = User.is_friend;
-  gr.c = 96;
+  gr.c = par.cnt;  // 24 // 96
   gr.err_groups = [];
   gr.sync1 = false;
   gr.sync2 = false;  
@@ -1007,7 +1007,7 @@ async function GetGroupLikes (date,f=false)
   }
   Start (false);
   ShowLikesAll ();
-  console.log ((finish = new Date()).toString() + "; " + (finish.getTime()-start.getTime()) + "ms");
+  console.log ((finish = new Date()).toStr(true) + "; " + (finish.getTime()-start.getTime()) + "ms");
   
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1154,7 +1154,10 @@ function KeyPress (e)
 	  par.debug = !par.debug;
 	  console.log ('par.debug=' + par.debug);
 	}
-	
+	if(e.charCode==99 && e.ctrlKey && e.altKey) //d
+	{
+	  par.cnt = prompt ("cnt:", par.cnt);
+	}	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
