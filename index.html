@@ -690,7 +690,7 @@ function GroupsIds (g)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function AddGroups (ids) 
 {
-  console.log ("AddGroupd(ids["+ ids + "])");
+  Debug ("AddGroupd(ids["+ ids + "])");
   if (!ids) return;
   let gd = document.getElementById ('groups_data');
   try
@@ -1044,7 +1044,7 @@ async function StorageGet (key, glob=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function StorageSet (key,val,glob=0)
 {
-  console.log ('StorageSet.' + key + ', id=' + Owner.id + ', val=' + val);
+  Debug ('StorageSet.' + key + ', id=' + Owner.id + ', val=' + val);
   try { const response = VKapi ('storage.set', {"key":key,"value":val,"user_id":Owner.id,"global":glob}); } 
   catch(e) { console.log (e); }
 }
@@ -1158,13 +1158,13 @@ function KeyPress (e)
 	}
 	if(e.charCode==99 && e.ctrlKey && e.altKey) //d
 	{
-	  par.cnt = prompt ("cnt:", par.cnt);
+	  par.cnt = parseInt (prompt ("cnt:", par.cnt));
 	}	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.54');
+  console.log('InitOk.v1.1.55');
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
