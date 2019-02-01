@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+.show {display: block;}
+
+body 		{ width: 760px;   color:#000; margin:0 auto; padding:0; direction:ltr; font-family:Tahoma,Verdana,Arial,Sans-Serif,Lucida Sans; font-size:12px; font-weight:normal}
+a 			{ color: #2a5885; text-decoration:none; cursor:pointer }
+a:hover 	{ text-decoration:underline }
+* { margin:0 auto; padding:0; }
+
+div.tab
+{
+	 margin:     0 0;
+	 font-size:  12px;
+    overflow:   hidden;
+    outline:    none;
+    box-shadow: none;
+    background-color: #dce7f2;
+    border-top:       1px solid #597da3;
+    border-bottom:    1px solid #597da3;
+}
+
+div.tab button
+{
+	 border: none;
+	 outline: none;
+    background-color: inherit;
+    float: left; 
+    cursor: pointer;
+    padding: 4px 12px;
+    transition: 0.3s;
+}
+div.tab button:hover
+{
+	color:	#fff;
+   	background-color: rgb(80, 114, 153);
+}
+div.tab button.active
+{
+    background-color: #597da3;
+}
+
+div.tab label
+{
+  font-size:  13px;
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  padding: 4px 6px;
+}
+
+div.tab label.counter
+{
+    float: right;
+    border: none;
+    outline: none;
+    padding: 4px 12px;
+}
+
+
+
+div.tab select
+{
+  margin: 	0 4px;
+  float: 	left;
+  border: 	none;
+  outline:	none;
+  cursor:	text;
+  padding:  3px 4px;
+  background-color: #f9f9f9;
+  min-width: 80px;
+}
+
+.tabcontent
+{
+    display: 		none;
+    padding: 		4px 4px;
+    border: 		1px solid #ccc;
+    border-top:	none;
+	 margin:			0 auto;
+	 overflow:		auto;
+	 max-height:	520px;    
+}		
+
+
+/* ----- dropdown menu -------------------------------------------------------*/
+.dropdown 
+{
+  float: left;
+  overflow: hidden;
+}
+
+    
+.dropdown .dropbtn 
+{
+  font-size: 10px;  
+  border: none;
+  outline: none;
+  color: black;
+  padding: 6px 1px;
+  background-color: inherit;
+  font-family: inherit;
+  float: left;
+  margin: 0;
+}
+
+.dropdown .dropbtn:hover
+{
+	color:	#fff;
+   	background-color: rgb(80, 114, 153);
+}
+
+.dropdown-content {
+  /* display: none; */
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 80px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  margin-top: 26px;
+  padding: 0 0;
+  /*
+  border-left:      1px solid #597da3;
+  border-bottom:    1px solid #597da3;
+  border-right:     1px solid #597da3;
+  */
+  border: none;
+}
+
+.dropdown-content *
+{
+  font-size:  12px;
+  float: none;
+  color: black;
+  padding: 6px 12px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  display: block;
+  margin: 0 0;
+  border: none;
+}
+
+
+
+.dropdown-content *:hover
+{
+  background-color: #dce7f2;
+}
+
+.dropdown-content input
+{
+  float: left;
+  margin-right: 7px;
+  margin-top: 2px;
+}
+
+div.tab .dropdown-content label
+{
+  font-size:  12px;
+  float: none;
+}
+
+.dropdown input[type=checkbox].dropbtn
+{
+  display: none;
+}
+
+ul.dropdown-content
+{
+  max-height:  0;
+  overflow:    hidden;
+  transition:  0.2s;
+  list-style-type:none;
+}
+
+.dropdown input[type=checkbox].dropbtn:checked ~ label.dropbtn
+{
+	color:	black;
+    background-color: #597da3;
+}
+
+.dropdown input[type=checkbox].btn1:checked ~ ul.menu1
+{
+    max-height: 300px;
+    /* display: block; */
+  border-left:      1px solid #597da3;
+  border-bottom:    1px solid #597da3;
+  border-right:     1px solid #597da3;
+}
+
+.dropdown input[type=checkbox].btn2:checked ~ ul.menu2
+{
+    max-height: 300px;
+    /* display: block; */
+  border-left:      1px solid #597da3;
+  border-bottom:    1px solid #597da3;
+  border-right:     1px solid #597da3;
+}
+
+
+/*
+.dropdown input[type=checkbox].dropbtn:checked ~ ul.dropdown-content
+{
+    max-height: 300px;
+    /* display: block; */ /*
+  border-left:      1px solid #597da3;
+  border-bottom:    1px solid #597da3;
+  border-right:     1px solid #597da3;
+}
+*/
+
+#name-filter {
+/*
+  border-box: box-sizing;
+  background-image: url('searchicon.png');
+  background-position: 4px 4px;
+  background-repeat: no-repeat;
+*/
+  /*font-size: 12px;
+  padding: 4px 12px;
+  border: none;*/
+  /*border-bottom: 1px solid #ddd;*/
+  margin 0;
+  ouline: none;
+  float: none;
+  margin-right: 0;
+}
+
+#name-filter:focus {outline: 2px solid #dce7f2;}
+
+</style>
+</head>
+<body>
+
+<h2>Search/Filter Dropdown</h2>
+<p>Click on the button to open the dropdown menu, and use the input field to search for a specific dropdown link.</p>
+
+
+
+<script>
+
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  div = document.getElementById("myDropdown");
+  a = div.getElementsByTagName("a");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
+  }
+}
+</script>
+
+
+
+
+<div id="user_data"></div>
+
+<div class="tab">
+
+
+
+<div class="dropdown">
+  <input type="checkbox" id="menu_toggle_1" class="dropbtn btn1">
+  <label for="menu_toggle_1" class="dropbtn">&#9660;</label>
+  <!--<button onclick="myFunction()" class="dropbtn">&#9660;</button>-->
+
+  <ul id="menu_1" class="dropdown-content menu1">
+    <li>&#128270; Фильтр:</li>
+    
+    <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="filterFunction()">
+    <li>Показывать:</li>
+    
+      <label>
+        <input type="checkbox" checked>Мужчин
+      </label>
+      <label>
+        <input type="checkbox" checked>Женщин
+      </label>
+      <label>
+        <input type="checkbox" checked>Не задано
+      </label>
+      <label>
+        <input type="checkbox">Только добавленных
+      </label>
+    <li>Сохранить</li>
+      <label>
+        <input type="checkbox">Автозагрузка фильтра
+      </label>
+  </ul>
+</div>
+
+  <button id="friends"  class="tablinks active" onclick="Select(event, 'friends_data','friends')">Друзья</button>
+
+  <button id="groups"   class="tablinks"        onclick="Select(event, 'groups_data','groups')  ">Группы</button>
+
+
+<div class="dropdown">
+  <input type="checkbox" id="menu_toggle_2" class="dropbtn btn2">
+  <label for="menu_toggle_2" class="dropbtn">&#9660;</label>
+  <!--<button onclick="myFunction()" class="dropbtn">&#9660;</button>-->
+
+  <ul id="menu_2" class="dropdown-content menu2">
+    <li>Группировать по</li>
+    
+      <label>
+        <input type="radio" name="groupping" value="By date" checked >Дате
+      </label>
+      <label>
+        <input type="radio" name="groupping" value="By wall">Стенке
+      </label>
+
+    <li>Сохранить</li>
+      <label>
+        <input type="checkbox">Автозагрузка настроек
+      </label>
+  </ul>
+</div>
+
+
+  <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data','likes')    ">Лайки</button>
+  <label>Искать в </label>
+  <select id="target" size="1" title="Искать лайки в группах или на стенках друзей друга">
+    <option selected value="1">группах</option>
+    <option          value="2">стенках</option>
+  </select>
+  <select id="period" size="1" title="Период поиска">
+    <option selected value="1">За один день</option>
+    <option value="3">За три дня</option>
+    <option value="7">За неделю</option>
+    <option value="14">За две недели</option>
+    <option value="31">За месяц</option>
+    <option value="92">За три месяца</option>    
+    <option value="183">За пол года</option>    
+    <option value="366">За год</option>
+    <option value="0">За всё время</option>
+  </select>  
+  <button id="start"	onclick="Start(true)" title="Искать лайки в группах">Искать</button>
+
+  <!-- <input  id="max" 		maxlength="5" size="5"  value="5"> -->
+  <label  id="count" class="counter">0</label>
+  <!-- <img id="ml" class="ml none" src="moving_lights.gif"> -->
+</div>
+
+<div id="friends_data"  class="tabcontent"></div>
+<div id="groups_data"   class="tabcontent"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
+<div id="likes_data"    class="tabcontent"><p>Выберете друга, затем период поиска и нажмите "Искать", для поиска его лайков.</p></div>
+
+  
+
+</body>
+</html>
+
