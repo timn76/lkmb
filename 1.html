@@ -45,12 +45,13 @@ div.tab button.active
 
 div.tab label
 {
-  font-size:  13px;
+  font-size:  12px;
   background-color: inherit;
   float: left;
   border: none;
   outline: none;
   padding: 4px 6px;
+  margin-left: 15px;
 }
 
 div.tab label.counter
@@ -147,7 +148,7 @@ div.tab select
 
 
 
-.dropdown-content *:hover
+.dropdown-content label:hover
 {
   background-color: #dce7f2;
 }
@@ -163,6 +164,18 @@ div.tab .dropdown-content label
 {
   font-size:  12px;
   float: none;
+  margin-left: 0;
+}
+
+div.tab .dropdown-content button
+{
+  float: none;
+  width: 100%;
+}
+
+div.tab .dropdown-content button:active
+{
+color:	black;
 }
 
 .dropdown input[type=checkbox].dropbtn
@@ -297,7 +310,7 @@ function filterFunction() {
       <label>
         <input type="checkbox">Только добавленных
       </label>
-    <li>Сохранить</li>
+    <button id="save1" onclick="">Сохранить</button>
       <label>
         <input type="checkbox">Автозагрузка фильтра
       </label>
@@ -324,7 +337,7 @@ function filterFunction() {
         <input type="radio" name="groupping" value="By wall">Стенке
       </label>
 
-    <li>Сохранить</li>
+    <button id="save2" onclick="">Сохранить</button>
       <label>
         <input type="checkbox">Автозагрузка настроек
       </label>

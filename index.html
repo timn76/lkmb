@@ -240,12 +240,13 @@ div.tab button.active
 
 div.tab label
 {
-  font-size:  13px;
+  font-size:  12px;
   background-color: inherit;
   float: left;
   border: none;
   outline: none;
   padding: 4px 6px;
+  margin-left: 15px;
 }
 
 div.tab label.counter
@@ -342,7 +343,7 @@ div.tab select
 
 
 
-.dropdown-content *:hover
+.dropdown-content label:hover
 {
   background-color: #dce7f2;
 }
@@ -358,6 +359,18 @@ div.tab .dropdown-content label
 {
   font-size:  12px;
   float: none;
+  margin-left: 0;
+}
+
+div.tab .dropdown-content button
+{
+  float: none;
+  width: 100%;
+}
+
+div.tab .dropdown-content button:active
+{
+color:	black;
 }
 
 .dropdown input[type=checkbox].dropbtn
@@ -1407,13 +1420,13 @@ function Init ()
 <div class="dropdown">
   <input type="checkbox" id="menu_toggle_1" class="dropbtn btn1">
   <label for="menu_toggle_1" class="dropbtn">&#9660;</label>
-  <!--<button onclick="myFunction()" class="dropbtn">&#9660;</button>-->
 
   <ul id="menu_1" class="dropdown-content menu1">
     <li>&#128270; Фильтр:</li>
     
     <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="filterFunction()">
     <li>Показывать:</li>
+    
       <label>
         <input type="checkbox" checked>Мужчин
       </label>
@@ -1426,7 +1439,7 @@ function Init ()
       <label>
         <input type="checkbox">Только добавленных
       </label>
-    <li>Сохранить</li>
+    <button id="save1" onclick="">Сохранить</button>
       <label>
         <input type="checkbox">Автозагрузка фильтра
       </label>
@@ -1452,13 +1465,12 @@ function Init ()
         <input type="radio" name="groupping" value="By wall">Стенке
       </label>
 
-    <li>Сохранить</li>
+    <button id="save2" onclick="">Сохранить</button>
       <label>
         <input type="checkbox">Автозагрузка настроек
       </label>
   </ul>
 </div>
-
 
   <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data','likes')    ">Лайки</button>
   <label>Искать в </label>
@@ -1479,15 +1491,13 @@ function Init ()
   </select>  
   <button id="start"	onclick="Start(true)" title="Искать лайки в группах">Искать</button>
 
-  <!-- <input  id="max" 		maxlength="5" size="5"  value="5"> -->
   <label  id="count" class="counter">0</label>
-  <!-- <img id="ml" class="ml none" src="moving_lights.gif"> -->
+  <img id="ml" class="ml none" src="moving_lights.gif">
 </div>
 
 <div id="friends_data"  class="tabcontent"></div>
 <div id="groups_data"   class="tabcontent"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
 <div id="likes_data"    class="tabcontent"><p>Выберете друга, затем период поиска и нажмите "Искать", для поиска его лайков.</p></div>
-
 
 </body>
 
