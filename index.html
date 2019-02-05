@@ -1447,7 +1447,7 @@ function SetFilterAccordion ()
   {
     let r = "none";
     let a = document.getElementById(c[i].tag).children;
-    for (let j=0; j<a.length; j++) if (!a[i].style.display) { r = ""; exit; }
+    for (let j=0; j<a.length; j++) if (!a[i].style.display) { r = ""; break; }
     c[i].style.display = r;    
   }
 }
