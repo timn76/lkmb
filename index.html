@@ -586,7 +586,8 @@ var Groups = [];
 var SearchList = [];
 var AllGroups = [];
 var Likes = [];
-var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96, friends: {load:false, filter:"", addedonly:false, men: true, women:true, unknown:true}, likes: {load:false, groupby:"ByDate"} };
+var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96}
+var Options = { friends: {load:false, filter:"", addedonly:false, men: true, women:true, unknown:true}, likes: {load:false, groupby:"ByDate"} };
 var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -816,7 +817,7 @@ async function ShowFriends (id,flush=false)
   if (flush) StorageSet ('friends',"");
   else AddFriends (Data.sgFriends = await StorageGet ('friends'));
   
-  SetFilterAccirdion ();
+  SetFilterAccordion ();
 
   fd.style.display = "block";
   document.getElementById("ml").style.display = "none";
@@ -978,7 +979,7 @@ async function GetGroups (id, flush=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function AppendPost (like)
 {
-  let lbl = (par.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : like.group.screen_name;
+  let lbl = (Options.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : like.group.screen_name;
   let act = GetAccordion (lbl, 'likes_data');
   act.appendChild (CreatePost (like));
   act.previousSibling.innerHTML = lbl + '  (' + act.childNodes.length + ')';
@@ -1378,50 +1379,51 @@ function KeyPress (e)
 	}	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function SaveParams (p)
+function SaveOptions (p)
 {
-  StorageSet ("par_" + p, JSON.stringify (par[p]));
+  StorageSet ("options", JSON.stringify (Options));
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-async function LoadParams (p)
+async function LoadOptions ()
 {
-  let l = await StorageGet ("par_" + p);
+  let l = await StorageGet ("options");
   console.log (l);
   if (!l) return;
   let j = JSON.parse (l);
-  if (j.load) par[p] = j;
 
-  if (p=="likes")
+  if (j.likes.load)
   {
-    document.getElementById("autoload2").checked = par.likes.load;
+    Options.likes = j.likes;
+    document.getElementById("autoload2").checked = Options.likes.load;
     let r = document.getElementsByName("groupping");
-    for (let i=0; i<r.length; i++) if(r[i].value==par.likes.groupby) r[i].checked = true;
+    for (let i=0; i<r.length; i++) if(r[i].value==Options.likes.groupby) r[i].checked = true;
   }
-  if (p=="friends")
+  if (j.friends.load)
   {
-    document.getElementById("autoload1").checked = par.friends.load;
-    document.getElementById("name-filter").value = par.friends.filter;
+    Options.friends = j.friends;
+    document.getElementById("autoload1").checked = Options.friends.load;
+    document.getElementById("name-filter").value = Options.friends.filter;
     let r = document.getElementsByName("show");
-    for (let i=0; i<r.length; i++) r[i].checked = par.friends[r[i].id];
+    for (let i=0; i<r.length; i++) r[i].checked = Options.friends[r[i].id];
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function ChangeParams (p)
+function ChangeOptions (p)
 {
   if (p=="friends")
   {
-    par.friends.load = document.getElementById("autoload1").checked;
-    par.friends.filter = document.getElementById("name-filter").value;
+    Options.friends.load = document.getElementById("autoload1").checked;
+    Options.friends.filter = document.getElementById("name-filter").value;
     let r = document.getElementsByName("show");
-    for (let i=0; i<r.length; i++) par.friends[r[i].id] = r[i].checked;
+    for (let i=0; i<r.length; i++) Options.friends[r[i].id] = r[i].checked;
     
     SetFilter ();
   }
   if (p=="likes")
   {
-    par.friends.load = document.getElementById("autoload2").checked;
+    Options.friends.load = document.getElementById("autoload2").checked;
     let r = document.getElementsByName("groupping");
-    for (let i=0; i<r.length; i++) if(r[i].checked) par.likes.groupby = r[i].value;
+    for (let i=0; i<r.length; i++) if(r[i].checked) Options.likes.groupby = r[i].value;
     
     ShowLikesAll ();
   }
@@ -1430,10 +1432,10 @@ function ChangeParams (p)
 function CheckFilter (e)
 {
   let r = true;
-  if (par.friends.filter)    if (e["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) r = false;
-  if (par.friends.addedonly) if (!e["data-added"]) r = false;
-  if (!par.friends.men)      if (e["data-sex"]==2) r = false;
-  if (!par.friends.women)    if (e["data-sex"]==1) r = false;
+  if (Options.friends.filter)    if (e["data-name"].toUpperCase().indexOf( Options.friends.filter.toUpperCase() ) < 0) r = false;
+  if (Options.friends.addedonly) if (!e["data-added"]) r = false;
+  if (!Options.friends.men)      if (e["data-sex"]==2) r = false;
+  if (!Options.friends.women)    if (e["data-sex"]==1) r = false;
   return r;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1459,9 +1461,8 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.58');
-  LoadParams ("friends");
-  LoadParams ("likes");
+  console.log('InitOk.v1.1.59');
+  LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1487,20 +1488,20 @@ function Init ()
       <li>Показывать:</li>
     
       <label>
-        <input type="checkbox" name="show" id="men"     onchange="ChangeParams('friends')" checked>Мужчин
+        <input type="checkbox" name="show" id="men"     onchange="ChangeOptions('friends')" checked>Мужчин
       </label>
       <label>
-        <input type="checkbox" name="show" id="women"   onchange="ChangeParams('friends')" checked>Женщин
+        <input type="checkbox" name="show" id="women"   onchange="ChangeOptions('friends')" checked>Женщин
       </label>
       <label>
-        <input type="checkbox" name="show" id="unknown" onchange="ChangeParams('friends')" checked>Не задано
+        <input type="checkbox" name="show" id="unknown" onchange="ChangeOptions('friends')" checked>Не задано
       </label>
       <label>
-        <input type="checkbox" name="show" id="addedonly" onchange="ChangeParams('friends')" >Только добавленных
+        <input type="checkbox" name="show" id="addedonly" onchange="ChangeOptions('friends')" >Только добавленных
       </label>
-      <button id="save1" onclick="SaveParams('friends')">Сохранить</button>
+      <button id="save1" onclick="SaveOptions('friends')">Сохранить</button>
       <label>
-        <input id="autoload1" type="checkbox" onchange="ChangeParams('friends')">Автозагрузка фильтра
+        <input id="autoload1" type="checkbox" onchange="ChangeOptions('friends')">Автозагрузка фильтра
       </label>
     </ul>
   </div>
@@ -1518,15 +1519,15 @@ function Init ()
     <li>Группировать по</li>
     
       <label>
-        <input type="radio" name="groupping" value="ByDate" onchange="ChangeParams('likes')"  checked>Дате
+        <input type="radio" name="groupping" value="ByDate" onchange="ChangeOptions('likes')"  checked>Дате
       </label>
       <label>
-        <input type="radio" name="groupping" value="ByWall" onchange="ChangeParams('likes')" >Стенке
+        <input type="radio" name="groupping" value="ByWall" onchange="ChangeOptions('likes')" >Стенке
       </label>
 
-    <button id="save2" onclick="SaveParams('likes')">Сохранить</button>
+    <button id="save2" onclick="SaveOptions('likes')">Сохранить</button>
       <label>
-        <input id="autoload2" type="checkbox" onchange="ChangeParams('likes')" >Автозагрузка настроек
+        <input id="autoload2" type="checkbox" onchange="ChangeOptions('likes')" >Автозагрузка настроек
       </label>
   </ul>
 </div>
