@@ -1398,7 +1398,7 @@ function SaveParams(p)
   StorageSet ("par_" + p, JSON.stringify (par[p]));
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function LoadParams(p)
+async function LoadParams(p)
 {
   let l = await StorageGet ("par_" + p);
   console.log (l);
