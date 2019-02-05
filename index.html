@@ -1429,7 +1429,7 @@ function ChangeParams (p)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CheckFilter (elem)
 {
-  ler r = true;
+  let r = true;
   if (par.friends.filter)    if (c[i]["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) r = false;
   if (par.friends.addedonly) if (!c[i]["data-added"]) r = false;
   if (!par.friends.men)      if (c[i]["data-sex"]==2) r = false;
@@ -1459,7 +1459,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.57');
+  console.log('InitOk.v1.1.58');
   LoadParams ("friends");
   LoadParams ("likes");
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
