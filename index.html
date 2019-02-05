@@ -586,7 +586,7 @@ var Groups = [];
 var SearchList = [];
 var AllGroups = [];
 var Likes = [];
-var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96, friends: {load:false, filter:"", addedonly:false, men: true, women:true, anknown:true}, likes: {load:false, groupby:"ByDate"} };
+var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96, friends: {load:false, filter:"", addedonly:false, men: true, women:true, unknown:true}, likes: {load:false, groupby:"ByDate"} };
 var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -643,26 +643,6 @@ function Debug (msg)
 function Create(type,attr) 
 {
   let elm = document.createElement(type);
-/*
-  if (attr.id     !== undefined) elm.id 			= attr.id;
-  if (attr.class  !== undefined) elm.className 	= attr.class;
-  if (attr.html		!== undefined) elm.innerHTML 	= attr.html;
-  if (attr.href		!== undefined) elm.href 		= attr.href;
-  if (attr.width		!== undefined) elm.width 		= attr.width;
-  if (attr.height		!== undefined) elm.height 		= attr.height;
-  if (attr.src		!== undefined) elm.src 			= attr.src;
-  if (attr.title		!== undefined) elm.title		= attr.title;
-  if (attr.alt		!== undefined) elm.alt			= attr.alt;
-  if (attr.child		!== undefined) elm.appendChild (attr.child);
-  if (attr.target		!== undefined) elm.target		= attr.target;
-  if (attr.type	   !== undefined) elm.type		   = attr.type;
-  if (attr.name	   !== undefined) elm.name		   = attr.name;
-  if (attr.value	   !== undefined) elm.value		= attr.value;
-  if (attr.for	   !== undefined) elm.htmlFor		= attr.for;
-  if (attr.tag	   !== undefined) elm.tag			= attr.tag;
-  if (attr.checked	!== undefined) elm.checked		= attr.checked;
-  if (attr.text	   !== undefined) elm.text		   = attr.text;
-*/
   for (let key in attr)
   {
     switch (key)
@@ -709,7 +689,7 @@ function GetAccordion (id,data_tab)
   let act = document.getElementById(id);
   if (!act)
   { 
-    let acc = document.getElementById(data_tab).appendChild (Create ('div',{id:'div-acc-'+id, class:'acc_tab'}));
+    let acc = document.getElementById(data_tab).appendChild (Create ('div',{id:'div-acc-'+id, class:'acc_tab', tag:id}));
     acc.appendChild ( Create ('input', {id:'i-acc-'+id, type:"checkbox", checked:(id.length==1?false:true) }) );
     acc.appendChild ( Create ('label', {for:'i-acc-'+id, html:id, class:(id.length==1?"char":"line")}) );
     act = acc.appendChild(Create('div',{id:id,class:'acc_tab-content'}));
@@ -733,6 +713,8 @@ function CreateFriendElement (friend)
 	tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
 	article.innerHTML += ( '<p onclick="DeleteFriend(this,event);" class="delete">&#10008;</p>' );	
 	article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.id); GetUser(event.currentTarget.id); }, false);
+
+  article.style.display = (CheckFilter(article))? "" : "none";
 
 	return (article);
 }
@@ -833,6 +815,9 @@ async function ShowFriends (id,flush=false)
   } while (Friends.length<Data.Friends.Count && offset<Data.Friends.Count)
   if (flush) StorageSet ('friends',"");
   else AddFriends (Data.sgFriends = await StorageGet ('friends'));
+  
+  SetFilterAccirdion ();
+
   fd.style.display = "block";
   document.getElementById("ml").style.display = "none";
   document.getElementById('count').innerHTML = '0';
@@ -1052,8 +1037,8 @@ function ShowLikesAll ()
 	Likes.sort( function(a, b) {return (b.post.date-a.post.date);} );
 	ld.innerHTML='';	
 	for (let i = 0; i < Likes.length; i++) AppendPost ( Likes[i] ); //ld.appendChild ( CreatePost ( Likes[i] ) );
- 	Likes.length = 0;
-  	Likes = [];	
+ 	//Likes.length = 0;
+  //Likes = [];	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function sleep (ms,start)
@@ -1393,12 +1378,12 @@ function KeyPress (e)
 	}	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function SaveParams(p)
+function SaveParams (p)
 {
   StorageSet ("par_" + p, JSON.stringify (par[p]));
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-async function LoadParams(p)
+async function LoadParams (p)
 {
   let l = await StorageGet ("par_" + p);
   console.log (l);
@@ -1421,7 +1406,7 @@ async function LoadParams(p)
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function ChangeParams(p)
+function ChangeParams (p)
 {
   if (p=="friends")
   {
@@ -1430,26 +1415,51 @@ function ChangeParams(p)
     let r = document.getElementsByName("show");
     for (let i=0; i<r.length; i++) par.friends[r[i].id] = r[i].checked;
     
-    SetFilter();
+    SetFilter ();
+  }
+  if (p=="likes")
+  {
+    par.friends.load = document.getElementById("autoload2").checked;
+    let r = document.getElementsByName("groupping");
+    for (let i=0; i<r.length; i++) if(r[i].checked) par.likes.groupby = r[i].value;
+    
+    ShowLikesAll ();
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function SetFilter()
+function CheckFilter (elem)
 {
-  let c = document.querySelectorAll("#friends_data article");
+  ler r = true;
+  if (par.friends.filter)    if (c[i]["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) r = false;
+  if (par.friends.addedonly) if (!c[i]["data-added"]) r = false;
+  if (!par.friends.men)      if (c[i]["data-sex"]==2) r = false;
+  if (!par.friends.women)    if (c[i]["data-sex"]==1) r = false;
+  return r;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function SetFilterAccordion ()
+{
+
+  let c = document.getElementById("friends_data").children;
   for (let i=0; i<c.length; i++)
   {
-    c[i].style.display = "";
-    if (par.friends.filter) if (c[i]["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) c[i].style.display = "none";
-    if (par.friends.addedonly) if (!c[i]["data-added"]) c[i].style.display = "none";
-    if (!par.friends.men) if (c[i]["data-sex"]==1) c[i].style.display = "none";
-    if (!par.friends.women) if (c[i]["data-sex"]==2) c[i].style.display = "none";
+    let r = "none";
+    a = document.getElementById(c[i].tag).children;
+    for (let j=0; j<a.length; j++) if (!a[i].style.display) { r = ""; exit; }
+    c[i].style.display = r;    
   }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function SetFilter ()
+{
+  let c = document.querySelectorAll("#friends_data article");
+  for (let i=0; i<c.length; i++) c[i].style.display = (CheckFilter(c[i]))? "" : "none";
+  SetFilterAccordion ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.56');
+  console.log('InitOk.v1.1.57');
   LoadParams ("friends");
   LoadParams ("likes");
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
@@ -1466,24 +1476,24 @@ function Init ()
 
 <div class="tab">
 
-<div class="dropdown">
-  <input type="checkbox" id="menu_toggle_1" class="dropbtn btn1">
-  <label for="menu_toggle_1" class="dropbtn">&#9660;</label>
+  <div class="dropdown">
+    <input type="checkbox" id="menu_toggle_1" class="dropbtn btn1">
+    <label for="menu_toggle_1" class="dropbtn">&#9660;</label>
 
-  <ul id="menu_1" class="dropdown-content menu1">
-    <li>&#128270; Фильтр:</li>
+    <ul id="menu_1" class="dropdown-content menu1">
+      <li>&#128270; Фильтр:</li>
     
-    <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="filterFunction()">
-    <li>Показывать:</li>
+      <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="SetFilter()">
+      <li>Показывать:</li>
     
-    <label>
-      <input type="checkbox" name="show" id="men"     onchange="ChangeParams('friends')" checked>Мужчин
-    </label>
-    <label>
+      <label>
+        <input type="checkbox" name="show" id="men"     onchange="ChangeParams('friends')" checked>Мужчин
+      </label>
+      <label>
         <input type="checkbox" name="show" id="women"   onchange="ChangeParams('friends')" checked>Женщин
       </label>
       <label>
-        <input type="checkbox" name="show" id="anknown" onchange="ChangeParams('friends')" checked>Не задано
+        <input type="checkbox" name="show" id="unknown" onchange="ChangeParams('friends')" checked>Не задано
       </label>
       <label>
         <input type="checkbox" name="show" id="addedonly" onchange="ChangeParams('friends')" >Только добавленных
@@ -1492,8 +1502,8 @@ function Init ()
       <label>
         <input id="autoload1" type="checkbox" onchange="ChangeParams('friends')">Автозагрузка фильтра
       </label>
-  </ul>
-</div>
+    </ul>
+  </div>
 
   <button id="friends"  class="tablinks active" onclick="Select(event, 'friends_data','friends')">Друзья</button>
 
@@ -1508,15 +1518,15 @@ function Init ()
     <li>Группировать по</li>
     
       <label>
-        <input type="radio" name="groupping" value="ByDate" checked>Дате
+        <input type="radio" name="groupping" value="ByDate" onchange="ChangeParams('likes')"  checked>Дате
       </label>
       <label>
-        <input type="radio" name="groupping" value="ByWall">Стенке
+        <input type="radio" name="groupping" value="ByWall" onchange="ChangeParams('likes')" >Стенке
       </label>
 
     <button id="save2" onclick="SaveParams('likes')">Сохранить</button>
       <label>
-        <input id="autoload2" type="checkbox">Автозагрузка настроек
+        <input id="autoload2" type="checkbox" onchange="ChangeParams('likes')" >Автозагрузка настроек
       </label>
   </ul>
 </div>
