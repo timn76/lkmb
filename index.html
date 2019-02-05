@@ -979,7 +979,7 @@ async function GetGroups (id, flush=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function AppendPost (like)
 {
-  let lbl = (Options.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : like.group.screen_name;
+  let lbl = (Options.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : like.group.name;
   let act = GetAccordion (lbl, 'likes_data');
   act.appendChild (CreatePost (like));
   act.previousSibling.innerHTML = lbl + '  (' + act.childNodes.length + ')';
@@ -1436,6 +1436,7 @@ function CheckFilter (e)
   if (Options.friends.addedonly) if (!e["data-added"]) r = false;
   if (!Options.friends.men)      if (e["data-sex"]==2) r = false;
   if (!Options.friends.women)    if (e["data-sex"]==1) r = false;
+  if (!Options.friends.unknown)  if (e["data-sex"]==0) r = false;
   return r;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1461,7 +1462,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.59');
+  console.log('InitOk.v1.1.60');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
@@ -1483,10 +1484,8 @@ function Init ()
 
     <ul id="menu_1" class="dropdown-content menu1">
       <li>&#128270; Фильтр:</li>
-    
-      <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="SetFilter()">
-      <li>Показывать:</li>
-    
+      <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="ChangeOptions('friends')">
+      <li>Показывать:</li>   
       <label>
         <input type="checkbox" name="show" id="men"     onchange="ChangeOptions('friends')" checked>Мужчин
       </label>
@@ -1499,10 +1498,10 @@ function Init ()
       <label>
         <input type="checkbox" name="show" id="addedonly" onchange="ChangeOptions('friends')" >Только добавленных
       </label>
-      <button id="save1" onclick="SaveOptions('friends')">Сохранить</button>
       <label>
         <input id="autoload1" type="checkbox" onchange="ChangeOptions('friends')">Автозагрузка фильтра
       </label>
+      <button id="save1" onclick="SaveOptions('friends')">Сохранить</button>
     </ul>
   </div>
 
@@ -1510,13 +1509,12 @@ function Init ()
 
   <button id="groups"   class="tablinks"        onclick="Select(event, 'groups_data','groups')  ">Группы</button>
 
+  <div class="dropdown">
+    <input type="checkbox" id="menu_toggle_2" class="dropbtn btn2">
+    <label for="menu_toggle_2" class="dropbtn">&#9660;</label>
 
-<div class="dropdown">
-  <input type="checkbox" id="menu_toggle_2" class="dropbtn btn2">
-  <label for="menu_toggle_2" class="dropbtn">&#9660;</label>
-
-  <ul id="menu_2" class="dropdown-content menu2">
-    <li>Группировать по</li>
+    <ul id="menu_2" class="dropdown-content menu2">
+      <li>Группировать по</li>
     
       <label>
         <input type="radio" name="groupping" value="ByDate" onchange="ChangeOptions('likes')"  checked>Дате
@@ -1524,13 +1522,12 @@ function Init ()
       <label>
         <input type="radio" name="groupping" value="ByWall" onchange="ChangeOptions('likes')" >Стенке
       </label>
-
-    <button id="save2" onclick="SaveOptions('likes')">Сохранить</button>
       <label>
         <input id="autoload2" type="checkbox" onchange="ChangeOptions('likes')" >Автозагрузка настроек
       </label>
-  </ul>
-</div>
+      <button id="save2" onclick="SaveOptions('likes')">Сохранить</button>
+    </ul>
+  </div>
 
   <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data','likes')    ">Лайки</button>
   <label>Искать в </label>
