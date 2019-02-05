@@ -1395,26 +1395,29 @@ function KeyPress (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function SaveParams(p)
 {
-  StorageSet ("par." + p, JSON.stringify (par[p]));
+  StorageSet ("par_" + p, JSON.stringify (par[p]));
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function LoadParams(p)
 {
-  let l = JSON.parse (StorageGet ("par." + p));
-  if (l.load) par[p] = l;
+  let l = StorageGet ("par_" + p);
+  console.log (l);
+  if (!l) return;
+  let j = JSON.parse (l);
+  if (j.load) par[p] = j;
 
   if (p=="likes")
   {
-    document.getElementById("autoload2").checked = l.load;
+    document.getElementById("autoload2").checked = par.likes.load;
     let r = document.getElementsByName("groupping");
-    for (let i=0; i<r.length; i++) if(r[i].value==l.groupby) r[i].checked = true;
+    for (let i=0; i<r.length; i++) if(r[i].value==par.likes.groupby) r[i].checked = true;
   }
   if (p=="friends")
   {
-    document.getElementById("autoload1").checked = l.load;
-    document.getElementById("name-filter").value = l.filter;
+    document.getElementById("autoload1").checked = par.friends.load;
+    document.getElementById("name-filter").value = par.friends.filter;
     let r = document.getElementsByName("show");
-    for (let i=0; i<r.length; i++) r[i].checked = l[r[i].id];
+    for (let i=0; i<r.length; i++) r[i].checked = par.friends[r[i].id];
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
