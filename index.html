@@ -586,7 +586,7 @@ var Groups = [];
 var SearchList = [];
 var AllGroups = [];
 var Likes = [];
-var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96 };
+var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96, friends: {load:false, filter:"", addedonly:false, men: true, women:true, anknown:true}, likes: {load:false, groupby:"ByDate"} };
 var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -642,26 +642,39 @@ function Debug (msg)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Create(type,attr) 
 {
-	let elm = document.createElement(type);
-	if (attr.id			!== undefined) elm.id 			= attr.id;
-	if (attr.class		!== undefined) elm.className 	= attr.class;
-	if (attr.html		!== undefined) elm.innerHTML 	= attr.html;
-	if (attr.href		!== undefined) elm.href 		= attr.href;
-	if (attr.width		!== undefined) elm.width 		= attr.width;
-	if (attr.height		!== undefined) elm.height 		= attr.height;
-	if (attr.src		!== undefined) elm.src 			= attr.src;
-	if (attr.title		!== undefined) elm.title		= attr.title;
-	if (attr.alt		!== undefined) elm.alt			= attr.alt;
-	if (attr.child		!== undefined) elm.appendChild (attr.child);
-	if (attr.target		!== undefined) elm.target		= attr.target;
-	if (attr.type	   !== undefined) elm.type		   = attr.type;
-	if (attr.name	   !== undefined) elm.name		   = attr.name;
-	if (attr.value	   !== undefined) elm.value		= attr.value;
-	if (attr.for	   !== undefined) elm.htmlFor		= attr.for;
-	if (attr.tag	   !== undefined) elm.tag			= attr.tag;
-	if (attr.checked	!== undefined) elm.checked		= attr.checked;
-	if (attr.text	   !== undefined) elm.text		   = attr.text;
-
+  let elm = document.createElement(type);
+/*
+  if (attr.id     !== undefined) elm.id 			= attr.id;
+  if (attr.class  !== undefined) elm.className 	= attr.class;
+  if (attr.html		!== undefined) elm.innerHTML 	= attr.html;
+  if (attr.href		!== undefined) elm.href 		= attr.href;
+  if (attr.width		!== undefined) elm.width 		= attr.width;
+  if (attr.height		!== undefined) elm.height 		= attr.height;
+  if (attr.src		!== undefined) elm.src 			= attr.src;
+  if (attr.title		!== undefined) elm.title		= attr.title;
+  if (attr.alt		!== undefined) elm.alt			= attr.alt;
+  if (attr.child		!== undefined) elm.appendChild (attr.child);
+  if (attr.target		!== undefined) elm.target		= attr.target;
+  if (attr.type	   !== undefined) elm.type		   = attr.type;
+  if (attr.name	   !== undefined) elm.name		   = attr.name;
+  if (attr.value	   !== undefined) elm.value		= attr.value;
+  if (attr.for	   !== undefined) elm.htmlFor		= attr.for;
+  if (attr.tag	   !== undefined) elm.tag			= attr.tag;
+  if (attr.checked	!== undefined) elm.checked		= attr.checked;
+  if (attr.text	   !== undefined) elm.text		   = attr.text;
+*/
+  for (key in attr)
+  {
+    switch (key)
+    {
+      case "class": elm.className = attr.class;   break;
+      case "html":  elm.innerHTML = attr.html;    break;
+      case "for":   elm.htmlFor   = attr.for;     break;
+      case "child": elm.appendChild (attr.child); break;
+      default:      elm[key] = attr[key];
+    }
+  }
+  
 	//var label = document.createElement('label')
 	//label.appendChild(document.createTextNode('text for label after checkbox'));
 	//if ((typeof attr.click	!= undefined) elm.addEventListener (attr.click);
@@ -711,7 +724,7 @@ function AppendFriend (friend)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreateFriendElement (friend)
 {
-	let article = Create('article',{id:friend.id, class:'sel_item del_item', tag:friend.id });
+	let article = Create('article',{id:friend.id, class:'sel_item del_item', "data-added":friend.added, "data-sex":friend.sex, "data-name":friend.first_name+' '+friend.last_name});
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width: 140, html:dm2html(friend.domain) + id2html(friend.id,friend.domain) + ls2html(friend.last_seen,friend.online)}));
@@ -719,7 +732,7 @@ function CreateFriendElement (friend)
 	tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
 	tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
 	article.innerHTML += ( '<p onclick="DeleteFriend(this,event);" class="delete">&#10008;</p>' );	
-	article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.tag); GetUser(event.currentTarget.tag); }, false);
+	article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.id); GetUser(event.currentTarget.id); }, false);
 
 	return (article);
 }
@@ -745,7 +758,7 @@ async function AddFriends (ids)
       if (s == -1)
       {
         response[i].id      = uvl (response[i].uid, response[i].id);
-		response[i].added   = true;
+        response[i].added   = true;
         Friends.push        ( response[i] );
         AppendFriend        ( response[i] );
         if (Data.sgFriends.indexOf(response[i].id)<0) Data.sgFriends += ( (Data.sgFriends?",":"") + response[i].id );
@@ -980,7 +993,7 @@ async function GetGroups (id, flush=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function AppendPost (like)
 {
-  let lbl = d2s(like.post.date).substr(0,10);
+  let lbl = (par.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : like.group.screen_name;
   let act = GetAccordion (lbl, 'likes_data');
   act.appendChild (CreatePost (like));
   act.previousSibling.innerHTML = lbl + '  (' + act.childNodes.length + ')';
@@ -1079,26 +1092,6 @@ async function VKapiS (method, params)
 function PSleep (ms) { return new Promise (resolve => setTimeout(resolve, ms)); }
 async function ASleep (ms,start) { await PSleep(ms); }
 //------------------------------------------------------------------------------------------------------------------------------------------
-/*
-function GetLikesCode (id,offset,f,fo='1')
-{
-	let Code =  'var p = API.wall.get ({ owner_id:'+ (f?'':'-') + id + ', count:24, offset:' + offset + ' }); '
-				+ ' var posts = p; ' 
-				+ ' var c = p.count; '
-				+ ' var res={}; '
-				+ ' var i=1; '
-				+ ' if(p.items.length>=0) { posts = p.items; i=0; } '
-				+ ' while(i< posts.length) '
-				+ ' { '
-				+ '	 var likes = API.likes.getList ({ type:"post", owner_id: posts[i].from_id, item_id: posts[i].id, friends_only:'+fo+', count:1000, skip_own:0 }); '
-				+ '	 if(likes.count>0) res.push ({"post":posts[i], "likes":likes});'
-				+ '	 i = i+1; '
-				+ ' } '
-				+ ' return { "date":posts[i-1].date, "count":c, "res":res };';
-	return Code;
-}
-*/
-//------------------------------------------------------------------------------------------------------------------------------------------
 function GetLikesCodeNF (id,offset,cnt,ls=0)
 {
 	let nl = '\n';
@@ -1136,7 +1129,7 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Copy (o)
 {
-  var copy = JSON.parse(JSON.stringify(o));
+  var copy = JSON.parse (JSON.stringify(o));
   return copy;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1197,7 +1190,7 @@ async function GetLikesGr ()
       if (SearchList[group.g] != null && SearchList[group.g].id == group.id) { Debug ("DEL: groups.g: " + group.g + "; SearchList[group.g].id: " + (SearchList[group.g]==null?"undefined":SearchList[group.g].id)); SearchList.splice (group.g,1); Debug ("DEL: groups.g: " + group.g + "; groups.id: " + group.id); }
       else console.log ("!=ID!!! group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + (SearchList[group.g]==null?"undefined":SearchList[group.g].id));
       gr.sync2 = false;
-	  return;
+      return;
     }
     if(/*!gr.fo && */response.i < group.c)
     {
@@ -1400,9 +1393,62 @@ function KeyPress (e)
 	}	
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function SaveParams(p)
+{
+  StorageSet ("par." + p, JSON.stringify (par[p]));
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function LoadParams(p)
+{
+  let l = JSON.parse (StorageGet ("par." + p));
+  if (l.load) par[p] = l;
+
+  if (p=="likes")
+  {
+    document.getElementById("autoload2").checked = l.load;
+    let r = document.getElementsByName("groupping");
+    for (let i=0; i<r.length; i++) if(r[i].value==l.groupby) r[i].checked = true;
+  }
+  if (p=="friends")
+  {
+    document.getElementById("autoload1").checked = l.load;
+    document.getElementById("name-filter").value = l.filter;
+    let r = document.getElementsByName("show");
+    for (let i=0; i<r.length; i++) r[i].checked = l[r[i].id];
+  }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function ChangeParams(p)
+{
+  if (p=="friends")
+  {
+    par.friends.load = document.getElementById("autoload1").checked;
+    par.friends.filter = document.getElementById("name-filter").value;
+    let r = document.getElementsByName("show");
+    for (let i=0; i<r.length; i++) par.friends[r[i].id] = r[i].checked;
+    
+    SetFilter();
+  }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function SetFilter()
+{
+  let c = document.querySelectorAll("#friends_data article");
+  for (let i=0; i<c.length; i++)
+  {
+    c[i].style.display = "";
+    if (par.friends.filter) if (c[i]["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) c[i].style.display = "none";
+    if (par.friends.addedonly) if (!c[i]["data-added"]) c[i].style.display = "none";
+    if (!par.friends.men) if (c[i]["data-sex"]==1) c[i].style.display = "none";
+    if (!par.friends.women) if (c[i]["data-sex"]==2) c[i].style.display = "none";
+  }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.55');
+  console.log('InitOk.v1.1.56');
+  LoadParams ("friends");
+  LoadParams ("likes");
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
   ShowFriends ();
@@ -1427,21 +1473,21 @@ function Init ()
     <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="filterFunction()">
     <li>Показывать:</li>
     
-      <label>
-        <input type="checkbox" checked>Мужчин
+    <label>
+      <input type="checkbox" name="show" id="men"     onchange="ChangeParams('friends')" checked>Мужчин
+    </label>
+    <label>
+        <input type="checkbox" name="show" id="women"   onchange="ChangeParams('friends')" checked>Женщин
       </label>
       <label>
-        <input type="checkbox" checked>Женщин
+        <input type="checkbox" name="show" id="anknown" onchange="ChangeParams('friends')" checked>Не задано
       </label>
       <label>
-        <input type="checkbox" checked>Не задано
+        <input type="checkbox" name="show" id="addedonly" onchange="ChangeParams('friends')" >Только добавленных
       </label>
+      <button id="save1" onclick="SaveParams('friends')">Сохранить</button>
       <label>
-        <input type="checkbox">Только добавленных
-      </label>
-    <button id="save1" onclick="">Сохранить</button>
-      <label>
-        <input type="checkbox">Автозагрузка фильтра
+        <input id="autoload1" type="checkbox" onchange="ChangeParams('friends')">Автозагрузка фильтра
       </label>
   </ul>
 </div>
@@ -1459,15 +1505,15 @@ function Init ()
     <li>Группировать по</li>
     
       <label>
-        <input type="radio" name="groupping" value="By date" checked >Дате
+        <input type="radio" name="groupping" value="ByDate" checked>Дате
       </label>
       <label>
-        <input type="radio" name="groupping" value="By wall">Стенке
+        <input type="radio" name="groupping" value="ByWall">Стенке
       </label>
 
-    <button id="save2" onclick="">Сохранить</button>
+    <button id="save2" onclick="SaveParams('likes')">Сохранить</button>
       <label>
-        <input type="checkbox">Автозагрузка настроек
+        <input id="autoload2" type="checkbox">Автозагрузка настроек
       </label>
   </ul>
 </div>
