@@ -1427,13 +1427,13 @@ function ChangeParams (p)
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function CheckFilter (elem)
+function CheckFilter (e)
 {
   let r = true;
-  if (par.friends.filter)    if (c[i]["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) r = false;
-  if (par.friends.addedonly) if (!c[i]["data-added"]) r = false;
-  if (!par.friends.men)      if (c[i]["data-sex"]==2) r = false;
-  if (!par.friends.women)    if (c[i]["data-sex"]==1) r = false;
+  if (par.friends.filter)    if (e["data-name"].toUpperCase().indexOf( par.friends.filter.toUpperCase() ) < 0) r = false;
+  if (par.friends.addedonly) if (!e["data-added"]) r = false;
+  if (!par.friends.men)      if (e["data-sex"]==2) r = false;
+  if (!par.friends.women)    if (e["data-sex"]==1) r = false;
   return r;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1444,7 +1444,7 @@ function SetFilterAccordion ()
   for (let i=0; i<c.length; i++)
   {
     let r = "none";
-    a = document.getElementById(c[i].tag).children;
+    let a = document.getElementById(c[i].tag).children;
     for (let j=0; j<a.length; j++) if (!a[i].style.display) { r = ""; exit; }
     c[i].style.display = r;    
   }
