@@ -1400,7 +1400,7 @@ function SaveParams(p)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function LoadParams(p)
 {
-  let l = StorageGet ("par_" + p);
+  let l = await StorageGet ("par_" + p);
   console.log (l);
   if (!l) return;
   let j = JSON.parse (l);
