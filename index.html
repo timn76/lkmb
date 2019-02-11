@@ -715,7 +715,7 @@ function CreateFriendElement (friend)
 	article.innerHTML += ( '<p onclick="DeleteFriend(this,event);" class="delete">&#10008;</p>' );	
 	article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.id); GetUser(event.currentTarget.id); }, false);
 
-  article.style.display = (CheckFilter(article))? "" : "none";
+  article.style.display = (CheckFilter(article)? "" : "none");
 
 	return (article);
 }
@@ -815,7 +815,7 @@ async function ShowFriends (id,flush=false)
     document.getElementById('count').innerHTML = Friends.length + '/' + Data.Friends.Count;
   } while (Friends.length<Data.Friends.Count && offset<Data.Friends.Count)
   if (flush) StorageSet ('friends',"");
-  else AddFriends (Data.sgFriends = await StorageGet ('friends'));
+  else await AddFriends (Data.sgFriends = await StorageGet ('friends'));
   
   SetFilterAccordion ();
 
@@ -1339,44 +1339,42 @@ function Select (evt, TabName, id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function KeyPress (e) 
 {
-  if (par.debug)
+  //Debug
+  console.log
+        ( e.type +
+          ' keyCode=' + e.keyCode +
+          ' which=' + e.which +
+          ' charCode=' + e.charCode +
+          ' char=' + String.fromCharCode(e.keyCode || e.charCode) +
+          (e.shiftKey ? ' +shift' : '') +
+          (e.ctrlKey  ? ' +ctrl' : '') +
+          (e.altKey   ? ' +alt' : '') +
+          (e.metaKey  ? ' +meta' : ''));
+  if (e.charCode==43) //+
   {
-    var text = e.type +
-      ' keyCode=' + e.keyCode +
-      ' which=' + e.which +
-      ' charCode=' + e.charCode +
-      ' char=' + String.fromCharCode(e.keyCode || e.charCode) +
-      (e.shiftKey ? ' +shift' : '') +
-      (e.ctrlKey  ? ' +ctrl' : '') +
-      (e.altKey   ? ' +alt' : '') +
-      (e.metaKey  ? ' +meta' : '') + "\n";
-	Debug (text);
+    let txt;
+    Debug (document.getElementsByClassName("tablinks active")[0].id);
+    switch (document.getElementsByClassName("tablinks active")[0].id)
+    {
+      case "friends":
+        txt = prompt ("Добавить аккаунт:", "");
+        if (txt) AddFriends (txt);
+        break;
+      case "groups":
+        txt = prompt ("Добавить группу:", "");
+        if (txt) AddGroups (txt);
+        break;  
+    }
+  } 
+  if (e.charCode==100 && e.ctrlKey && e.altKey) // d
+  {
+    par.debug = !par.debug;
+    console.log ('par.debug=' + par.debug);
   }
-	let txt;
-	if(e.charCode==43) //+
-	{
-	  Debug (document.getElementsByClassName("tablinks active")[0].id);
-	  switch (document.getElementsByClassName("tablinks active")[0].id)
-	  {
-	    case "friends":
-		  txt = prompt ("Добавить аккаунт:", "");
-		  if (txt) AddFriends (txt);
-		    break;
-	    case "groups":
-		  txt = prompt ("Добавить группу:", "");
-		  if (txt) AddGroups (txt);
-		    break;	  
-	  }
-	} 
-	if(e.charCode==100 && e.ctrlKey && e.altKey) // d
-	{
-	  par.debug = !par.debug;
-	  console.log ('par.debug=' + par.debug);
-	}
-	if(e.charCode==99 && e.ctrlKey && e.altKey) // с
-	{
-	  par.cnt = parseInt (prompt ("cnt:", par.cnt));
-	}	
+  if (e.charCode==99 && e.ctrlKey && e.altKey) // с
+  {
+    par.cnt = parseInt (prompt ("cnt:", par.cnt));
+  }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function SaveOptions (p)
@@ -1462,7 +1460,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.60');
+  console.log('InitOk.v1.1.61');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
