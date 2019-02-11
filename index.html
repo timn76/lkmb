@@ -587,7 +587,7 @@ var SearchList = [];
 var AllGroups = [];
 var Likes = [];
 var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96}
-var Options = { friends: {load:false, filter:"", addedonly:false, men: true, women:true, unknown:true}, likes: {load:false, groupby:"ByDate"} };
+var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}, likes: {load:false, "groupby":"ByDate"} };
 var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -1368,12 +1368,12 @@ function KeyPress (e)
 		    break;	  
 	  }
 	} 
-	if(e.charCode==100 && e.ctrlKey && e.altKey) //d
+	if(e.charCode==100 && e.ctrlKey && e.altKey) // d
 	{
 	  par.debug = !par.debug;
 	  console.log ('par.debug=' + par.debug);
 	}
-	if(e.charCode==99 && e.ctrlKey && e.altKey) //d
+	if(e.charCode==99 && e.ctrlKey && e.altKey) // с
 	{
 	  par.cnt = parseInt (prompt ("cnt:", par.cnt));
 	}	
