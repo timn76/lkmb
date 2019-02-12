@@ -1018,9 +1018,9 @@ function CreatePost (like)
         if (att.photo != undefined)
         {
           text = text || att.photo.text;
-          if ((let len=att.photo.sizes.length)>0) 
+          if (att.photo.sizes.length>0) 
           { 
-            for (let i=0;i<len;i++) if (att.photo.sizes[i].type=='x') { photo = att.photo.sizes[i].src; break; } 
+            for (let i=0; i<att.photo.sizes.length; i++) if (att.photo.sizes[i].type=='x') { photo = att.photo.sizes[i].src; break; } 
           }
           else if (att.photo.photo_604) photo = att.photo.photo_604;  // 75,130,604,807          
         }
@@ -1065,7 +1065,7 @@ function CreatePost (like)
       {
         if (att.album != undefined)
         {
-          if (att.album.thumb != undefined) for (let i=0;i<att.album.thumb.sizes.length;i++) if (att.album.thumb.sizes[i].type=='x') { photo = att.album.thumb.sizes[i].src; break; }
+          if (att.album.thumb != undefined) for (let i=0; i<att.album.thumb.sizes.length; i++) if (att.album.thumb.sizes[i].type=='x') { photo = att.album.thumb.sizes[i].src; break; }
           text = text || att.album.title + "\n" + att.album.description;
         }
       }
