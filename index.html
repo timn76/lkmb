@@ -987,7 +987,7 @@ function AppendPost (like)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreatePost (like)
 {
-  let article = Create ('article', {class:"post" /*, id:like.id}*/);
+  let article = Create ('article', {class:"post" /*, id:like.id*/});
   let tr = article.appendChild (document.createElement ('table')).appendChild (document.createElement('tr'));
   let td;
   if (like.group.first_name !== undefined)
