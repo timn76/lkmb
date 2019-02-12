@@ -979,7 +979,7 @@ async function GetGroups (id, flush=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function AppendPost (like)
 {
-  let lbl = (Options.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : like.group.name;
+  let lbl = (Options.likes.groupby=="ByDate") ? d2s(like.post.date).substr(0,10) : ((like.group.first_name !== undefined) ? (like.group.first_name+' '+like.group.last_name):like.group.name) ;
   let act = GetAccordion (lbl, 'likes_data');
   act.appendChild (CreatePost (like));
   act.previousSibling.innerHTML = lbl + '  (' + act.childNodes.length + ')';
@@ -1383,8 +1383,9 @@ function Select (evt, TabName, id)
     let c = document.getElementById(TabName).children;
     if (c.length>1) 
     {
-      let s = ! ((c[0].nodeName == "P")? c[1].children[0].checked:c[0].children[0].checked);
-      for (i = 0; i < c.length; i++) c[i].children[0].checked = s;
+      let i = (c[0].nodeName == "P"?:1:0);
+      let s = !c[i].children[0].checked);
+      for (; i < c.length; i++) c[i].children[0].checked = s;
     }
   }
   tabcontent = document.getElementsByClassName("tabcontent");
@@ -1519,7 +1520,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.64');
+  console.log('InitOk.v1.1.65');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
