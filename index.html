@@ -1383,7 +1383,7 @@ function Select (evt, TabName, id)
     let c = document.getElementById(TabName).children;
     if (c.length>1) 
     {
-      let i = (c[0].nodeName == "P"?:1:0);
+      let i = (c[0].nodeName == "P"?1:0);
       let s = !c[i].children[0].checked);
       for (; i < c.length; i++) c[i].children[0].checked = s;
     }
