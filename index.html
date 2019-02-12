@@ -845,7 +845,8 @@ async function GetGroup (id)
   Debug ("GetGroup (" + id + ")");
   try
   {
-    const response = await VKapi ('groups.getById', {group_id:id, fields:Group_fields}, 10000);
+    let response = await VKapi ('groups.getById', {group_id:id, fields:Group_fields}, 10000);
+    Debug (response);
     for (let i = 0; i < response.length; i++)
     {
       Group = response[i];
@@ -1490,7 +1491,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.67');
+  console.log('InitOk.v1.1.68');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
