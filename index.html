@@ -961,6 +961,8 @@ function AppendPost (like)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreatePost (like)
 {
+  try 
+  {
   let article = Create ('article', {class:"post" /*, id:like.id*/});
   let tr = article.appendChild (document.createElement ('table')).appendChild (document.createElement('tr'));
   let td;
@@ -970,6 +972,16 @@ function CreatePost (like)
     td = tr.appendChild (Create ('td', { child: Create ('a', {href:'https://vk.com/'+like.group.screen_name, child:  Create ('img',{src:like.group.photo_50, title:like.group.name, alt:like.group.name})})}));
   td.appendChild (Create ('footer', {child:Create('a', {href:'https://vk.com/wall'+like.post.from_id+'_'+like.post.id,html:'<p class="date">' + d2s(like.post.date) + '</p>'})}));
   if (like.post.copy_history != undefined && like.post.copy_history.length>0) like.post = like.post.copy_history[0]; // for repost
+  function GetPhoto (p)
+  {
+    let r;
+    if (p != undefined)
+    {
+      if (p.sizes.length>0) for (let i=0; i<p.sizes.length; i++) if (p.sizes[i].type=='x') { r = p.sizes[i].url; break; }
+      if(!r && att.photo.photo_604) r = p.photo_604;  // 75,130,604,807
+    }
+    return r;
+  }
   let photo = null;
   let text = like.post.text;
   if (like.post.attachments != undefined)
@@ -991,8 +1003,7 @@ function CreatePost (like)
         if (att.photo != undefined)
         {
           text = text || att.photo.text;
-          if (att.photo.sizes.length>0) for (let i=0; i<att.photo.sizes.length; i++) if (att.photo.sizes[i].type=='x') { photo = att.photo.sizes[i].url; break; } 
-          photo = photo || att.photo.photo_604;  // 75,130,604,807          
+          photo = GetPhoto (att.photo);
         }
       }
       else if (att.type=="posted_photo")
@@ -1035,18 +1046,16 @@ function CreatePost (like)
       {
         if (att.album != undefined)
         {
-          if (att.album.thumb != undefined) for (let i=0; i<att.album.thumb.sizes.length; i++) if (att.album.thumb.sizes[i].type=='x') { photo = att.album.thumb.sizes[i].src; break; }
-          photo = photo || att.album.thumb.photo_604;
-          text = text || att.album.title + "\n" + att.album.description;
+          photo = GetPhoto (att.album.thumb);
+          text = text || att.album.title + "\n" + att.album.description || att.album.thumb.text;
         }
       }
       else if (att.type=="link")
       {
         if (att.link != undefined)
         {
-          if (att.link.photo != undefined) for (let i=0; i<att.link.photo.sizes.length; i++) if (att.link.photo.sizes[i].type=='x') { photo = att.link.photo.sizes[i].src; break; }
-          photo = photo || att.link.thumb.photo_604 || att.link.image_src;
-          text = text || att.link.title + "\n" + att.link.description;
+          photo = GetPhoto (att.link.photo) || att.link.image_src;
+          text = text || att.link.title + "\n" + att.link.description || att.link.photo.text;
         }
       }
       break;
@@ -1056,6 +1065,8 @@ function CreatePost (like)
   else Debug (like);
   tr.appendChild (Create('td', { class:'text', child:Create('section', {height:td.offsetHeight, class:'text',html:'<p class="text">' + text + '</p>'})}));
   return (article);
+  }
+  catch (e) { console.log (e); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 /*
@@ -1501,7 +1512,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.70');
+  console.log('InitOk.v1.1.71');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
