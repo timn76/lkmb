@@ -989,30 +989,96 @@ function CreatePost (like)
 {
   let article = Create ('article', {class:"post", id:like.id});
   let tr = article.appendChild (document.createElement ('table')).appendChild (document.createElement('tr'));
-  let td = tr.appendChild (Create ('td', { child: Create ('a', {href:'https://vk.com/'+like.group.screen_name, child:  Create ('img',{src:like.group.photo_50, title:like.group.name, alt:like.group.name})})}));
+  let td;
+  if (like.group.first_name !== undefined)
+	  td = tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+like.group.domain, child:  Create('img',{src:like.group.photo_50, title:like.group.first_name+' '+like.group.last_name })})}));
+  else 
+    td = tr.appendChild (Create ('td', { child: Create ('a', {href:'https://vk.com/'+like.group.screen_name, child:  Create ('img',{src:like.group.photo_50, title:like.group.name, alt:like.group.name})})}));
   let photo = null;
+  let text = like.post.text;
   td.appendChild (Create ('footer', {child:Create('a', {href:'https://vk.com/wall'+like.post.from_id+'_'+like.post.id,html:'<p class="date">' + d2s(like.post.date) + '</p>'})}));
   if (like.post.copy_history != undefined && like.post.copy_history.length>0) like.post = like.post.copy_history[0]; // for repost
-  if (like.post.attachments !== undefined)
+  if (like.post.attachments != undefined)
+  {
+    loop_attachments:
     for (let a = 0; a < like.post.attachments.length; a++)
-      if (like.post.attachments[a].type="photo")
-        if (like.post.attachments[a].photo != undefined) { photo = like.post.attachments[a].photo.photo_604; break; }  // 75,130,604,807
-        else
+    {
+      let att = like.post.attachments[a];
+      /*
+      for (let key in att)
+      {
+        switch (key)
         {
-          if (like.post.attachments[a].doc != undefined) { photo = like.post.attachments[a].doc.url; break; }
-          else if (like.post.attachments[a].video != undefined)
-          {
-            photo = like.post.attachments[a].video.photo_320;
-            like.post.text = uvl(like.post.text,like.post.attachments[a].video.description);
-            break;
-          }
+          case "photo": 
         }
+      }
+      */
+      if (att.type=="photo")
+      {
+        if (att.photo != undefined)
+        {
+          text = text || att.photo.text;
+          if ((let len=att.photo.sizes.length)>0) 
+          { 
+            for (let i=0;i<len;i++) if (att.photo.sizes[i].type=='x') { photo = att.photo.sizes[i].src; break; } 
+          }
+          else if (att.photo.photo_604) photo = att.photo.photo_604;  // 75,130,604,807          
+        }
+      }
+      else if (att.type=="posted_photo")
+      {
+        if (att.posted_photo != undefined && att.posted_photo.photo_604) photo = att.posted_photo.photo_604;
+      }
+      else if (att.type=="graffiti")
+      {
+        if (att.graffiti != undefined && att.graffiti.photo_604) photo = att.graffiti.photo_604;
+      }
+      else if (att.type=="doc")
+      {
+        if (att.doc != undefined && att.doc.url) photo = att.doc.url;
+      }
+      else if (att.type=="video")
+      {
+        if (att.video != undefined)
+        {
+          photo = att.video.photo_640 || att.video.photo_320 || att.video.image_medium;
+          text = text || att.video.title + "\n" + att.video.description;
+        }
+      }
+      else if (att.type=="note")
+      {
+        if (att.note != undefined)
+        {
+          photo = att.note.view_url;
+          text = text || att.note.text;
+        }
+      }
+      else if (att.type=="page")
+      {
+        if (att.page != undefined)
+        {
+          if (att.page.view_url) photo = att.page.view_url;
+          text = text || att.page.title + "\n" + att.page.html;
+        }
+      }
+      else if (att.type=="album")
+      {
+        if (att.album != undefined)
+        {
+          if (att.album.thumb != undefined) for (let i=0;i<att.album.thumb.sizes.length;i++) if (att.album.thumb.sizes[i].type=='x') { photo = att.album.thumb.sizes[i].src; break; }
+          text = text || att.album.title + "\n" + att.album.description;
+        }
+      }
+      break;
+    }
+  }
   if (photo != null) td = tr.appendChild ( Create ('td', { width:180, child: Create ('img', {class:'post', src:photo}) }) );
   else Debug (like);
-  tr.appendChild (Create('td', { class:'text', child:Create('section', {height:td.offsetHeight, class:'text',html:'<p class="text">' + like.post.text + '</p>'})}));
+  tr.appendChild (Create('td', { class:'text', child:Create('section', {height:td.offsetHeight, class:'text',html:'<p class="text">' + text + '</p>'})}));
   return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+/*
 function AddPost (like)
 {
   let ld = GetAccordion (d2s(like.post.date).substr(0,10),'likes_data'); // document.getElementById('likes_data');
@@ -1021,9 +1087,9 @@ function AddPost (like)
   for (i = 0; i < Likes.length; i++) if (Likes[i].id == like.id) break;
   if (i==0) ld.insertBefore ( post, ld.firstChild );
   else if (i==Likes.length-1) ld.appendChild ( post );
-  else ld.insertBefore ( post, document.getElementById(Likes[i+1].id) /*.nextSibling */ );
-
+  else ld.insertBefore ( post, document.getElementById(Likes[i+1].id) }//.nextSibling  );
 }
+*/
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowLikes (likes)
 {
@@ -1460,7 +1526,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.61');
+  console.log('InitOk.v1.1.62');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
