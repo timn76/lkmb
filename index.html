@@ -842,6 +842,7 @@ function ShowGroup (group)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGroup (id)
 {
+  Debug ("GetGroup (" + id + ")");
   try
   {
     const response = await VKapi ('groups.getById', {group_id:id, fields:Group_fields}, 10000);
@@ -1489,7 +1490,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.66');
+  console.log('InitOk.v1.1.67');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
