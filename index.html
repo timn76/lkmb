@@ -1040,6 +1040,15 @@ function CreatePost (like)
           text = text || att.album.title + "\n" + att.album.description;
         }
       }
+      else if (att.type=="link")
+      {
+        if (att.link != undefined)
+        {
+          if (att.link.photo != undefined) for (let i=0; i<att.link.photo.sizes.length; i++) if (att.link.photo.sizes[i].type=='x') { photo = att.link.photo.sizes[i].src; break; }
+          photo = photo || att.link.thumb.photo_604 || att.link.image_src;
+          text = text || att.link.title + "\n" + att.link.description;
+        }
+      }
       break;
     }
   }
@@ -1492,7 +1501,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.69');
+  console.log('InitOk.v1.1.70');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
