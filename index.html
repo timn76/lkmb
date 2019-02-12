@@ -825,19 +825,19 @@ async function GetPostsCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGroup (group) 
 {
-	let article = document.createElement('article');
-	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
-
-	tr.appendChild(Create('td', {width:110,  html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
-	tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+group.screen_name, child:  Create('img',{src:group.photo_50, title:group.name})})}));
-	tr.appendChild(Create('td', {width:200, html:'<p class="name">'+group.name+'</p>'}));
-	tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Членов</header><footer>' + group.members_count + '</footer>'}));
-	tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Постов</header><footer id="posts">' + uvl(group.post_count,'-') + '</footer>'}));
-	tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Аудио</header><footer>'  + uvl(group.counters.audios,'-') + '</footer>'}));
-	tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Видео</header><footer>'  + uvl(group.counters.videos,'-') + '</footer>'}));
-	tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Фото</header><footer>'   + uvl(group.counters.photos,'-') + '</footer>'}));
-
-	return (article);
+  Debug ("ShowGroup (group)");
+  Debug (group);
+  let article = document.createElement('article');
+  let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
+  tr.appendChild(Create('td', {width:110,  html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
+  tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+group.screen_name, child:  Create('img',{src:group.photo_50, title:group.name})})}));
+  tr.appendChild(Create('td', {width:200, html:'<p class="name">'+group.name+'</p>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Членов</header><footer>' + group.members_count + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Постов</header><footer id="posts">' + uvl(group.post_count,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Аудио</header><footer>'  + uvl(group.counters.audios,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Видео</header><footer>'  + uvl(group.counters.videos,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Фото</header><footer>'   + uvl(group.counters.photos,'-') + '</footer>'}));
+  return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGroup (id)
@@ -847,14 +847,15 @@ async function GetGroup (id)
   {
     let response = await VKapi ('groups.getById', {group_id:id, fields:Group_fields}, 10000);
     Debug (response);
-    for (let i = 0; i < response.length; i++)
+    if (response.length>0)
     {
-      Group = response[i];
-      Group.id = uvl (response[i].id, response[i].gid);
+      Group = response[0];
+      Group.id = uvl (Group.id, Group.gid);
       Group.post_count = await GetPostsCount (Group.id);
-      document.getElementById('user_data').innerHTML = ShowGroup(Group).outerHTML;;
+      Debug (Group);
+      Debug (document.getElementById('user_data').innerHTML = ShowGroup(Group).outerHTML);
     }
-  } 
+  }
   catch (e) { console.log (e); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1491,7 +1492,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.68');
+  console.log('InitOk.v1.1.69');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
