@@ -987,7 +987,7 @@ function AppendPost (like)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreatePost (like)
 {
-  let article = Create ('article', {class:"post", id:like.id});
+  let article = Create ('article', {class:"post" /*, id:like.id}*/);
   let tr = article.appendChild (document.createElement ('table')).appendChild (document.createElement('tr'));
   let td;
   if (like.group.first_name !== undefined)
@@ -1377,27 +1377,23 @@ async function Start (state)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Select (evt, TabName, id) 
 {
-    let i, tabcontent, tablinks;
-	
-	if ((id=="friends" || id=="likes") && document.getElementById(id).className == "tablinks active")
-	{
-		let c = document.getElementById(TabName).children;
-		if (c.length) 
-		{
-			let s = ! ((c[0].nodeName == "P")?c[1].children[0].checked:c[0].children[0].checked);
-			for (i = 0; i < c.length; i++) c[i].children[0].checked = s;
-		}
-	}
-
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
-
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
-
-    document.getElementById(TabName).style.display = "block";
-    //evt.currentTarget.className += " active";
-    document.getElementById(id).className += " active";
+  let i, tabcontent, tablinks;
+  if ((id=="friends" || id=="likes") && document.getElementById(id).className == "tablinks active")
+  {
+    let c = document.getElementById(TabName).children;
+    if (c.length>1) 
+    {
+      let s = ! ((c[0].nodeName == "P")? c[1].children[0].checked:c[0].children[0].checked);
+      for (i = 0; i < c.length; i++) c[i].children[0].checked = s;
+    }
+  }
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+  document.getElementById(TabName).style.display = "block";
+  //evt.currentTarget.className += " active";
+  document.getElementById(id).className += " active";
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function KeyPress (e) 
@@ -1523,7 +1519,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.63');
+  console.log('InitOk.v1.1.64');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
