@@ -392,47 +392,18 @@ ul.dropdown-content
     background-color: #597da3;
 }
 
-.dropdown input[type=checkbox].btn1:checked ~ ul.menu1
+.dropdown input[type=checkbox].btn:checked ~ ul.menu, .dropdown:hover > .dropbtn  ~ ul.menu
 {
-    max-height: 300px;
-    /* display: block; */
-  border-left:      1px solid #597da3;
-  border-bottom:    1px solid #597da3;
-  border-right:     1px solid #597da3;
-}
-
-.dropdown input[type=checkbox].btn2:checked ~ ul.menu2
-{
-    max-height: 300px;
-    /* display: block; */
+  max-height: 300px;
+  /* display: block; */
   border-left:      1px solid #597da3;
   border-bottom:    1px solid #597da3;
   border-right:     1px solid #597da3;
 }
 
 
-/*
-.dropdown input[type=checkbox].dropbtn:checked ~ ul.dropdown-content
+#name-filter
 {
-    max-height: 300px;
-    /* display: block; */ /*
-  border-left:      1px solid #597da3;
-  border-bottom:    1px solid #597da3;
-  border-right:     1px solid #597da3;
-}
-*/
-
-#name-filter {
-/*
-  border-box: box-sizing;
-  background-image: url('searchicon.png');
-  background-position: 4px 4px;
-  background-repeat: no-repeat;
-*/
-  /*font-size: 12px;
-  padding: 4px 12px;
-  border: none;*/
-  /*border-bottom: 1px solid #ddd;*/
   margin 0;
   ouline: none;
   float: none;
@@ -1241,9 +1212,8 @@ async function GetLikesGr ()
       gr.sync2 = false;
       return;
     }
-    if(/*!gr.fo && */response.i < group.c)
+    if(response.i < group.c)
     {
-      //console.log ('gr.fo:' + gr.fo + ', i:' + response.i);
       group.offset += response.i;
       group.c -= response.i;
       group.ls = response.ls;
@@ -1272,7 +1242,6 @@ async function GetGroupLikes (date,f=false)
   gr.f = f;
   gr.date = date;
   gr.uid = User.id;
-  //console.log (User.IsFriend);
   gr.fo = User.is_friend;
   Debug ("par.cnt=" + par.cnt);
   gr.c = par.cnt;  // 24 // 96
@@ -1281,7 +1250,7 @@ async function GetGroupLikes (date,f=false)
   gr.sync1 = false;
   gr.sync2 = false;  
   for (let i=0; i<SearchList.length; i++) SearchList[i].offset = -gr.c;
-  console.log ((start = new Date()).toStr(true) + ": " + gr.g + " / " + SearchList.length);
+  console.log ((start = new Date()).toStr(true) + ": " + gr.g + " / " + SearchList.length + ", c=" + gr.c);
   while (!Cancel && (SearchList.length>0 || gr.err_groups.length>0))
   {
     await Promise.all ([GetLikesGr (), GetLikesGr (), GetLikesGr (), ASleep (1020)]);
@@ -1399,8 +1368,8 @@ function Select (evt, TabName, id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function KeyPress (e) 
 {
-  //Debug
-  console.log
+  Debug
+  //console.log
         ( e.type +
           ' keyCode=' + e.keyCode +
           ' which=' + e.which +
@@ -1445,7 +1414,7 @@ function SaveOptions (p)
 async function LoadOptions ()
 {
   let l = await StorageGet ("options");
-  console.log (l);
+  Debug (l);
   if (!l) return;
   let j = JSON.parse (l);
 
@@ -1520,7 +1489,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.65');
+  console.log('InitOk.v1.1.66');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
@@ -1537,10 +1506,10 @@ function Init ()
 <div class="tab">
 
   <div class="dropdown">
-    <input type="checkbox" id="menu_toggle_1" class="dropbtn btn1">
+    <input type="checkbox" id="menu_toggle_1" class="dropbtn btn">
     <label for="menu_toggle_1" class="dropbtn">&#9660;</label>
 
-    <ul id="menu_1" class="dropdown-content menu1">
+    <ul id="menu_1" class="dropdown-content menu">
       <li>&#128270; Фильтр:</li>
       <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="ChangeOptions('friends')">
       <li>Показывать:</li>   
@@ -1568,10 +1537,10 @@ function Init ()
   <button id="groups"   class="tablinks"        onclick="Select(event, 'groups_data','groups')  ">Группы</button>
 
   <div class="dropdown">
-    <input type="checkbox" id="menu_toggle_2" class="dropbtn btn2">
+    <input type="checkbox" id="menu_toggle_2" class="dropbtn btn">
     <label for="menu_toggle_2" class="dropbtn">&#9660;</label>
 
-    <ul id="menu_2" class="dropdown-content menu2">
+    <ul id="menu_2" class="dropdown-content menu">
       <li>Группировать по</li>
     
       <label>
