@@ -1443,7 +1443,7 @@ async function LoadOptions ()
   {
     Options.likes = j.likes;
     document.getElementById("autoload2").checked = Options.likes.load;
-    let r = document.getElementsByName("groupping");
+    var r = document.getElementsByName("groupping");
     for (let i=0; i<r.length; i++) if(r[i].value==Options.likes.groupby) r[i].checked = true;
     r = document.getElementsByName("include");
     for (let i=0; i<r.length; i++) r[i].checked = Options.include[r[i].id];
@@ -1453,7 +1453,7 @@ async function LoadOptions ()
     Options.friends = j.friends;
     document.getElementById("autoload1").checked = Options.friends.load;
     document.getElementById("name-filter").value = Options.friends.filter;
-    let r = document.getElementsByName("show");
+    var r = document.getElementsByName("show");
     for (let i=0; i<r.length; i++) r[i].checked = Options.friends[r[i].id];
   }
 }
@@ -1464,20 +1464,20 @@ function ChangeOptions (p)
   {
     Options.friends.load = document.getElementById("autoload1").checked;
     Options.friends.filter = document.getElementById("name-filter").value;
-    let r = document.getElementsByName("show");
+    var r = document.getElementsByName("show");
     for (let i=0; i<r.length; i++) Options.friends[r[i].id] = r[i].checked;
     SetFilter ();
   }
   if (p=="likes")
   {
     Options.likes.load = document.getElementById("autoload2").checked;
-    let r = document.getElementsByName("groupping");
+    var r = document.getElementsByName("groupping");
     for (let i=0; i<r.length; i++) if(r[i].checked) Options.likes.groupby = r[i].value;
     ShowLikesAll ();
   }
   if (p=="include")
   {
-    let r = document.getElementsByName("include");
+    var r = document.getElementsByName("include");
     for (let i=0; i<r.length; i++) Options.include[r[i].id] = r[i].checked;
   }
 }
@@ -1515,7 +1515,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.1');
+  console.log('InitOk.v1.2.2');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
