@@ -1309,6 +1309,8 @@ async function GetLikesOne ()
 //------------------------------------------------------
 async function GetLikes (type,sl)
 {
+  let start;
+  let finish;
   gr.sl = sl.slice ();
   gr.g = -1;
   gr.l = gr.sl.length;
@@ -1336,12 +1338,12 @@ async function GetLikesAll (sl,date,f=false)
   gr.c    = par.cnt;
   gr.err_groups = []; 
   for (let i=0; i<sl.length; i++) sl[i].offset = -gr.c;
+  start = new Date();
   if (Options.include.post)  await GetLikes ("post",sl);
   if (Options.include.photo) await GetLikes ("photo",sl);
   Start (false);
   ShowLikesAll ();
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
-  
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
@@ -1577,7 +1579,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.11');
+  console.log('InitOk.v1.2.12');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
