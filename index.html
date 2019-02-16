@@ -1263,7 +1263,7 @@ async function GetLikesOne ()
     Debug (response);
     let likes = [];
     let res = response.res;
-    for (let i=0; i<res.length; i++) if (res[i].post.date >= gr.date)
+    for (let i=0; i<res.length; i++) if (res[i][gr.type].date >= gr.date)
     {
       //let like = {"post":res[i].post,"group":group,"id":'wall'+res[i].post.from_id+'_'+res[i].post.id};
       let like = res[i];
@@ -1579,7 +1579,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.13');
+  console.log('InitOk.v1.2.14');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
