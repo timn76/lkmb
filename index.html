@@ -1003,7 +1003,7 @@ function CreatePost (like)
   if (like.type == "post")
   {
     if (like.post.copy_history != undefined && like.post.copy_history.length>0) like.post = like.post.copy_history[0]; // for repost
-    let text = text || like.post.text;
+    text = text || like.post.text;
     if (like.post.attachments != undefined)
     {
       for (let a = 0; a < like.post.attachments.length; a++)
@@ -1577,7 +1577,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.10');
+  console.log('InitOk.v1.2.11');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
