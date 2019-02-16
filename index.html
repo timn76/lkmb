@@ -1113,7 +1113,7 @@ function ShowLikes (likes)
 function ShowLikesAll ()
 {
 	let ld = document.getElementById('likes_data');
-	Likes.sort( function(a, b) {return (b.post.date-a.post.date);} );
+	Likes.sort( function(a, b) {return (b[b.type].date-a[a.type].date);} );
 	ld.innerHTML='';	
 	for (let i = 0; i < Likes.length; i++) AppendPost ( Likes[i] ); //ld.appendChild ( CreatePost ( Likes[i] ) );
  	//Likes.length = 0;
@@ -1341,6 +1341,7 @@ async function GetLikesAll (sl,date,f=false)
   start = new Date();
   if (Options.include.post)  await GetLikes ("post",sl);
   if (Options.include.photo) await GetLikes ("photo",sl);
+  if (Options.include.video) await GetLikes ("video",sl);
   Start (false);
   ShowLikesAll ();
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
@@ -1579,7 +1580,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.14');
+  console.log('InitOk.v1.2.15');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
