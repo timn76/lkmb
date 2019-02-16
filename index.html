@@ -1162,7 +1162,7 @@ function GetLikesCode (id,offset,cnt)
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function GetLikesCodeNF (id,offset,cnt,ls=0)
+function GetLikesCodeOld (id,offset,cnt,ls=0)
 {
 	let nl = '\n';
 	let Code =  ''
@@ -1235,8 +1235,8 @@ async function GetLikesGr ()
   gr.sync1 = false;
   try 
   {
-    //console.log (GetLikesCodeNF(group.id,group.offset,gr.f,1,User.id));
-    const response = await VKapi ('execute', {"code": GetLikesCodeNF(group.id,group.offset,group.c,group.ls)});
+    //console.log (GetLikesCode (group.id,group.offset,gr.f,1,User.id));
+    const response = await VKapi ('execute', {"code": GetLikesCode (group.id,group.offset,group.c,group.ls)});
     Debug (response);
     let likes = [];
     let res = response.res;
@@ -1276,7 +1276,7 @@ async function GetLikesGr ()
   {
     gr.err_groups.push (group);
     console.log (e);
-    Debug (GetLikesCodeNF(group.id,group.offset,group.c,group.ls));
+    Debug (GetLikesCode (group.id,group.offset,group.c,group.ls));
     console.log ("group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; SearchList[g].id: " + (SearchList[group.g]==null?"undefined":SearchList[group.g].id));
     console.log ('------------------------------------------------------------------------------');
   }
@@ -1545,7 +1545,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.3');
+  console.log('InitOk.v1.2.4');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
