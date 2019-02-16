@@ -1153,7 +1153,7 @@ function GetLikesCode (id,offset,cnt)
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.isLiked ({ user_id:' + gr.uid + ', type:"post", owner_id: posts[i].from_id, item_id: posts[i].id }); '
 				+ nl + (par.debug?'     all.push ({"i":i,"id":posts[i].id,"post":posts[i],"likes":likes}); ':'')
-				+ nl + '     if (likes.response.liked || likes.response.copied) res.push ({"post":posts[i],"likes":likes.response}); '
+				+ nl + '     if (likes.response.liked==1 || likes.response.copied==1) res.push ({"post":posts[i],"likes":likes.response}); '
 				+ nl + '     e = e + 1; '
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
@@ -1545,7 +1545,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.4');
+  console.log('InitOk.v1.2.5');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
