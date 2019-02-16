@@ -557,8 +557,8 @@ var Groups = [];
 var SearchList = [];
 var AllGroups = [];
 var Likes = [];
-var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:96}
-var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}, likes: {load:false, "groupby":"ByDate"} };
+var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:24 }
+var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}, likes: {load:false, "groupby":"ByDate"}, include: {photo: false, video:false, comments:false} };
 var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -626,11 +626,9 @@ function Create(type,attr)
       default:      elm[key] = attr[key];
     }
   }
-  
 	//var label = document.createElement('label')
 	//label.appendChild(document.createTextNode('text for label after checkbox'));
 	//if ((typeof attr.click	!= undefined) elm.addEventListener (attr.click);
-
 	return elm;
 }//------------------------------------------------------------------------------------------------------------------------------------------
 function id2html(id,addr) 
@@ -1276,8 +1274,8 @@ async function GetGroupLikes (date,f=false)
   console.log ((start = new Date()).toStr(true) + ": " + gr.g + " / " + SearchList.length + ", c=" + gr.c);
   while (!Cancel && (SearchList.length>0 || gr.err_groups.length>0))
   {
-    await Promise.all ([GetLikesGr (), GetLikesGr (), GetLikesGr (), ASleep (1020)]);
-    document.getElementById('count').innerHTML = gr.g + '.' + (SearchList[gr.g]==null?'':SearchList[gr.g].offset)  + ':' + SearchList.length + '/' + gr.l + ':' + CountLikes;
+    await Promise.all ([GetLikesGr (), GetLikesGr (), GetLikesGr (), ASleep (1030)]);
+    document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (SearchList[gr.g]==null?'':SearchList[gr.g].offset)  + ':'):"") + SearchList.length + '/' + gr.l + ':' + CountLikes;
   }
   Start (false);
   ShowLikesAll ();
@@ -1429,7 +1427,7 @@ function KeyPress (e)
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function SaveOptions (p)
+function SaveOptions ()
 {
   StorageSet ("options", JSON.stringify (Options));
 }
@@ -1447,6 +1445,8 @@ async function LoadOptions ()
     document.getElementById("autoload2").checked = Options.likes.load;
     let r = document.getElementsByName("groupping");
     for (let i=0; i<r.length; i++) if(r[i].value==Options.likes.groupby) r[i].checked = true;
+    r = document.getElementsByName("include");
+    for (let i=0; i<r.length; i++) r[i].checked = Options.include[r[i].id];
   }
   if (j.friends.load)
   {
@@ -1466,16 +1466,19 @@ function ChangeOptions (p)
     Options.friends.filter = document.getElementById("name-filter").value;
     let r = document.getElementsByName("show");
     for (let i=0; i<r.length; i++) Options.friends[r[i].id] = r[i].checked;
-    
     SetFilter ();
   }
   if (p=="likes")
   {
-    Options.friends.load = document.getElementById("autoload2").checked;
+    Options.likes.load = document.getElementById("autoload2").checked;
     let r = document.getElementsByName("groupping");
     for (let i=0; i<r.length; i++) if(r[i].checked) Options.likes.groupby = r[i].value;
-    
     ShowLikesAll ();
+  }
+  if (p=="include")
+  {
+    let r = document.getElementsByName("include");
+    for (let i=0; i<r.length; i++) Options.include[r[i].id] = r[i].checked;
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1512,7 +1515,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.1.71');
+  console.log('InitOk.v1.2.1');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
@@ -1535,28 +1538,17 @@ function Init ()
     <ul id="menu_1" class="dropdown-content menu">
       <li>&#128270; Фильтр:</li>
       <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="ChangeOptions('friends')">
-      <li>Показывать:</li>   
-      <label>
-        <input type="checkbox" name="show" id="men"     onchange="ChangeOptions('friends')" checked>Мужчин
-      </label>
-      <label>
-        <input type="checkbox" name="show" id="women"   onchange="ChangeOptions('friends')" checked>Женщин
-      </label>
-      <label>
-        <input type="checkbox" name="show" id="unknown" onchange="ChangeOptions('friends')" checked>Не задано
-      </label>
-      <label>
-        <input type="checkbox" name="show" id="addedonly" onchange="ChangeOptions('friends')" >Только добавленных
-      </label>
-      <label>
-        <input id="autoload1" type="checkbox" onchange="ChangeOptions('friends')">Автозагрузка фильтра
-      </label>
+      <li>Показывать:</li>
+      <label><input type="checkbox" name="show" id="men"        onchange="ChangeOptions('friends')" checked>Мужчин</label>
+      <label><input type="checkbox" name="show" id="women"      onchange="ChangeOptions('friends')" checked>Женщин</label>
+      <label><input type="checkbox" name="show" id="unknown"    onchange="ChangeOptions('friends')" checked>Не задано</label>
+      <label><input type="checkbox" name="show" id="addedonly"  onchange="ChangeOptions('friends')">Только добавленных</label>
+      <label><input type="checkbox"             id="autoload1"  onchange="ChangeOptions('friends')">Автозагрузка фильтра</label>
       <button id="save1" onclick="SaveOptions('friends')">Сохранить</button>
     </ul>
   </div>
 
   <button id="friends"  class="tablinks active" onclick="Select(event, 'friends_data','friends')">Друзья</button>
-
   <button id="groups"   class="tablinks"        onclick="Select(event, 'groups_data','groups')  ">Группы</button>
 
   <div class="dropdown">
@@ -1564,26 +1556,23 @@ function Init ()
     <label for="menu_toggle_2" class="dropbtn">&#9660;</label>
 
     <ul id="menu_2" class="dropdown-content menu">
+     <li>Включить в поиск:</li>
+      <label><input type="checkbox" name="include" id="photo"     onchange="ChangeOptions('include')">Фотки</label>    
+      <label><input type="checkbox" name="include" id="video"     onchange="ChangeOptions('include')">Видео</label>
+      <label><input type="checkbox" name="include" id="comments"  onchange="ChangeOptions('include')">Комментарии</label>
       <li>Группировать по</li>
-    
-      <label>
-        <input type="radio" name="groupping" value="ByDate" onchange="ChangeOptions('likes')"  checked>Дате
-      </label>
-      <label>
-        <input type="radio" name="groupping" value="ByWall" onchange="ChangeOptions('likes')" >Стенке
-      </label>
-      <label>
-        <input id="autoload2" type="checkbox" onchange="ChangeOptions('likes')" >Автозагрузка настроек
-      </label>
+      <label><input type="radio" name="groupping" value="ByDate"  onchange="ChangeOptions('likes')" checked>Дате</label>
+      <label><input type="radio" name="groupping" value="ByWall"  onchange="ChangeOptions('likes')"        >Стенке</label>
+      <label><input type="checkbox"                id="autoload2" onchange="ChangeOptions('likes')">Автозагрузка настроек</label>
       <button id="save2" onclick="SaveOptions('likes')">Сохранить</button>
     </ul>
   </div>
 
-  <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data','likes')    ">Лайки</button>
+  <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data','likes')">Лайки</button>
   <label>Искать в </label>
   <select id="target" size="1" title="Искать лайки в группах или на стенках друзей друга">
     <option selected value="1">группах</option>
-    <option          value="2">стенках</option>
+    <option          value="2">друзьях</option>
   </select>
   <select id="period" size="1" title="Период поиска">
     <option selected value="1">За один день</option>
