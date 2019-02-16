@@ -1133,6 +1133,35 @@ async function VKapiS (method, params)
 function PSleep (ms) { return new Promise (resolve => setTimeout(resolve, ms)); }
 async function ASleep (ms,start) { await PSleep(ms); }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function GetLikesCode (id,offset,cnt)
+{
+	let nl = '\n';
+	let Code =  ''
+				+ ' var p = API.wall.get ({ owner_id:'+ (gr.f?'':'-') + id + ', count:' + cnt + ', offset:' + offset + ' });   '
+				+ nl + ' var posts = p; '
+				+ nl + ' var c = p.count; '
+				+ nl + ' var res={};  '
+				+ nl + ' var all={};  '
+				+ nl + ' var i=1;   '
+				+ nl + ' var j=-1; '
+				+ nl + ' var e=1; '
+				+ nl + ' if (p.items.length>=0) { posts = p.items; i=0; } '
+				+ nl + ' while (i<posts.length && e<25)'
+				+ nl + ' { '
+				+ nl + '   j = -1; '
+        + nl + '   if (posts[i].likes.count>0 && e<25) '
+				+ nl + '   { '
+				+ nl + '     var likes = API.likes.isLiked ({ user_id:' + gr.uid + ', type:"post", owner_id: posts[i].from_id, item_id: posts[i].id }); '
+				+ nl + (par.debug?'     all.push ({"i":i,"id":posts[i].id,"post":posts[i],"likes":likes}); ':'')
+				+ nl + '     if (likes.response.liked || likes.response.copied) res.push ({"post":posts[i],"likes":likes.response}); '
+				+ nl + '     e = e + 1; '
+				+ nl + '   } '
+				+ nl + '   i = i + 1; '
+				+ nl + ' }  '
+				+ nl + ' return { "id":' + (gr.f?'':'-') + id + ',"date":posts[i-1].date, "count":c, "i":i, "ls":0, "res":res' + (par.debug?', "e":e, "j":j, "all":all, "posts": p, "cnt":' + cnt:'') + '}; ';
+	return Code;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 function GetLikesCodeNF (id,offset,cnt,ls=0)
 {
 	let nl = '\n';
@@ -1163,7 +1192,7 @@ function GetLikesCodeNF (id,offset,cnt,ls=0)
 				+ nl + (!gr.fo?'   if (i<posts.length && e<25) ls = 0; ':'')
 				+ nl + ' }  '
 				+ nl + (!gr.fo?' if (ls>posts[i-1].likes.count || j>=0) ls = 0; else i = i - 1;':'')
-				+ nl + (!gr.fo?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
+				+ nl + ((par.debug && !gr.fo)?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
 				+ nl + ' return { "id":' + (gr.f?'':'-') + id + ',"date":posts[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "j":j, "all":all, "posts": p, "cnt":' + cnt:'') + '}; ';
 	return Code;
 }
@@ -1445,6 +1474,7 @@ async function LoadOptions ()
     document.getElementById("autoload2").checked = Options.likes.load;
     var r = document.getElementsByName("groupping");
     for (let i=0; i<r.length; i++) if(r[i].value==Options.likes.groupby) r[i].checked = true;
+    Options.include = j.include;
     r = document.getElementsByName("include");
     for (let i=0; i<r.length; i++) r[i].checked = Options.include[r[i].id];
   }
@@ -1515,7 +1545,7 @@ function SetFilter ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.2.2');
+  console.log('InitOk.v1.2.3');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
