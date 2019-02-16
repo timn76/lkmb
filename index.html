@@ -1176,7 +1176,7 @@ function GetLikesCode (id,offset,cnt)
 				+ nl + '   { '
 				+ nl + '     var likes = API.likes.isLiked ({ user_id:' + gr.uid + ', type:"' + gr.type + '", owner_id: obj[i].from_id, item_id: obj[i].id }); '
 				+ nl + (par.debug?'     all.push ({"i":i,"id":obj[i].id,"obj":obj[i],"likes":likes}); ':'')
-				+ nl + '     if (likes.liked==1 || likes.copied==1) res.push ({type="' + gr.type + '",' + gr.type + ':obj[i], id:"' + (gr.type=="post")?'wall':gr.type) + id + '_' + obj[i].id + '"}); '
+				+ nl + '     if (likes.liked==1 || likes.copied==1) res.push ({type="' + gr.type + '",' + gr.type + ':obj[i], id:"' + (gr.type=="post"?'wall':gr.type) + id + '_' + obj[i].id + '"}); '
 				+ nl + '     e = e + 1; '
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
