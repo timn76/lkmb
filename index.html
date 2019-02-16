@@ -764,7 +764,7 @@ async function GetFriends (id,offset=0)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetAllFriends (id)
 {
-  let friends [];
+  let friends = [];
   let offset = 0;
   do 
   {
@@ -1390,7 +1390,7 @@ async function Start (state)
 {
 	let dt = new Date();
 	let btn = document.getElementById('start');
-  let sl [];
+  let sl = [];
 
 	if(state && btn.innerHTML == 'Искать')
 	{
