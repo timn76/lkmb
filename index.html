@@ -1307,6 +1307,23 @@ async function GetLikesOne ()
   }
 }
 //------------------------------------------------------
+async function GetLikes (type,sl)
+{
+  gr.sl = sl.slice ();
+  gr.g = -1;
+  gr.l = gr.sl.length;
+  gr.type = type;
+  gr.sync1 = false;
+  gr.sync2 = false;
+  console.log (type + ": " + (start = new Date()).toStr(true) + ": " + gr.g + " / " + gr.sl.length + ", c=" + gr.c);
+  while (!Cancel && (gr.sl.length>0 || gr.err_groups.length>0))
+  {
+    await Promise.all ([GetLikesOne (), GetLikesOne (), GetLikesOne (), ASleep (1030)]);
+    document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
+  }
+  console.log (type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+}
+//------------------------------------------------------
 async function GetLikesAll (sl,date,f=false)
 {
   let start;
@@ -1319,24 +1336,8 @@ async function GetLikesAll (sl,date,f=false)
   gr.c    = par.cnt;
   gr.err_groups = []; 
   for (let i=0; i<sl.length; i++) sl[i].offset = -gr.c;
-  function GetLikes (type)
-  {
-    gr.sl = sl.slice ();
-    gr.g = -1;
-    gr.l = gr.sl.length;
-    gr.type = type;
-    gr.sync1 = false;
-    gr.sync2 = false;
-    console.log (type + ": " + (start = new Date()).toStr(true) + ": " + gr.g + " / " + gr.sl.length + ", c=" + gr.c);
-    while (!Cancel && (gr.sl.length>0 || gr.err_groups.length>0))
-    {
-      await Promise.all ([GetLikesOne (), GetLikesOne (), GetLikesOne (), ASleep (1030)]);
-      document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
-    }
-    console.log (type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
-  }
-  if (Options.include.post) GetLikes ("post");
-  if (Options.include.photo) GetLikes ("photo");
+  if (Options.include.post)  await GetLikes ("post",sl);
+  if (Options.include.photo) await GetLikes ("photo",sl);
   Start (false);
   ShowLikesAll ();
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
