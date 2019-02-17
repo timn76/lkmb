@@ -1589,12 +1589,12 @@ function post (url,prm,callback)
 }
 function test()
 {
-  post ('/friends',{act:'filter_friends',al:1,city:0,sex:0,age_from:1,age_to:80,uid:User.id},function(uids){ console.log (uids); } );
+  post ('https://vk.com/friends',{act:'filter_friends',al:1,city:0,sex:0,age_from:1,age_to:80,uid:User.id}, function(uids){ console.log (uids); } );
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.1');
+  console.log('InitOk.v1.3.2');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
@@ -1666,7 +1666,7 @@ function Init ()
     <option value="0">За всё время</option>
   </select>  
   <button id="start"	onclick="Start(true)" title="Искать лайки в группах">Искать</button>
-  <button id="btn_test"	onclick="test()" title="Тест">Искать</button>
+  <button id="btn_test"	onclick="test()" title="Тест">Тест</button>
   <label  id="count" class="counter">0</label>
   <img id="ml" class="ml none" src="moving_lights.gif">
 </div>
