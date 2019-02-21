@@ -553,7 +553,7 @@ var Groups = [];
 var Likes = [];
 var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}, likes: {load:false, "groupby":"ByDate"}, include: {post:true, photo: false, video:false, comments:false} };
-var Data = {sgGroups:'', sgFriends:'', Friends: {Count:0, Step:500}};
+var Data = {sgGroups:"", sgFriends:"", Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
 {
@@ -913,7 +913,7 @@ function GroupsIds (g)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function AddGroups (ids) 
 {
-  Debug ("AddGroupd(ids["+ ids + "])");
+  Debug ("AddGroups(ids["+ ids + "])");
   if (!ids) return;
   let gd = document.getElementById ('groups_data');
   try
@@ -923,12 +923,15 @@ async function AddGroups (ids)
     {
       let s = Groups.indexOf (SetGid(response[i]).id);
       // let s=-1; for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
+      Debug (response[i]);
       if (s == -1)
       {
         response[i].added  = true;
         Groups.push        ( response[i] );
         gd.appendChild     ( ShowGroups (response[i]) );
+        Debug ("Data.sgGroups=[" + Data.sgGroups + "]");
         if (Data.sgGroups.indexOf (response[i].gid)<0) Data.sgGroups += ( (Data.sgGroups?",":"") + Math.abs (response[i].gid) );
+        Debug ("Data.sgGroups=[" + Data.sgGroups + "]");
       }
     }
     StorageSet ('gr'+User.id, Data.sgGroups);
@@ -1603,7 +1606,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.5');
+  console.log('InitOk.v1.3.6');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
