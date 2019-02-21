@@ -114,12 +114,12 @@ a:hover 	{ text-decoration:underline }
 	}
 	header
 	{
-    	height: 16px;
-		margin: 0 0;
-   	padding: 4px 12px;
-   	font-size: 	12px;
-   	text-align:	center;
-   	background-color: #dce7f2;
+    height: 16px;
+    margin: 0 0;
+    padding: 4px 12px;
+    font-size: 	12px;
+    text-align:	center;
+    background-color: #dce7f2;
 	}
 	footer
 	{
@@ -130,11 +130,12 @@ a:hover 	{ text-decoration:underline }
 	}
 	section.text 
 	{
-  		max-height: 250px;
-  		overflow: 	auto;
+    max-height: 250px;
+    overflow: 	auto;
 	}
 
 	p.text {}
+
 /*		
 div.tab
 {
@@ -341,8 +342,6 @@ div.tab select
   border: none;
 }
 
-
-
 .dropdown-content label:hover
 {
   background-color: #dce7f2;
@@ -388,8 +387,8 @@ ul.dropdown-content
 
 .dropdown input[type=checkbox].dropbtn:checked ~ label.dropbtn
 {
-	color:	black;
-    background-color: #597da3;
+  color: black;
+  background-color: #597da3;
 }
 
 .dropdown input[type=checkbox].btn:checked ~ ul.menu, .dropdown:hover > .dropbtn  ~ ul.menu
@@ -410,8 +409,7 @@ ul.dropdown-content
   margin-right: 0;
 }
 
-#name-filter:focus {outline: 2px solid #dce7f2;}
-
+#name-filter:focus { outline: 2px solid #dce7f2; }
 		
 	img.ml
 	{
@@ -461,7 +459,6 @@ ul.dropdown-content
 		display:none;
 	}
 
-
 /* -=== Accordion styles ======================- */
 .acc_tab {
   position: relative;
@@ -484,7 +481,7 @@ ul.dropdown-content
   line-height: 2em;
   cursor: pointer;
   margin-right: 0.5em;
-  color: #939393;
+  color: #535353;
 }
 .acc_tab label.char 
 {
@@ -493,7 +490,7 @@ ul.dropdown-content
 }
 .acc_tab label.line 
 {
-  font-size: 10px;
+  font-size: 11px;
 }
 .acc_tab-content 
 {
@@ -525,7 +522,6 @@ ul.dropdown-content
 }
 .acc_tab label.line::after {
   right: 0;
-
 }
 .acc_tab input[type=checkbox] + label::after {
   content: "+";
@@ -610,9 +606,9 @@ function Debug (msg)
   if (par.debug) console.log (msg);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function Create(type,attr) 
+function Create (type,attr) 
 {
-  let elm = document.createElement(type);
+  let elm = document.createElement (type);
   for (let key in attr)
   {
     switch (key)
@@ -827,7 +823,7 @@ async function GetPostsCount (id)
 {
   try
   {
-    const response = await VKapi ('wall.get', {owner_id:-id, count:1});
+    const response = await VKapi ('wall.get', {owner_id:id, count:1});
     return (response.count);
   } 
   catch (e) { console.log (e); }
@@ -850,6 +846,13 @@ function ShowGroup (group)
   return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function SetGid (g)
+{
+  g.gid = abs (uvl (g.id, g.gid));
+  g.id = - g.gid;
+  return g;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGroup (id)
 {
   Debug ("GetGroup (" + id + ")");
@@ -860,8 +863,7 @@ async function GetGroup (id)
     if (response.length>0)
     {
       Group = response[0];
-      Group.id = uvl (Group.id, Group.gid);
-      Group.post_count = await GetPostsCount (Group.id);
+      Group.post_count = await GetPostsCount (SetGid(Group).id);
       Debug (Group);
       Debug (document.getElementById('user_data').innerHTML = ShowGroup(Group).outerHTML);
     }
@@ -873,7 +875,7 @@ function DeleteGroup (element,event,id)
 {
   let i=-1;
   Debug (element);
-  for (let j=0; j<Groups.length; j++) if (element.parentNode.id == Groups[j].id) { i = j; break; }
+  for (let j=0; j<Groups.length; j++) if (element.parentNode.id == Groups[j].gid) { i = j; break; }
   if (i>=0) Groups.splice (i,1);
   Data.sgGroups = DelSubstr (Data.sgGroups, element.parentNode.id);
   StorageSet ('gr'+User.id, GroupsIds (Groups));
@@ -883,7 +885,7 @@ function DeleteGroup (element,event,id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGroups (group) 
 {
-	let article = Create('article', { id:group.id, class:'sel_item del_item' });
+	let article = Create('article', { id:group.gid, class:'sel_item del_item' });
 	let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
 	tr.appendChild(Create('td', {width:180, html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
@@ -903,8 +905,8 @@ function GroupsIds (g)
   let s = "";
   if (g.length)
   {
-    for (let i=0; i<g.length-1; i++) s += (g[i].id + "," + ((i+1)%25==0?"\n":""));
-    s += g[g.length-1].id;
+    for (let i=0; i<g.length-1; i++) s += (abs(g[i].id) + "," + ((i+1)%25==0?"\n":""));
+    s += abs(g[g.length-1].id);
   }
   return (s);
 }
@@ -919,14 +921,14 @@ async function AddGroups (ids)
     let response = await VKapi ('groups.getById', { group_ids:ids, fields:Group_fields });
     for (let i = 0; i < response.length; i++)
     {
-      let s=-1;
-      for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
+      let s = Groups.indexOf (SetGid(response).id);
+      // let s=-1; for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
       if (s == -1)
       {
         response[i].added  = true;
         Groups.push        ( response[i] );
         gd.appendChild     ( ShowGroups (response[i]) );
-		if (Data.sgGroups.indexOf(response[i].id)<0) Data.sgGroups += ( (Data.sgGroups?",":"") + response[i].id );
+        if (Data.sgGroups.indexOf (response[i].gid)<0) Data.sgGroups += ( (Data.sgGroups?",":"") + abs (response[i].gid) );
       }
     }
     StorageSet ('gr'+User.id, Data.sgGroups);
@@ -950,7 +952,7 @@ async function GetGroups (id, flush=0)
     Group = null;
     Groups = response.items;
     Debug ('GetGroups ('+id+'):' + GroupsIds (Groups));
-    for (let i = 0; i < Groups.length; i++) gd.appendChild ( ShowGroups (Groups[i]) );
+    for (let i = 0; i < Groups.length; i++) gd.appendChild ( ShowGroups ( SetGid ( Groups[i] ) ) );
     if (flush) StorageSet ('gr'+id,"");
     else AddGroups (Data.sgGroups = await StorageGet ('gr'+id));
   }
@@ -1159,9 +1161,9 @@ function GetLikesCode (id,offset,cnt)
 {
 	let nl = '\n';
 	let Code =  ''
-				+ (gr.type=="post" ?' var p = API.wall.get ({ owner_id:'+ (gr.f?'':'-') + id + ', count:' + cnt + ', offset:' + offset + ' });   ':'')
-        + (gr.type=="photo"?' var p = API.photos.getAll ({ owner_id:'+ (gr.f?'':'-') + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
-        + (gr.type=="video"?' var p = API.video.get ({ owner_id:'+ (gr.f?'':'-') + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
+				+ (gr.type=="post" ?' var p = API.wall.get      ({ owner_id:' + id + ',             count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + (gr.type=="photo"?' var p = API.photos.getAll ({ owner_id:' + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + (gr.type=="video"?' var p = API.video.get     ({ owner_id:' + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
 				+ nl + ' var obj = p; '
 				+ nl + ' var c = p.count; '
 				+ nl + ' var res={}; '
@@ -1180,7 +1182,7 @@ function GetLikesCode (id,offset,cnt)
 				+ nl + '   } '
 				+ nl + '   i = i + 1; '
 				+ nl + ' }  '
-				+ nl + ' return { "date":obj[i-1].date, "count":c, "i":i, "res":res' + (par.debug?', "id":' + (gr.f?'':'-') + id + ', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
+				+ nl + ' return { "date":obj[i-1].date, "count":c, "i":i, "res":res' + (par.debug?', "id":' + id + ', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
 	return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1286,7 +1288,7 @@ async function GetLikesOne ()
       gr.sync2 = false;
       return;
     }
-    if(response.i < group.c)
+    if (response.i < group.c)
     {
       group.offset += response.i;
       group.c -= response.i;
@@ -1347,6 +1349,10 @@ async function GetLikesAll (sl,date,f=false)
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function GetGuests (id,dat)
+{
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
 {
   try 
@@ -1354,6 +1360,7 @@ async function GetUser (id)
     const response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);  	
     User = response[0];
     User.id = uvl (User.id, User.uid);
+    User.uid = User.id;
     if (id==undefined)
     {
       if (User.id==156808317) par.me = true;
@@ -1393,29 +1400,31 @@ async function SetRunCount (id)
 async function Start (state)
 {
 	let dt = new Date();
-	let btn = document.getElementById('start');
+	let btn = document.getElementById ('start');
   let sl = [];
 
 	if(state && btn.innerHTML == 'Искать')
 	{
-		if(document.getElementById('target').value==2)
+    if (document.getElementById('period').value>0) dt.setDate (dt.getDate()-document.getElementById('period').value);
+		else dt = new Date (2000, 0, 1);
+    let dat = Math.trunc((+dt)/(86400*1000))*86400;
+    if (document.getElementById('target').value==3) return GetGuests (User.id,dat); // гости
+		if (document.getElementById('target').value==2) // в друзьях
 		{
 			sl = await GetFriendsAll (User.id);
 		}
-		else
+		else  // в группах
 		{
-			if(Groups.length==0) return; 
-			if(Group!=null) sl.push(Group);
+			if (Groups.length==0) return; 
+			if (Group!=null) sl.push(Group);
 			else sl = Groups.slice();
 		}
 		Likes.length = 0;
 		Cancel = false;
 		document.getElementById('likes_data').innerHTML = '<p>Идёт поиск...</p>';
 		CountLikes = 0;
-		if(document.getElementById('period').value>0) dt.setDate(dt.getDate()-document.getElementById('period').value);
-		else dt = new Date(2000, 0, 1);
-		GetLikesAll (sl,Math.trunc((+dt)/(86400*1000))*86400,(document.getElementById('target').value==2));
-		Select(null, 'likes_data','likes');
+		GetLikesAll (sl,dat,(document.getElementById('target').value==2));
+		Select (null, 'likes_data','likes');
 		btn.innerHTML = 'Стоп';
 		document.getElementById("ml").style.display = "block";
 	}
@@ -1594,7 +1603,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.2');
+  console.log('InitOk.v1.3.3');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
@@ -1628,7 +1637,7 @@ function Init ()
   </div>
 
   <button id="friends"  class="tablinks active" onclick="Select(event, 'friends_data','friends')">Друзья</button>
-  <button id="groups"   class="tablinks"        onclick="Select(event, 'groups_data','groups')  ">Группы</button>
+  <button id="groups"   class="tablinks"        onclick="Select(event, 'groups_data', 'groups')" >Группы</button>
 
   <div class="dropdown">
     <input type="checkbox" id="menu_toggle_2" class="dropbtn btn">
@@ -1647,12 +1656,13 @@ function Init ()
       <button id="save2" onclick="SaveOptions('likes')">Сохранить</button>
     </ul>
   </div>
-
-  <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data','likes')">Лайки</button>
-  <label>Искать в </label>
+  <button id="likes"    class="tablinks"        onclick="Select(event, 'likes_data' ,'likes')" >Лайки</button>
+  <!-- <button id="guests"   class="tablinks"        onclick="Select(event, 'guests_data','guests')">Гости</button> -->
+  <label>Искать </label>
   <select id="target" size="1" title="Искать лайки в группах или на стенках друзей друга">
-    <option selected value="1">группах</option>
-    <option          value="2">друзьях</option>
+    <option selected value="1">в группах</option>
+    <option          value="2">в друзьях</option>
+    <!-- <option          value="3">гостей</option> -->
   </select>
   <select id="period" size="1" title="Период поиска">
     <option selected value="1">За один день</option>
@@ -1666,7 +1676,7 @@ function Init ()
     <option value="0">За всё время</option>
   </select>  
   <button id="start"	onclick="Start(true)" title="Искать лайки в группах">Искать</button>
-  <button id="btn_test"	onclick="test()" title="Тест">Тест</button>
+  <!-- <button id="btn_test"	onclick="test()" title="Тест">Тест</button> -->
   <label  id="count" class="counter">0</label>
   <img id="ml" class="ml none" src="moving_lights.gif">
 </div>
@@ -1674,7 +1684,7 @@ function Init ()
 <div id="friends_data"  class="tabcontent"></div>
 <div id="groups_data"   class="tabcontent"><p>Выберете друга, во вкладке "Друзья" для просмотра его групп.</p></div>
 <div id="likes_data"    class="tabcontent"><p>Выберете друга, затем период поиска и нажмите "Искать", для поиска его лайков.</p></div>
-
+<!-- <div id="guests_data"   class="tabcontent"><p>Выберете друга, "искать гостей", затем период поиска и нажмите "Искать", для поиска его гостей.</p></div>-->
 </body>
 
 </html>
