@@ -921,7 +921,7 @@ async function AddGroups (ids)
     let response = await VKapi ('groups.getById', { group_ids:ids, fields:Group_fields });
     for (let i = 0; i < response.length; i++)
     {
-      let s = Groups.indexOf (SetGid(response).id);
+      let s = Groups.indexOf (SetGid(response[i]).id);
       // let s=-1; for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
       if (s == -1)
       {
@@ -1603,7 +1603,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.4');
+  console.log('InitOk.v1.3.5');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
