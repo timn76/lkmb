@@ -848,7 +848,7 @@ function ShowGroup (group)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function SetGid (g)
 {
-  g.gid = abs (uvl (g.id, g.gid));
+  g.gid = Math.abs (uvl (g.id, g.gid));
   g.id = - g.gid;
   return g;
 }
@@ -905,8 +905,8 @@ function GroupsIds (g)
   let s = "";
   if (g.length)
   {
-    for (let i=0; i<g.length-1; i++) s += (abs(g[i].id) + "," + ((i+1)%25==0?"\n":""));
-    s += abs(g[g.length-1].id);
+    for (let i=0; i<g.length-1; i++) s += (Math.abs(g[i].id) + "," + ((i+1)%25==0?"\n":""));
+    s += Math.abs(g[g.length-1].id);
   }
   return (s);
 }
@@ -928,7 +928,7 @@ async function AddGroups (ids)
         response[i].added  = true;
         Groups.push        ( response[i] );
         gd.appendChild     ( ShowGroups (response[i]) );
-        if (Data.sgGroups.indexOf (response[i].gid)<0) Data.sgGroups += ( (Data.sgGroups?",":"") + abs (response[i].gid) );
+        if (Data.sgGroups.indexOf (response[i].gid)<0) Data.sgGroups += ( (Data.sgGroups?",":"") + Math.abs (response[i].gid) );
       }
     }
     StorageSet ('gr'+User.id, Data.sgGroups);
@@ -1603,7 +1603,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.3');
+  console.log('InitOk.v1.3.4');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Owner = GetUser ();
