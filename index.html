@@ -1685,7 +1685,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.7');
+  console.log('InitOk.v1.3.8');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
@@ -1744,7 +1744,7 @@ function Init ()
   <select id="target" size="1" title="Искать лайки в группах или на стенках друзей друга">
     <option selected value="1">в группах</option>
     <option          value="2">в друзьях</option>
-    <!-- <option          value="3">гостей</option> -->
+    <option          value="3">гостей</option>
   </select>
   <select id="period" size="1" title="Период поиска">
     <option selected value="1">За один день</option>
