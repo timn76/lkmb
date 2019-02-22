@@ -1213,7 +1213,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + '     ls = ls + 1000; '
         + nl + '     e = e + 1; '
         + nl + '   } '
-        + nl + '   if (la.length>0) res.push ({type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id, "likes":la }); '
+        + nl + '   if (la.length>0) res.push ({obj:{type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id}, "likes":la }); '
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
@@ -1351,6 +1351,7 @@ async function GetLikesAll (sl,date,f=false)
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+var Guests = {};
 async function GetGuestsOne (offset)
 {
   Debug ("GetGuestsOne (" + offset + ")");
@@ -1383,17 +1384,17 @@ async function GetGuestsOne (offset)
     let res = response.res;
     for (let i=0; i<res.length; i++) if (res[i][gr.type].date >= gr.date)
     {
-      //let like = {"post":res[i].post,"group":group,"id":'wall'+res[i].post.from_id+'_'+res[i].post.id};
-      let like = res[i];
-      like["group"] = group;
-      likes.push (like);
-      //Likes.push (like);
+      let l = res[i];
+      for (let j=0; j<l.likes.length; j++)
+        for (let k=0,id=0; k<l.likes[j].length,id=l.likes[j][k]; k++)
+        {
+          if(Guests[id]) Guests[id].obj.push (obj); else Guests[id] = {"id":id,obj:[obj]}; 
+        }
     }
     //if (likes.length > 0) ShowLikes (likes);
     if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
     {
       Debug ("DEL: group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; group.offset: " + group.offset + "; response.count: " + response.count);  
-      let i=0;
       if (!gr.sl) return;
       while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
       gr.sync2 = true;
@@ -1664,7 +1665,6 @@ function CheckFilter (e)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function SetFilterAccordion ()
 {
-
   let c = document.getElementById("friends_data").children;
   for (let i=0; i<c.length; i++)
   {
@@ -1698,7 +1698,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.16');
+  console.log('InitOk.v1.3.17');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
