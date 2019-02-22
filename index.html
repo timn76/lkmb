@@ -1393,7 +1393,7 @@ async function GetGuestsOne (offset)
     {
       Debug ("DEL: group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; group.offset: " + group.offset + "; response.count: " + response.count);  
       let i=0;
-      if (gr.sl.length == 0) return;
+      if (!gr.sl) return;
       while (gr.sync2) { await Promise.all ([console.log ("gr.sync2"), ASleep (10)]); }
       gr.sync2 = true;
       gr.sl = null;
@@ -1493,23 +1493,31 @@ async function Start (state)
     if (document.getElementById('period').value>0) dt.setDate (dt.getDate()-document.getElementById('period').value);
     else dt = new Date (2000, 0, 1);
     let dat = Math.trunc((+dt)/(86400*1000))*86400;
-    if (document.getElementById('target').value==3) return GetGuests (User.id,dat); // гости
-    if (document.getElementById('target').value==2) // в друзьях
-    {
-      sl = await GetFriendsAll (User.id);
+    if (document.getElementById('target').value==3) // гости
+    {  
+      document.getElementById('guests_data').innerHTML = '<p>Идёт поиск...</p>';
+      GetGuests (User.id,dat);
+      Select (null, 'guests_data','guests');
     }
-    else  // в группах
+    else
     {
-      if (Groups.length==0) return; 
-      if (Group!=null) sl.push(Group);
-      else sl = Groups.slice();
+      if (document.getElementById('target').value==2) // в друзьях
+      {
+        sl = await GetFriendsAll (User.id);
+      }
+      else  // в группах
+      {
+        if (Groups.length==0) return; 
+        if (Group!=null) sl.push(Group);
+        else sl = Groups.slice();
+      }
+      Likes.length = 0;
+      document.getElementById('likes_data').innerHTML = '<p>Идёт поиск...</p>';
+      CountLikes = 0;
+      GetLikesAll (sl,dat,(document.getElementById('target').value==2));
+      Select (null, 'likes_data','likes');
     }
-    Likes.length = 0;
     Cancel = false;
-    document.getElementById('likes_data').innerHTML = '<p>Идёт поиск...</p>';
-    CountLikes = 0;
-    GetLikesAll (sl,dat,(document.getElementById('target').value==2));
-    Select (null, 'likes_data','likes');
     btn.innerHTML = 'Стоп';
     document.getElementById("ml").style.display = "block";
   }
@@ -1688,7 +1696,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.13');
+  console.log('InitOk.v1.3.15');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
