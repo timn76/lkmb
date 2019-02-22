@@ -1205,7 +1205,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + ' while (i<obj.length && e<25) '
         + nl + ' { '
         + nl + '   var la = []; '
-        + nl + '   while (ls<obj[i].likes.count && j<0 && e<25) '
+        + nl + '   while (ls<obj[i].likes.count && e<25) '
         + nl + '   { '
         + nl + '     var likes = API.likes.getList ({ type:"' + type + '", owner_id: obj[i].owner_id, item_id: obj[i].id, friends_only:0, count:1000, skip_own:0, offset:ls }); '
         + nl + (par.debug?'     all.push ({"i":i,"id":obj[i].id,"ls":ls,"' + type + '":obj[i],"likes":likes}); ':'')
@@ -1217,7 +1217,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
-        + nl + ' if (ls>obj[i-1].likes.count || j>=0) ls = 0; else i = i - 1; '
+        + nl + ' if (ls>obj[i-1].likes.count) ls = 0; else i = i - 1; '
         //+ nl + ((par.debug && !gr.fo)?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
         + nl + ' return { "id":' + id + ',"date":obj[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
   return Code;
@@ -1688,7 +1688,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.12');
+  console.log('InitOk.v1.3.13');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
