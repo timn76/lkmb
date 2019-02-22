@@ -1427,13 +1427,15 @@ async function GetGuests (id,dat)
   gr.c =  par.cnt;
   gr.offset = - gr.c;
   gr.date = dat;
-  console.log (gr.type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
+  gr.err_groups = [];
+  //start = new Date();
+  // console.log (gr.type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
   while (!Cancel && gr.sl)
   {
     await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1030)]);
     //document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
   }
-  console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+  //console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
@@ -1686,7 +1688,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.9');
+  console.log('InitOk.v1.3.10');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
