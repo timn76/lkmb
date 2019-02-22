@@ -1196,16 +1196,15 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + ' var p = API.wall.get ({ owner_id:'+ id + ', count:' + cnt + ', offset:' + offset + ' });   '
         + nl + ' var obj = p; '
         + nl + ' var c = p.count; '
-        + nl + ' var res={};  '
-        + nl + ' var all={};  '
+        + nl + ' var res=[];  '
+        + nl + ' var all=[];  '
         + nl + ' var i=1;   '
         + nl + ' var e=1; '
         + nl + ' var ls = ' + ls + '; '
         + nl + ' if (p.items.length>=0) { obj = p.items; i=0; } '
         + nl + ' while (i<obj.length && e<25) '
         + nl + ' { '
-        + nl + '   j = -1; '
-        + nl + '   la = {}; '
+        + nl + '   var la = []; '
         + nl + '   while (ls<obj[i].likes.count && j<0 && e<25) '
         + nl + '   { '
         + nl + '     var likes = API.likes.getList ({ type:"' + type + '", owner_id: obj[i].owner_id, item_id: obj[i].id, friends_only:0, count:1000, skip_own:0, offset:ls }); '
@@ -1220,7 +1219,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + ' }  '
         + nl + ' if (ls>obj[i-1].likes.count || j>=0) ls = 0; else i = i - 1; '
         //+ nl + ((par.debug && !gr.fo)?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
-        + nl + ' return { "id":' + id + ',"date":obj[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "j":j, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
+        + nl + ' return { "id":' + id + ',"date":obj[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
   return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1305,7 +1304,7 @@ async function GetLikesOne ()
   {
     gr.err_groups.push (group);
     console.log (e);
-    Debug (GetLikesCode (group.id,group.offset,group.c,group.ls));
+    Debug (GetGuestsCode (gr.type,group.id,group.offset,group.c,group.ls));
     console.log ("group.g: " + group.g + "; group.offset: " + group.offset + "; group.id: " + group.id + "; gr.sl[g].id: " + (gr.sl[group.g]==null?"undefined":gr.sl[group.g].id));
     console.log ('------------------------------------------------------------------------------');
   }
@@ -1689,7 +1688,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.11');
+  console.log('InitOk.v1.3.12');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
