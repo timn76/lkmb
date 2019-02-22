@@ -1360,15 +1360,16 @@ async function GetGuestsOne (offset)
   gr.sync1 = true;
   if (gr.err_groups.length > 0) 
   {
-    group = gr.err_groups[0];
+    group = gr.err_groups.pop ();
     Debug ("POP: group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
-    gr.err_groups.splice(0,1);
+    //gr.err_groups.splice(0,1);
   }
   else
   {
     if (!gr.sl) { gr.sync1 = false; return; }
-    gr.sl.ls = 0;
     group = Copy(gr.sl);
+    group.offset = offset;
+    group.ls = 0;
     Debug ("NEW: group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
   }
   gr.sync1 = false;
@@ -1426,13 +1427,13 @@ async function GetGuests (id,dat)
   gr.c =  par.cnt;
   gr.offset = - gr.c;
   gr.date = dat;
-  console.log (type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
+  console.log (gr.type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
   while (!Cancel && gr.sl)
   {
     await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1030)]);
-    document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
+    //document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
   }
-  console.log (type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+  console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
@@ -1685,7 +1686,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.8');
+  console.log('InitOk.v1.3.9');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
