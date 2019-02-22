@@ -1353,6 +1353,7 @@ async function GetLikesAll (sl,date,f=false)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsOne (offset)
 {
+  Debug ("GetGuestsOne (" + offset + ")");
   let group;
   let i;
   while (gr.sync1) { await Promise.all ([console.log ("gr.sync1"), ASleep (10)]); }
@@ -1421,6 +1422,7 @@ async function GetGuestsOne (offset)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuests (id,dat)
 {
+  Debug ("GetGuests (" + id + ", " + dat + ")");
   if(!id) return;
   gr.sl = User;
   gr.type = "post";
@@ -1696,7 +1698,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.15');
+  console.log('InitOk.v1.3.16');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
