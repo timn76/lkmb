@@ -13,34 +13,35 @@
 <!-- <script type="text/javascript" src="grlikes.js"></script> -->
 <style>
 body     { width: 760px;   color:#000; margin:0 auto; padding:0; direction:ltr; font-family:Tahoma,Verdana,Arial,Sans-Serif,Lucida Sans; font-size:12px; font-weight:normal}
-a       { color: #2a5885; text-decoration:none; cursor:pointer }
-a:hover   { text-decoration:underline }
 
-  div   {}
-  div.date
-  {
-    overflow:   hidden;
-    min-height: 100px;
-    max-height: 400px;
-    min-width:   130px;
-    /* border: solid 1px black; */
-  }
+*
+{
+  border: none;
+  outline:    none;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  overflow: none;
+  box-shadow: none;
+  text-decoration:none; 
+}
+
+  a         { color: #2a5885; cursor:pointer }
+  a:hover   { text-decoration:underline }
+
   img.post
   {
-    border: 0;
     max-width:   180px;
-    max-height: 250px;
+    max-height:  250px;
   }
   p
   {
-    font-size:   12px;
-    padding: 2px 0;
-    margin: 0 auto;
+    padding:     1px 0;
+    margin:      0 auto;
   }
   p.date
   {
     font-size:  10px;
-    width:     90px;
+    width:      85px;
   }
   p.green
   {
@@ -49,39 +50,23 @@ a:hover   { text-decoration:underline }
   p.name
   {
     font-size:   14px;
-    /* font-weight: bold; */
-    padding: 4px 12px;
-    /* color:  #475a70; */
   }
   button
   {
-    /* font-size:   12px; */
-      border:     none;
-      outline:    none;
-      cursor:     pointer;
-      padding:    4px 12px;
-      transition: 0.3s;
-     background-color: #dce7f2;
-      width:            inherit
+    cursor:     pointer;
+    padding:    4px 10px;
+    transition: 0.3s;
+    background-color: #dce7f2;
   }
   button:hover
   {
     color:  #fff;
-     background-color: rgb(80, 114, 153);
-  }
-  tr
-  {
-     padding: 0;
-     margin: 0;
-  }
-  tr:hover
-  {
-  }  
+    background-color: rgb(80, 114, 153);
+  } 
   td
   {
-     padding: 0;
-     border:  1px solid #eee;
-     text-align:  center;
+    border:      1px solid #eee;
+    text-align:  center;
   }
   td.text
   {
@@ -89,13 +74,19 @@ a:hover   { text-decoration:underline }
   }
   td.counter
   {
-    min-width: 70px; 
+    min-width: 60px;
     vertical-align: top;
+    text-align:  center;
   }
-  td button
+  td.counter header
   {
-    min-width: 70px; 
-    vertical-align: top;
+    height: 17px;
+    padding: 4px 0;
+    background-color: #dce7f2;
+  }
+  td.counter footer
+  {
+    padding: 4px 0;
   }
   .sel_item
   {
@@ -108,211 +99,101 @@ a:hover   { text-decoration:underline }
   {
     border-bottom: 1px solid #597da3;
   }
-
-  section
-  {
-  }
-  header
-  {
-    height: 16px;
-    margin: 0 0;
-    padding: 4px 12px;
-    font-size:   12px;
-    text-align:  center;
-    background-color: #dce7f2;
-  }
-  footer
-  {
-    margin: 4px 0;
-     padding: 2px 0;
-     font-size:   12px;
-     text-align:  center;
-  }
   section.text 
   {
     max-height: 250px;
     overflow:   auto;
   }
 
-  p.text {}
-
-/*    
-div.tab
-{
-   margin:     0 0;
-   font-size:  12px;
-    overflow:   hidden;
-    outline:    none;
-    box-shadow: none;
+  div.tab
+  {
+    overflow:         hidden;
     background-color: #dce7f2;
     border-top:       1px solid #597da3;
     border-bottom:    1px solid #597da3;
-}
-
-div.tab button
-{
-   border: none;
-   outline: none;
+  }
+  div.tab button
+  {
     background-color: inherit;
     float: left; 
-    cursor: pointer;
-    padding: 4px 12px;
-    transition: 0.3s;
-}
-div.tab button:hover
-{
+  }
+  div.tab button:hover
+  {
     color:  #fff;
-     background-color: rgb(80, 114, 153);
-}
-div.tab button.active
-{
+    background-color: rgb(80, 114, 153);
+  }
+  div.tab button.active
+  {
     background-color: #597da3;
-}
-
-div.tab label
-{
+  }
+  div.tab label
+  {
     background-color: inherit;
-    float: right;
-    border: none;
-    outline: none;
-    padding: 4px 12px;
-}
-div.tab input
-{
-   margin: 0 4px;
     float: left;
-    border: none;
-    outline: none;
-    cursor: text;
-    padding: 4px 4px;
-}
-div.tab select
-{
-  margin:   0 4px;
-   float:   left;
-   border:   none;
-   outline:  none;
-   cursor:  text;
-  padding:  2px 4px;
-}
-.tabcontent
-{
-    display:     none;
-    padding:     4px 4px;
-    border:     1px solid #ccc;
-    border-top:  none;
-   margin:      0 auto;
-   overflow:    auto;
-   max-height:  520px;    
-}
-*/
-
-div.tab
-{
-   margin:     0 0;
-   font-size:  12px;
-    overflow:   hidden;
-    outline:    none;
-    box-shadow: none;
-    background-color: #dce7f2;
-    border-top:       1px solid #597da3;
-    border-bottom:    1px solid #597da3;
-}
-
-div.tab button
-{
-   border: none;
-   outline: none;
-    background-color: inherit;
-    float: left; 
-    cursor: pointer;
-    padding: 4px 12px;
-    transition: 0.3s;
-}
-div.tab button:hover
-{
-  color:  #fff;
-     background-color: rgb(80, 114, 153);
-}
-div.tab button.active
-{
-    background-color: #597da3;
-}
-
-div.tab label
-{
-  font-size:  12px;
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  padding: 4px 6px;
-  margin-left: 15px;
-}
-
-div.tab label.counter
-{
+    padding: 4px 6px;
+    margin-left: 12px;
+  }
+  div.tab label.counter
+  {
     float: right;
-    border: none;
-    outline: none;
-    padding: 4px 12px;
-}
-
-
-
-div.tab select
-{
-  margin:   0 4px;
-  float:   left;
-  border:   none;
-  outline:  none;
-  cursor:  text;
-  padding:  3px 4px;
-  background-color: #f9f9f9;
-  min-width: 80px;
-}
-
-.tabcontent
-{
+    padding: 4px 6px;
+  }
+  div.tab select
+  {
+    margin:   0 4px;
+    float:   left;
+    cursor:  pointer;
+    padding:  3px 4px;
+    background-color: #f9f9f9;
+    min-width: 80px;
+  }
+  .tabcontent
+  {
     display:     none;
     padding:     4px 4px;
-    border:     1px solid #ccc;
+    border:      1px solid #ccc;
     border-top:  none;
-   margin:      0 auto;
-   overflow:    auto;
-   max-height:  520px;    
-}    
-
-
+    margin:      0 auto;
+    overflow:    auto;
+    max-height:  520px;    
+  }    
+  img.ml
+  {
+    margin: 7px 8px;
+    border: none;
+    width:   20px;
+    height: 10px;
+    float: right;
+    display: none; 
+  }
+  .hide
+  {
+    display: none; 
+  }
 /* ----- dropdown menu -------------------------------------------------------*/
 .dropdown 
 {
   float: left;
   overflow: hidden;
 }
-
-    
 .dropdown .dropbtn 
 {
   font-size: 10px;  
-  border: none;
-  outline: none;
   color: black;
   padding: 6px 1px;
   background-color: inherit;
   font-family: inherit;
   float: left;
-  margin: 0;
+  margin: 0 0;
 }
-
 .dropdown .dropbtn:hover
 {
   color:  #fff;
-     background-color: rgb(80, 114, 153);
+  background-color: rgb(80, 114, 153);
 }
 
-.dropdown-content {
-  /* display: none; */
+.dropdown-content 
+{
   position: absolute;
   background-color: #f9f9f9;
   min-width: 80px;
@@ -320,12 +201,15 @@ div.tab select
   z-index: 1;
   margin-top: 26px;
   padding: 0 0;
-  /*
-  border-left:      1px solid #597da3;
-  border-bottom:    1px solid #597da3;
-  border-right:     1px solid #597da3;
-  */
   border: none;
+}
+
+ul.dropdown-content
+{
+  max-height:  0;
+  overflow:    hidden;
+  transition:  0.2s;
+  list-style-type:none;
 }
 
 .dropdown-content *
@@ -369,7 +253,7 @@ div.tab .dropdown-content button
 
 div.tab .dropdown-content button:active
 {
-color:  black;
+  color:  black;
 }
 
 .dropdown input[type=checkbox].dropbtn
@@ -377,53 +261,31 @@ color:  black;
   display: none;
 }
 
-ul.dropdown-content
-{
-  max-height:  0;
-  overflow:    hidden;
-  transition:  0.2s;
-  list-style-type:none;
-}
-
 .dropdown input[type=checkbox].dropbtn:checked ~ label.dropbtn
 {
   color: black;
+  background-color: #597da3;
+}
+.dropdown:hover > label.dropbtn
+{
   background-color: #597da3;
 }
 
 .dropdown input[type=checkbox].btn:checked ~ ul.menu, .dropdown:hover > .dropbtn  ~ ul.menu
 {
   max-height: 300px;
-  /* display: block; */
-  border-left:      1px solid #597da3;
-  border-bottom:    1px solid #597da3;
-  border-right:     1px solid #597da3;
+  border:     1px solid #597da3;
+  border-top: none;
 }
-
 
 #name-filter
 {
-  margin 0;
-  ouline: none;
+  margin 0 0;
   float: none;
-  margin-right: 0;
+  width: 100%;
 }
 
 #name-filter:focus { outline: 2px solid #dce7f2; }
-    
-  img.ml
-  {
-    margin: 7px 8px;
-    border: 0;
-    width:   20px;
-    height: 10px;
-    float: right;
-    display: none; 
-  }
-  .hide
-  {
-    display: none; 
-  }
 
 /* -=== delete button ======================- */
   .delete 
@@ -502,11 +364,13 @@ ul.dropdown-content
   transition: max-height .35s;
 }
 /* :checked */
-.acc_tab input:checked ~ .acc_tab-content {
+.acc_tab input:checked ~ .acc_tab-content 
+{
   max-height: 0;
 }
 /* Icon */
-.acc_tab label::after {
+.acc_tab label::after
+{
   position: absolute;
   /* right: 0; */
   top: 0;
@@ -675,6 +539,7 @@ function CreateFriendElement (friend)
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+friend.domain, child:  Create('img',{src:friend.photo_50, title:friend.first_name+' '+friend.last_name })})}));
   tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
   tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
+  //tr.appendChild(Create('td', {width: 120, html:ls2html(friend.last_seen,friend.online)}));
   article.innerHTML += ( '<p onclick="DeleteFriend(this,event);" class="delete">&#10008;</p>' );  
   article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.id); GetUser(event.currentTarget.id); }, false);
 
@@ -806,15 +671,16 @@ function ShowUser (user)
   let article = document.createElement('article');
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
-  tr.appendChild(Create('td', {width:110,  html:dm2html(user.domain) + id2html(user.id,user.domain) + ls2html(user.last_seen,user.online)}));
+  tr.appendChild(Create('td', {"max-width":90,  html:dm2html(user.domain) + id2html(user.id,user.domain) + ls2html(user.last_seen,user.online)}));
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+user.domain, child:  Create('img',{src:user.photo_50, title:user.first_name+' '+user.last_name })})}));
   tr.appendChild(Create('td', {width:140, html:'<p class="name">'+user.first_name + '<br/>' + user.last_name+'</p>'}));
-  tr.appendChild(Create('td', {width:70,  html:'<p>'+uvl(user.bdate,"n/a")+'</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<button onclick="ShowFriends('+user.id+')">Друзей</button><p>' + user.counters.friends + '</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<button onclick="GetGroups('+user.id+',1)">Групп</button><p>'  + ((typeof user.groups)!='undefined'?user.counters.groups:user.counters.pages) + '</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header>Аудио</header><p>'  + uvl(user.counters.audios,'-') + '</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><p>'  + uvl(user.counters.videos,'-') + '</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header>Фото</header><p>'   + uvl(user.counters.photos,'-') + '</p>'}));
+  tr.appendChild(Create('td', {width:60,  html:'<p>'+uvl(user.bdate,"n/a")+'</p>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<button onclick="ShowFriends('+user.id+')">Друзей</button><footer>' + user.counters.friends + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<button onclick="GetGroups('+user.id+',1)">Групп</button><footer>'  + ((typeof user.groups)!='undefined'?user.counters.groups:user.counters.pages) + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Аудио</header><footer>'  + uvl(user.counters.audios,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><footer>'  + uvl(user.counters.videos,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Фото</header><footer>'   + uvl(user.counters.photos,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Постов</header><footer>' + uvl(user.post_count,'-') + '</footer>'}));
 
   return (article);
 }
@@ -838,11 +704,11 @@ function ShowGroup (group)
   tr.appendChild(Create('td', {width:110,  html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+group.screen_name, child:  Create('img',{src:group.photo_50, title:group.name})})}));
   tr.appendChild(Create('td', {width:200, html:'<p class="name">'+group.name+'</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Членов</header><footer>' + group.members_count + '</footer>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Постов</header><footer id="posts">' + uvl(group.post_count,'-') + '</footer>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Аудио</header><footer>'  + uvl(group.counters.audios,'-') + '</footer>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Видео</header><footer>'  + uvl(group.counters.videos,'-') + '</footer>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<header class="counter">Фото</header><footer>'   + uvl(group.counters.photos,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Членов</header><footer>' + group.members_count + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Постов</header><footer id="posts">' + uvl(group.post_count,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Аудио</header><footer>'  + uvl(group.counters.audios,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><footer>'  + uvl(group.counters.videos,'-') + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Фото</header><footer>'   + uvl(group.counters.photos,'-') + '</footer>'}));
   return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1439,6 +1305,7 @@ async function GetGuests (id,dat)
     //document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
   }
   //console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+  Start (false);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
@@ -1449,6 +1316,7 @@ async function GetUser (id)
     User = response[0];
     User.id = uvl (User.id, User.uid);
     User.uid = User.id;
+    User.post_count = await GetPostsCount (User.id);
     if (id==undefined)
     {
       if (User.id==156808317) par.me = true;
@@ -1698,7 +1566,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.17');
+  console.log('InitOk.v1.3.18');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
