@@ -996,7 +996,7 @@ function sleep (ms,start)
   for (let i = 0; i < 1e7; i++) if ((new Date().getTime() - start) > ms) break;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function VKapi (method, params, timeout=3000)
+function VKapiP (method, params, timeout=3000)
 {
 let ok = false;
   //console.log ('VKapi' + '.' + method);
@@ -1016,12 +1016,30 @@ let ok = false;
     }
   );
 }
-/*
-async function VKapiS (method, params)
+
+async function VKapi (method, params, timeout)
 {
-  return await VKapi (method, params);
+  let r, i=3;
+  async function f ()
+  {
+    try 
+    {
+      r = await VKapiP (method, params, timeout); 
+    } 
+    catch (e)
+    {
+      if (e.error_code==6) r=null; else r=e;  // error_code: 6, error_msg: "Too many requests per second"
+    }
+  }
+  while (!r && i)
+  {
+    await Promise.all ([f (), ASleep (350)]);
+    i--;
+  }
+  if (r.error_code) throw (r);
+  retur r;
 }
-*/
+
 //------------------------------------------------------------------------------------------------------------------------------------------
 function PSleep (ms) { return new Promise (resolve => setTimeout(resolve, ms)); }
 async function ASleep (ms,start) { await PSleep(ms); }
@@ -1079,7 +1097,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + '     ls = ls + 1000; '
         + nl + '     e = e + 1; '
         + nl + '   } '
-        + nl + '   if (la.length>0) res.push ({obj:{type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id}, "likes":la }); '
+        + nl + '   if (la.length>0) res.push ({type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id, "likes":la }); '
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
@@ -1128,7 +1146,7 @@ async function GetLikesOne ()
   try 
   {
     //console.log (GetLikesCode (group.id,group.offset,gr.f,1,User.id));
-    const response = await VKapi ('execute', {"code": GetLikesCode (group.id,group.offset,group.c,group.ls)});
+    const response = await VKapiP ('execute', {"code": GetLikesCode (group.id,group.offset,group.c,group.ls)});
     Debug (response);
     let likes = [];
     let res = response.res;
@@ -1244,7 +1262,7 @@ async function GetGuestsOne (offset)
   try 
   {
     Debug (GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls));
-    const response = await VKapi ('execute', {"code": GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls)});
+    const response = await VKapiP ('execute', {"code": GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls)});
     Debug (response);
     let likes = [];
     let res = response.res;
@@ -1566,7 +1584,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.18');
+  console.log('InitOk.v1.3.19');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
