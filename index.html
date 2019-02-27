@@ -671,7 +671,7 @@ function ShowUser (user)
   let article = document.createElement('article');
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
 
-  tr.appendChild(Create('td', {"max-width":90,  html:dm2html(user.domain) + id2html(user.id,user.domain) + ls2html(user.last_seen,user.online)}));
+  tr.appendChild(Create('td', {width:100,  html:dm2html(user.domain) + id2html(user.id,user.domain) + ls2html(user.last_seen,user.online)}));
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+user.domain, child:  Create('img',{src:user.photo_50, title:user.first_name+' '+user.last_name })})}));
   tr.appendChild(Create('td', {width:140, html:'<p class="name">'+user.first_name + '<br/>' + user.last_name+'</p>'}));
   tr.appendChild(Create('td', {width:60,  html:'<p>'+uvl(user.bdate,"n/a")+'</p>'}));
@@ -1584,7 +1584,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.19');
+  console.log('InitOk.v1.3.20');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
