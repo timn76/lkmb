@@ -1083,7 +1083,9 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
 {
   let nl = '\n';
   let Code =  ''
-        + ' var p = API.wall.get ({ owner_id:'+ id + ', count:' + cnt + ', offset:' + offset + ' });   '
+        + (gr.type=="post" ?' var p = API.wall.get      ({ owner_id:' + id + ',             count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + (gr.type=="photo"?' var p = API.photos.getAll ({ owner_id:' + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + (gr.type=="video"?' var p = API.video.get     ({ owner_id:' + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
         + nl + ' var obj = p; '
         + nl + ' var c = p.count; '
         + nl + ' var res=[];  '
@@ -1633,7 +1635,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.24');
+  console.log('InitOk.v1.3.25');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
