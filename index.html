@@ -670,7 +670,7 @@ async function ShowFriends (id,flush=false)
   document.getElementById('count').innerHTML = '0';
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function ShowUser (user) 
+function CreateUserElement (user) 
 {
   let article = document.createElement('article');
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
@@ -1376,6 +1376,19 @@ async function GetGuestsAll (dat)
   Start (false);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+async function ShowUser (id) 
+{
+  if (User.id != id) User = await GetUser (id);
+  User.post_count = await GetPostsCount (User.id);
+  if (id==undefined)
+  {
+    if (User.id==156808317) par.me = true;
+    Owner = Copy (User);
+    SetRunCount  (Owner.id);
+  }
+  document.getElementById('user_data').innerHTML = CreateUserElement(User).outerHTML;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
 {
   Debug ("GetUser (" + id + ")");
@@ -1385,16 +1398,9 @@ async function GetUser (id)
     Debug ("GetUser - response");
     Debug (response);
     User = response[0];
-    User.id = uvl (User.id, User.uid);
-    User.uid = User.id;
-    User.post_count = await GetPostsCount (User.id);
-    if (id==undefined)
-    {
-      if (User.id==156808317) par.me = true;
-      SetRunCount (Owner.id);
-    }
-    document.getElementById('user_data').innerHTML = ShowUser(User).outerHTML;
-    return User;
+    response[0] = uvl (response[0].id, response[0].uid);
+    response[0].uid = response[0].id;
+    return response[0];
   }
   catch (e) { console.log (e); }
 }
@@ -1636,10 +1642,10 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.27');
+  console.log('InitOk.v1.3.28');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
-  User = Owner = GetUser ();
+  ShowUser ();
   ShowFriends ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
