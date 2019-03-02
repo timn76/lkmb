@@ -415,8 +415,11 @@ var CountLikes = 0;
 var Friends = [];
 var Groups = [];
 var Likes = [];
+var Guests = {};
 var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:24 }
-var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}, likes: {load:false, "groupby":"ByDate"}, include: {post:true, photo: false, video:false, comments:false} };
+var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
+              , likes:   {load:false, "groupby":"ByDate"}
+              , include: {post:true, photo: false, video:false, comments:false} };
 var Data = {sgGroups:"", sgFriends:"", Friends: {Count:0, Step:500}};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
@@ -1097,7 +1100,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + '     ls = ls + 1000; '
         + nl + '     e = e + 1; '
         + nl + '   } '
-        + nl + '   if (la.length>0) res.push ({type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id, "likes":la }); '
+        + nl + '   if (la.length>0) res.push ({obj:{type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id}, "likes":la }); '
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
@@ -1219,6 +1222,8 @@ async function GetLikesAll (sl,date,f=false)
   Debug ("GetLikesAll ()");
   let start;
   let finish;
+  Likes.length = 0;
+  CountLikes = 0;
   if (User.id==156808317 && !par.me) { sleep(10000); return; }
   gr.f    = f;
   gr.date = date;
@@ -1230,12 +1235,38 @@ async function GetLikesAll (sl,date,f=false)
   if (Options.include.post)  await GetLikes ("post",sl);
   if (Options.include.photo) await GetLikes ("photo",sl);
   if (Options.include.video) await GetLikes ("video",sl);
+  document.getElementById('count').innerHTML = CountLikes;
   Start (false);
   ShowLikesAll ();
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-var Guests = {};
+function CreateGuestElement (i,guest)
+{
+  let friend = guest.user;
+  let article = Create('article',{id:friend.id, class:'guest sel_item'});
+  let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
+  tr.appendChild(Create('td', {width:  50, html:'<p><strong>'+i+'</strong></p>'}));
+  tr.appendChild(Create('td', {width:  70, html:'<p>'+guest.obj.length+'</p>'}));
+  tr.appendChild(Create('td', {width: 140, html:dm2html(friend.domain) + id2html(friend.id,friend.domain) + ls2html(friend.last_seen,friend.online)}));
+  tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+friend.domain, child:  Create('img',{src:friend.photo_50, title:friend.first_name+' '+friend.last_name })})}));
+  tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
+  tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
+  article.addEventListener ("click", function(event) {  }, false);
+
+  article.style.display = (CheckFilter(article)? "" : "none");
+
+  return (article);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function ShowGuests ()
+{
+  let gd = document.getElementById('guests_data');
+  Guests.sort( function(a, b) {return (b.obj.length-a.obj.length);} );
+  gd.innerHTML='';  
+  for (let i = 0; i < Guests.length; i++) gd.appendChild ( CreateGuestElement (i+1,Guests[i]) ); 
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsOne (offset)
 {
   Debug ("GetGuestsOne (" + offset + ")");
@@ -1266,16 +1297,17 @@ async function GetGuestsOne (offset)
     Debug (response);
     let likes = [];
     let res = response.res;
-    for (let i=0; i<res.length; i++) if (res[i][gr.type].date >= gr.date)
+    for (let i=0; i<res.length; i++) if (res[i].obj.[gr.type].date >= gr.date)
     {
       let l = res[i];
       for (let j=0; j<l.likes.length; j++)
         for (let k=0,id=0; k<l.likes[j].length,id=l.likes[j][k]; k++)
         {
-          if(Guests[id]) Guests[id].obj.push (obj); else Guests[id] = {"id":id,obj:[obj]}; 
+          if(Guests[id]) Guests[id].obj.push (res[i].obj); else Guests[id] = {"id":id,obj:[res[i].obj]};
+          if(!Guests[id].user) Guests[id].user = await GetUser (id);
         }
     }
-    //if (likes.length > 0) ShowLikes (likes);
+    if (Guests.length > 0) ShowGuests (Guests);
     if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
     {
       Debug ("DEL: group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; group.offset: " + group.offset + "; response.count: " + response.count);  
@@ -1400,9 +1432,7 @@ async function Start (state)
         if (Group!=null) sl.push(Group);
         else sl = Groups.slice();
       }
-      Likes.length = 0;
       document.getElementById('likes_data').innerHTML = '<p>Идёт поиск...</p>';
-      CountLikes = 0;
       GetLikesAll (sl,dat,(document.getElementById('target').value==2));
       Select (null, 'likes_data','likes');
     }
