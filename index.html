@@ -416,7 +416,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:false, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:true, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -426,15 +426,17 @@ if (!Date.prototype.toStr)
 {
   (function()
   {
-    function pad(number)
+    function pad(number, l=2)
     {
       if (number < 10) return '0' + number;
+      if (l<=number.length()) return number;
+      number = "000000000000000".substr (-(l-number.length())) + number;
       return number;
     }
     Date.prototype.toStr = function(sec=false)
     {
       if(isNaN(this)) return 'n/a';
-      return pad(this.getDate()) + '.' + pad(this.getMonth() + 1) + '.' + this.getFullYear() + ' ' + pad(this.getHours()) + ':' + pad(this.getMinutes()) + (sec?(':' + pad(this.getSeconds()) + '.' + this.getMilliseconds()):'');
+      return pad(this.getDate()) + '.' + pad(this.getMonth() + 1) + '.' + this.getFullYear() + ' ' + pad(this.getHours()) + ':' + pad(this.getMinutes()) + (sec?(':' + pad(this.getSeconds()) + '.' + pad(this.getMilliseconds(),3)):'');
     };
   }());
 }
@@ -1635,7 +1637,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.25');
+  console.log('InitOk.v1.3.26');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
