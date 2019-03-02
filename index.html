@@ -407,7 +407,7 @@ div.tab .dropdown-content button:active
 //------------------------------------------------------------------------------------------------------------------------------------------
 'use strict';
 //------------------------------------------------------------------------------------------------------------------------------------------
-var Owner = {id:""};
+var Owner;
 var User;
 var Group;
 var Cancel = false;
@@ -1378,7 +1378,7 @@ async function GetGuestsAll (dat)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function ShowUser (id) 
 {
-  if (User.id != id) User = await GetUser (id);
+  if (!User || User.id != id) User = await GetUser (id);
   User.post_count = await GetPostsCount (User.id);
   if (id==undefined)
   {
@@ -1397,9 +1397,7 @@ async function GetUser (id)
     let response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
     Debug ("GetUser - response");
     Debug (response);
-    User = response[0];
-    response[0] = uvl (response[0].id, response[0].uid);
-    response[0].uid = response[0].id;
+    response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
     return response[0];
   }
   catch (e) { console.log (e); }
@@ -1642,7 +1640,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.28');
+  console.log('InitOk.v1.3.29');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
