@@ -1364,11 +1364,12 @@ async function GetGuestsAll (dat)
   let finish;
   if(!User.id) return;
   CountLikes = 0;
-  console.log (gr.type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
+  console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
   await GetGuests ("post",  dat);
   await GetGuests ("photo", dat);
   await GetGuests ("video", dat);
-  console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+  console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+  document.getElementById('count').innerHTML = CountLikes;
   Start (false);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1463,7 +1464,8 @@ async function Start (state)
     await ASleep (500);
     btn.innerHTML = 'Искать';
     document.getElementById("ml").style.display = "none";
-    if(Likes.length==0) document.getElementById('likes_data').innerHTML = '<p>Ничего не найдено.</p>';
+    if(Likes.length==0)  document.getElementById('likes_data').innerHTML = '<p>Ничего не найдено.</p>';
+    if(Guests.length==0) document.getElementById('guests_data').innerHTML = '<p>Ничего не найдено.</p>';
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1631,7 +1633,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.23');
+  console.log('InitOk.v1.3.24');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
