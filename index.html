@@ -416,7 +416,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:true, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:true, trace:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -472,6 +472,11 @@ function uvl(v,d)
 function Debug (msg)
 {
   if (par.debug) console.log (msg);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function Debug (msg)
+{
+  if (par.trace) console.log (msg);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Create (type,attr) 
@@ -1154,7 +1159,7 @@ async function GetLikesOne ()
   gr.sync1 = false;
   try 
   {
-    //console.log (GetLikesCode (group.id,group.offset,gr.f,1,User.id));
+    Trace (GetLikesCode (group.id,group.offset,gr.f,1,User.id));
     const response = await VKapiP ('execute', {"code": GetLikesCode (group.id,group.offset,group.c,group.ls)});
     Debug (response);
     let likes = [];
@@ -1168,7 +1173,7 @@ async function GetLikesOne ()
       Likes.push (like);
     }
     if (likes.length > 0) ShowLikes (likes);
-    if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
+    if ( response.date == null || response.date < gr.date || group.offset > response.count )  
     {
       Debug ("DEL: groups.g: " + group.g + "; group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; groups.offset: " + group.offset + "; response.count: " + response.count);  
       let i=0;
@@ -1183,7 +1188,7 @@ async function GetLikesOne ()
       gr.sync2 = false;
       return;
     }
-    if (response.i < group.c)
+    if (response.i < group.c && response.count > group.c)
     {
       group.offset += response.i;
       group.c -= response.i;
@@ -1267,6 +1272,7 @@ function CreateGuestElement (i,guest)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGuests ()
 {
+  Debug ("ShowGuests (" + Guests.length + ")");
   let gd = document.getElementById('guests_data');
   Guests.sort( function(a, b) {return (b.obj.length-a.obj.length);} );
   gd.innerHTML='';  
@@ -1284,12 +1290,11 @@ async function GetGuestsOne (offset)
   {
     group = gr.err_groups.pop ();
     Debug ("POP: group.offset: " + group.offset + "; group.id: " + group.id + "; group.c: " + group.c + "; group.ls: " + group.ls);
-    //gr.err_groups.splice(0,1);
   }
   else
   {
     if (!gr.sl) { gr.sync1 = false; return; }
-    group = Copy(gr.sl);
+    group = Copy (gr.sl);
     group.offset = offset;
     group.ls = 0;
     group.c = gr.c;
@@ -1298,7 +1303,7 @@ async function GetGuestsOne (offset)
   gr.sync1 = false;
   try 
   {
-    Debug (GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls));
+    Trace (GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls));
     const response = await VKapiP ('execute', {"code": GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls)});
     Debug (response);
     let likes = [];
@@ -1309,13 +1314,16 @@ async function GetGuestsOne (offset)
       for (let j=0; j<l.likes.length; j++)
         for (let k=0,id=0; k<l.likes[j].length,id=l.likes[j][k]; k++)
         {
-          if(Guests[id]) Guests[id].obj.push (res[i].obj); else Guests[id] = {"id":id,obj:[res[i].obj]};
-          if(!Guests[id].user) Guests[id].user = await GetUser (id);
+          Debug (id);
+          Debug (Guests[id]);
+          if (Guests[id]) Guests[id].obj.push (res[i].obj); else Guests[id] = {"id":id,obj:[res[i].obj]};
+          if (!Guests[id].user) Guests[id].user = await GetUser (id);
           CountLikes ++;
+          Debug (Guests);
         }
     }
-    if (Guests.length > 0) ShowGuests (Guests);
-    if ( response.date == null || response.date < gr.date || group.offset > response.count + 100 )  
+    if (Guests.length > 0) ShowGuests ();
+    if ( response.date == null || response.date < gr.date || group.offset > response.count )  
     {
       Debug ("DEL: group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; group.offset: " + group.offset + "; response.count: " + response.count);  
       if (!gr.sl) return;
@@ -1325,7 +1333,7 @@ async function GetGuestsOne (offset)
       gr.sync2 = false;
       return;
     }
-    if (response.i < group.c)
+    if (response.i < group.c && response.count > group.c)
     {
       group.offset += response.i;
       group.c -= response.i;
@@ -1358,6 +1366,7 @@ async function GetGuests (type,dat)
     await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1030)]);
     document.getElementById('count').innerHTML = type + ":" + gr.offset + ":" + CountLikes;
   }
+  ShowGuests ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsAll (dat)
@@ -1529,8 +1538,11 @@ function KeyPress (e)
   } 
   if (e.charCode==100 && e.ctrlKey && e.altKey) // d
   {
-    par.debug = !par.debug;
+    if (!par.debug) par.debug = true;
+    if (!par.trace) par.trace = true;
+    else par.debug = par.trace = false;
     console.log ('par.debug=' + par.debug);
+    console.log ('par.trace=' + par.trace);
   }
   if (e.charCode==99 && e.ctrlKey && e.altKey) // с
   {
@@ -1640,7 +1652,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.30');
+  console.log('InitOk.v1.3.31');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
