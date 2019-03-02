@@ -430,7 +430,7 @@ if (!Date.prototype.toStr)
     {
       if (number < 10) return '0' + number;
       if (l<=number.length()) return number;
-      number = "000000000000000".substr (-(l-number.length())) + number;
+      number = "000000000000000".substr (-(l-number.toString().length())) + number;
       return number;
     }
     Date.prototype.toStr = function(sec=false)
@@ -1637,7 +1637,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.26');
+  console.log('InitOk.v1.3.27');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
