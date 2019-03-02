@@ -690,9 +690,12 @@ function ShowUser (user)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetPostsCount (id)
 {
+  Debug ("GetPostsCount (" + id + ")");
   try
   {
     const response = await VKapi ('wall.get', {owner_id:id, count:1});
+    Debug ("GetPostsCount - response");
+    Debug (response);
     return (response.count);
   } 
   catch (e) { console.log (e); }
@@ -1360,9 +1363,12 @@ async function GetGuests (id,dat)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetUser (id) 
 {
+  Debug ("GetUser (" + id + ")");
   try 
   {
-    const response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
+    let response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
+    Debug ("GetUser - response");
+    Debug (response);
     User = response[0];
     User.id = uvl (User.id, User.uid);
     User.uid = User.id;
@@ -1614,7 +1620,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.21');
+  console.log('InitOk.v1.3.22');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
