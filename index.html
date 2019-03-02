@@ -1308,6 +1308,7 @@ async function GetGuestsOne (offset)
         {
           if(Guests[id]) Guests[id].obj.push (res[i].obj); else Guests[id] = {"id":id,obj:[res[i].obj]};
           if(!Guests[id].user) Guests[id].user = await GetUser (id);
+          CountLikes ++;
         }
     }
     if (Guests.length > 0) ShowGuests (Guests);
@@ -1340,24 +1341,34 @@ async function GetGuestsOne (offset)
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-async function GetGuests (id,dat)
+async function GetGuests (type,dat)
 {
   Debug ("GetGuests (" + id + ", " + dat + ")");
-  if(!id) return;
   gr.sl = User;
-  gr.type = "post";
+  gr.type = type;
   gr.c =  par.cnt;
   gr.offset = - gr.c;
   gr.date = dat;
   gr.err_groups = [];
-  //start = new Date();
-  // console.log (gr.type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
   while (!Cancel && gr.sl)
   {
     await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1030)]);
-    //document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
+    document.getElementById('count').innerHTML = type + ":" + gr.offset + ":" + CountLikes;
   }
-  //console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+async function GetGuestsAll (dat)
+{
+  Debug ("GetGuestsAll (" + User.id + ", " + dat + ")");
+  let start;
+  let finish;
+  if(!User.id) return;
+  CountLikes = 0;
+  console.log (gr.type + ": " + (start = new Date()).toStr(true) + ", c=" + gr.c);
+  await GetGuests ("post",  dat);
+  await GetGuests ("photo", dat);
+  await GetGuests ("video", dat);
+  console.log (gr.type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
   Start (false);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
