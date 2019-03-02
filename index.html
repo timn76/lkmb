@@ -429,9 +429,8 @@ if (!Date.prototype.toStr)
     function pad(number, l=2)
     {
       if (number < 10) return '0' + number;
-      if (l<=number.length()) return number;
-      number = "000000000000000".substr (-(l-number.toString().length())) + number;
-      return number;
+      if (l<=number.toString().length()) return number;
+      return "000000000000000".substr (-(l-number.toString().length())) + number;
     }
     Date.prototype.toStr = function(sec=false)
     {
