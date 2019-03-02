@@ -1297,7 +1297,7 @@ async function GetGuestsOne (offset)
     Debug (response);
     let likes = [];
     let res = response.res;
-    for (let i=0; i<res.length; i++) if (res[i].obj.[gr.type].date >= gr.date)
+    for (let i=0; i<res.length; i++) if (res[i].obj[gr.type].date >= gr.date)
     {
       let l = res[i];
       for (let j=0; j<l.likes.length; j++)
@@ -1614,7 +1614,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.20');
+  console.log('InitOk.v1.3.21');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
