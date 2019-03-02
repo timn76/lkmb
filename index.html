@@ -1343,7 +1343,7 @@ async function GetGuestsOne (offset)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuests (type,dat)
 {
-  Debug ("GetGuests (" + id + ", " + dat + ")");
+  Debug ("GetGuests (" + type + ", " + dat + ")");
   gr.sl = User;
   gr.type = type;
   gr.c =  par.cnt;
@@ -1434,7 +1434,7 @@ async function Start (state)
     if (document.getElementById('target').value==3) // гости
     {  
       document.getElementById('guests_data').innerHTML = '<p>Идёт поиск...</p>';
-      GetGuests (User.id,dat);
+      GetGuestsAll (dat);
       Select (null, 'guests_data','guests');
     }
     else
@@ -1631,7 +1631,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.22');
+  console.log('InitOk.v1.3.23');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   User = Owner = GetUser ();
