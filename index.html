@@ -1272,11 +1272,14 @@ function CreateGuestElement (i,guest)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGuests ()
 {
-  Debug ("ShowGuests (" + Guests.length + ")");
+  Debug ("ShowGuests ()");
+  Debug (Guests);
   let gd = document.getElementById('guests_data');
-  Guests.sort( function(a, b) {return (b.obj.length-a.obj.length);} );
+  let g = [];
+  for (let i in Guests) g.push (Guests[i]);
+  g.sort( function(a, b) {return (b.obj.length-a.obj.length);} );
   gd.innerHTML='';  
-  for (let i = 0; i < Guests.length; i++) gd.appendChild ( CreateGuestElement (i+1,Guests[i]) ); 
+  for (let i = 0; i < g.length; i++) gd.appendChild ( CreateGuestElement (i+1,g[i]) ); 
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsOne (offset)
@@ -1652,7 +1655,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.31');
+  console.log('InitOk.v1.3.32');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
