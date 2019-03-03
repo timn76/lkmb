@@ -1267,6 +1267,8 @@ function ShowGuestLikes (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreateGuestElement (i,guest)
 {
+  Debug ("CreateGuestElement (" + i + ")");
+  Debug (guest);
   let friend = guest.user;
   let article = Create('article',{tag:friend.id, class:'guest sel_item'});
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
@@ -1288,6 +1290,8 @@ async function FillGuestsData ()
     let ids;
     for (let i in Guests) if (!Guests[i].user || !Guests[i].user.id) ids += id + ",";
     let r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
+    Debug (FillGuestsData (): response);
+    Debug (r);
     for (let i = 0; i < r.length; i++) Guests[i].user = r[i];
   }
   catch (e) { console.log (e); }
@@ -1438,10 +1442,13 @@ async function GetUser (id)
     Debug ("GetUser - response");
     Debug (response);
     if (response.error_code) throw (response);
-    response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
-    return response[0];
+    else
+    {
+      response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
+      return response[0];
+    }
   }
-  catch (e) { console.log (e); console.log (response); }
+  catch (e) { console.log ("GetUser(" + id + ") Error!!!"); console.log (e); console.log (response); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function StorageGet (key, glob=0) 
@@ -1684,7 +1691,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.45');
+  console.log ('InitOk.v1.3.46');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
