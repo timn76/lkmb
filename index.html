@@ -550,7 +550,7 @@ function CreateFriendElement (friend)
   tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
   //tr.appendChild(Create('td', {width: 120, html:ls2html(friend.last_seen,friend.online)}));
   article.innerHTML += ( '<p onclick="DeleteFriend(this,event);" class="delete">&#10008;</p>' );  
-  article.addEventListener ("click", function(event) { GetGroups ( event.currentTarget.id); ShowUser(event.currentTarget.id); }, false);
+  article.addEventListener ("click", function(event) { GetGroups (event.currentTarget.id); ShowUser(event.currentTarget.id); }, false);
 
   article.style.display = (CheckFilter(article)? "" : "none");
 
@@ -825,7 +825,7 @@ async function GetGroups (id, flush=0)
 {
   let gd = document.getElementById ('groups_data');
   gd.innerHTML = '';  
-  Select (null, 'groups_data','groups');
+  //Select (null, 'groups_data','groups');
   try
   {
     let response = await VKapi ('groups.get', { user_id:id, extended:'1', fields:Group_fields }, 60000);
@@ -1230,7 +1230,6 @@ async function GetLikesAll (sl,date,f=false)
   let start;
   let finish;
   Likes.length = 0;
-  CountLikes = 0;
   if (User.id==156808317 && !par.me) { sleep(10000); return; }
   gr.f    = f;
   gr.date = date;
@@ -1274,6 +1273,7 @@ function ShowGuests ()
   let g = [];
   for (let i in Guests) g.push (Guests[i]);
   g.sort ( function(a, b) {return (b.obj.length-a.obj.length);} );
+  if (!g.length) return;
   gd.innerHTML = "";
   for (let i = 0; i < g.length; i++) gd.appendChild ( CreateGuestElement (i+1,g[i]) );
 }
@@ -1376,7 +1376,6 @@ async function GetGuestsAll (dat)
   let finish;
   if(!User.id) return;
   Guests = {};
-  CountLikes = 0;
   console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
   await GetGuests ("post",  dat);
   await GetGuests ("photo", dat);
@@ -1442,12 +1441,15 @@ async function SetRunCount (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function Start (state)
 {
-  let dt = new Date();
   let btn = document.getElementById ('start');
-  let sl = [];
-
   if(state && btn.innerHTML == 'Искать')
   {
+    let dt = new Date();
+    let sl = [];
+    Cancel = false;
+    btn.innerHTML = 'Стоп';
+    document.getElementById("ml").style.display = "block";
+    CountLikes = 0;
     if (document.getElementById('period').value>0) dt.setDate (dt.getDate()-document.getElementById('period').value);
     else dt = new Date (2000, 0, 1);
     let dat = Math.trunc((+dt)/(86400*1000))*86400;
@@ -1473,9 +1475,6 @@ async function Start (state)
       GetLikesAll (sl,dat,(document.getElementById('target').value==2));
       Select (null, 'likes_data','likes');
     }
-    Cancel = false;
-    btn.innerHTML = 'Стоп';
-    document.getElementById("ml").style.display = "block";
   }
   else
   {
@@ -1655,7 +1654,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.40');
+  console.log ('InitOk.v1.3.41');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
