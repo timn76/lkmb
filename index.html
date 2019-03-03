@@ -1277,9 +1277,11 @@ function ShowGuests ()
   let gd = document.getElementById('guests_data');
   let g = [];
   for (let i in Guests) g.push (Guests[i]);
-  g.sort( function(a, b) {return (b.obj.length-a.obj.length);} );
-  gd.innerHTML='';  
-  for (let i = 0; i < g.length; i++) gd.appendChild ( CreateGuestElement (i+1,g[i]) ); 
+  g.sort ( function(a, b) {return (b.obj.length-a.obj.length);} );
+  gd.innerHTML = "";
+  if (!g.length) gd.innerHTML = "<p>Ничего не найдено.</p>";
+  for (let i = 0; i < g.length; i++) gd.appendChild ( CreateGuestElement (i+1,g[i]) );
+
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsOne (offset)
@@ -1324,7 +1326,7 @@ async function GetGuestsOne (offset)
           Debug (Guests);
         }
     }
-    if (Guests.length > 0) ShowGuests ();
+    //if (Guests.length > 0) ShowGuests ();
     if ( response.date == null || response.date < gr.date || group.offset > response.count )  
     {
       Debug ("DEL: group.id: " + group.id + "; response.date: " + response.date + "; gr.date: " + gr.date+ "; group.offset: " + group.offset + "; response.count: " + response.count);  
@@ -1484,7 +1486,7 @@ async function Start (state)
     btn.innerHTML = 'Искать';
     document.getElementById("ml").style.display = "none";
     if(Likes.length==0)  document.getElementById('likes_data').innerHTML = '<p>Ничего не найдено.</p>';
-    if(Guests.length==0) document.getElementById('guests_data').innerHTML = '<p>Ничего не найдено.</p>';
+    //if(Guests.length==0) document.getElementById('guests_data').innerHTML = '<p>Ничего не найдено.</p>';
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1655,7 +1657,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.34');
+  console.log('InitOk.v1.3.35');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
