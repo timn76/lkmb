@@ -1299,7 +1299,7 @@ async function FillGuestsData ()
     if (ids) r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
     Debug ("FillGuestsData (): response");
     Debug (r);
-    for (let i = 0; i < r.length; i++) Guests[i].user = r[i];
+    if (r) for (let i = 0; i < r.length; i++) Guests[i].user = r[i];
   }
   catch (e) { console.log (e); }
 }
@@ -1706,7 +1706,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.51');
+  console.log ('InitOk.v1.3.52');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
