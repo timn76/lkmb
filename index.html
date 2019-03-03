@@ -854,6 +854,8 @@ function AppendPost (like)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreatePost (like)
 {
+  Debug ("CreatePost");
+  Debug (like);
   try 
   {
   let article = Create ('article', {class:"post" });
@@ -1667,7 +1669,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.41');
+  console.log ('InitOk.v1.3.42');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
