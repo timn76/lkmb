@@ -1034,23 +1034,22 @@ let ok = false;
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function VKapi (method, params, timeout)
 {
-  let r, err=false, i=3;
+  let r, err=true, i=3;
   async function f ()
   {
     Debug ("VKapi." + method + ".f: " + (new Date()).toStr(true) + ", i=" + i);
-    try  { r = await VKapiP (method, params, timeout); }
+    try  { r = await VKapiP (method, params, timeout); err = false; }
     catch (e)
     {
       Debug ("VKapi." + method + ".e");
       Debug (e);
-      if (e.error.error_code==6 && i--) r = null; else { err=true; r = e.error; } // error_code: 6, error_msg: "Too many requests per second"
+      if (e.error.error_code!=6) { i=0; r = e.error; } // error_code: 6, error_msg: "Too many requests per second"
     }
   }
-  while (!err) await Promise.all ([f (), ASleep (350)]);
+  while (err && i--) await Promise.all ([f (), ASleep (350)]);
   Debug ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i + ", err=" + err);
   Debug (r);
-  if (!err) return (r);
-  if (r.error_code) throw (r);
+  if (err) throw (r);
   return r;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1701,13 +1700,13 @@ function test()
   post ('https://vk.com/friends',{act:'filter_friends',al:1,city:0,sex:0,age_from:1,age_to:80,uid:User.id}, function(uids){ console.log (uids); } );
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function Init ()
+async function Init ()
 {
-  console.log ('InitOk.v1.3.55');
-  LoadOptions ();
+  console.log ('InitOk.v1.3.56');
+  await LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
-  ShowUser ();
-  ShowFriends ();
+  await ShowUser ();
+  await ShowFriends ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
  
