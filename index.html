@@ -1019,7 +1019,7 @@ let ok = false;
   (
     function (resolve, reject)
     {
-      setTimeout( function () { if(!ok) reject ('VKapi.' + method + ' - TimeOut!'); }, timeout);
+      setTimeout( function () { if(!ok) reject ({error_code:101,error_message:'VKapi.' + method + ' - TimeOut!'}); }, timeout);
       VK.api (method, params, 
          function (data)
          {
@@ -1034,24 +1034,22 @@ let ok = false;
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function VKapi (method, params, timeout)
 {
-  let r, i=5;
+  let r, err=false, i=3;
   async function f ()
   {
     Debug ("VKapi." + method + ".f: " + (new Date()).toStr(true) + ", i=" + i);
-    try 
-    {
-      r = await VKapiP (method, params, timeout);
-    }
+    try  { r = await VKapiP (method, params, timeout); }
     catch (e)
     {
       Debug ("VKapi." + method + ".e");
       Debug (e);
-      if (e.error.error_code==6 && i--) r = null; else r = e.error;  // error_code: 6, error_msg: "Too many requests per second"
+      if (e.error.error_code==6 && i--) r = null; else { err=true; r = e.error; } // error_code: 6, error_msg: "Too many requests per second"
     }
   }
-  while (!r) await Promise.all ([f (), ASleep (350)]);
-  Debug ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i);
+  while (!err) await Promise.all ([f (), ASleep (350)]);
+  Debug ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i + ", err=" + err);
   Debug (r);
+  if (!err) return (r);
   if (r.error_code) throw (r);
   return r;
 }
@@ -1705,7 +1703,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.54');
+  console.log ('InitOk.v1.3.55');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
