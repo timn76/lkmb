@@ -1255,7 +1255,7 @@ function ShowGuestLikes (id)
   let ld = document.getElementById('likes_data');
   for (let i=0; i<Guests[id].obj.length; i++)
   {
-    Guests[id].obj[i].friend = Guests[id].user;
+    Guests[id].obj[i].group = Guests[id].user;
     likes.push ( Guests[id].obj[i] );
   }
   likes.sort( function(a, b) {return (b[b.type].date-a[a.type].post.date);} );
@@ -1669,7 +1669,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.42');
+  console.log ('InitOk.v1.3.43');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
