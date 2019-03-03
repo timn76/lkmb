@@ -1357,12 +1357,14 @@ async function GetGuestsOne (offset)
 async function GetGuests (type,dat)
 {
   Debug ("GetGuests (" + type + ", " + dat + ")");
-  gr.sl = User;
+  gr.sl = Copy (User);
   gr.type = type;
   gr.c =  par.cnt;
   gr.offset = - gr.c;
   gr.date = dat;
   gr.err_groups = [];
+  Debug ("Cancel:" + Cancel);
+  Debug (gr.sl);
   while (!Cancel && gr.sl)
   {
     await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1030)]);
@@ -1657,7 +1659,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.38');
+  console.log('InitOk.v1.3.39');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
