@@ -1247,10 +1247,25 @@ async function GetLikesAll (sl,date,f=false)
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+function ShowGuestLikes (id)
+{
+  let likes = [];
+  let ld = document.getElementById('likes_data');
+  for (let i=0; i<Guests[id].obj.length; i++)
+  {
+    Guests[id].obj[i].friend = Guests[id].user;
+    likes.push ( Guests[id].obj[i] );
+  }
+  likes.sort( function(a, b) {return (b[b.type].date-a[a.type].post.date);} );
+  ld.innerHTML = "";
+  Select (null, 'likes_data','likes');
+  for (let i = 0; i < likes.length; i++) ld.appendChild ( CreatePost ( likes[i] ) ); 
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 function CreateGuestElement (i,guest)
 {
   let friend = guest.user;
-  let article = Create('article',{id:friend.id, class:'guest sel_item'});
+  let article = Create('article',{tag:friend.id, class:'guest sel_item'});
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
   tr.appendChild(Create('td', {width:  50, html:'<p><strong>'+i+'</strong></p>'}));
   tr.appendChild(Create('td', {width:  70, html:'<p>'+guest.obj.length+'</p>'}));
@@ -1258,7 +1273,7 @@ function CreateGuestElement (i,guest)
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+friend.domain, child:  Create('img',{src:friend.photo_50, title:friend.first_name+' '+friend.last_name })})}));
   tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
   tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
-  article.addEventListener ("click", function(event) {  }, false);
+  article.addEventListener ("click", function(event) { ShowGuestLikes ( event..currentTarget.tag ); }, false);
 
   article.style.display = (CheckFilter(article)? "" : "none");
 
@@ -1408,6 +1423,7 @@ async function GetUser (id)
     response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
     Debug ("GetUser - response");
     Debug (response);
+    if (response.error_code) throw (response);
     response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
     return response[0];
   }
