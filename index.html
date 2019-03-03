@@ -569,8 +569,7 @@ async function AddFriends (ids)
   let fd = document.getElementById ('friends_data');
   try
   {
-    const response = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 10000);    
-
+    const response = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 10000);
     for (let i = 0; i < response.length; i++)
     {
       let s=-1;
@@ -585,12 +584,14 @@ async function AddFriends (ids)
         //Data.Friends.Count ++;
       }
     }
-    StorageSet ("friends", "");
     StorageSet ("friends", Data.sgFriends);
   }
   catch (e)
   {
+    Debug ("AddFriends(ids["+ ids + "]) - Error!!!");
     console.log (e);
+    Data.sgFriends = DelSubstr (Data.sgFriends, ids);
+    StorageSet ('friends', Data.sgFriends);
     if (e.error != undefined) fd.innerHTML = e.error.error_msg;
   }
 }
@@ -1468,6 +1469,7 @@ async function StorageGet (key, glob=0)
   {
     Debug ('StorageGet.' + key + ', id=' + Owner.id);
     const response = await VKapi ('storage.get', {"key":key,"user_id":Owner.id,"global":glob});
+    Debug (response);
     return (response);
   } 
   catch (e) { console.log (e); }
@@ -1708,7 +1710,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.57');
+  console.log ('InitOk.v1.3.58');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Process ();
