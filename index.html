@@ -1290,7 +1290,7 @@ async function FillGuestsData ()
     let ids;
     for (let i in Guests) if (!Guests[i].user || !Guests[i].user.id) ids += id + ",";
     let r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
-    Debug (FillGuestsData (): response);
+    Debug ("FillGuestsData (): response");
     Debug (r);
     for (let i = 0; i < r.length; i++) Guests[i].user = r[i];
   }
