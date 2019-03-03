@@ -1280,11 +1280,25 @@ function CreateGuestElement (i,guest)
   return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function ShowGuests ()
+async function FillGuestsData ()
+{
+  Debug ("FillGuestsData ()");
+  try
+  {
+    let ids;
+    for (let i in Guests) if (!Guests[i].user || !Guests[i].user.id) ids += id + ",";
+    let r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
+    for (let i = 0; i < r.length; i++) Guests[i].user = r[i];
+  }
+  catch (e) { console.log (e); }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+async function ShowGuests ()
 {
   Debug ("ShowGuests ()");
   Debug (Guests);
   let gd = document.getElementById('guests_data');
+  await FillGuestsData ();
   let g = [];
   for (let i in Guests) g.push (Guests[i]);
   g.sort ( function(a, b) {return (b.obj.length-a.obj.length);} );
@@ -1381,7 +1395,7 @@ async function GetGuests (type,dat)
     await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1050)]);
     document.getElementById('count').innerHTML = type + ":" + gr.offset + ":" + CountLikes;
   }
-  ShowGuests ();
+  await ShowGuests ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsAll (dat)
@@ -1670,7 +1684,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.44');
+  console.log ('InitOk.v1.3.45');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
