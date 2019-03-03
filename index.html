@@ -1293,9 +1293,10 @@ async function FillGuestsData ()
   Debug ("FillGuestsData ()");
   try
   {
-    let ids;
-    for (let i in Guests) if (!Guests[i].user || !Guests[i].user.id) ids += i + ",";
-    let r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
+    let ids,r;
+    for (let i in Guests) if (Guests[i]) if (!Guests[i].user || !Guests[i].user.id) ids += i + ",";
+    Debug ("FillGuestsData (): ids=" + ids);
+    if (ids) r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
     Debug ("FillGuestsData (): response");
     Debug (r);
     for (let i = 0; i < r.length; i++) Guests[i].user = r[i];
@@ -1447,7 +1448,7 @@ async function GetUser (id)
     response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
     Debug ("GetUser - response");
     Debug (response);
-    if (response.error_code) throw response;
+    if (response.error_code) throw (response);
     else
     {
       if (!response[0])
@@ -1705,7 +1706,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.50');
+  console.log ('InitOk.v1.3.51');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
