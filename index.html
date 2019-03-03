@@ -1275,8 +1275,12 @@ function CreateGuestElement (i,guest)
   let friend = guest.user;
   let article = Create('article',{tag:friend.id, class:'guest sel_item'});
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
-  tr.appendChild(Create('td', {width:  50, html:'<p><strong>'+i+'</strong></p>'}));
-  tr.appendChild(Create('td', {width:  70, html:'<p>'+guest.obj.length+'</p>'}));
+  tr.appendChild(Create('td', {width:  40, html:'<p><strong>'+i+'</strong></p>'}));
+  //tr.appendChild(Create('td', {width:  40, html:'<p>'+guest.obj.length+'</p>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Лайков</header><footer>' + guest.obj.length  + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Постов</header><footer>' + guest.count.post  + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Фото</header><footer>'   + guest.count.photo + '</footer>'}));
+  tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><footer>'  + guest.count.video + '</footer>'}));
   tr.appendChild(Create('td', {width: 140, html:dm2html(friend.domain) + id2html(friend.id,friend.domain) + ls2html(friend.last_seen,friend.online)}));
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+friend.domain, child:  Create('img',{src:friend.photo_50, title:friend.first_name+' '+friend.last_name })})}));
   tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
@@ -1287,20 +1291,37 @@ function CreateGuestElement (i,guest)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function FillGuestsData ()
 {
+  async function GetUsers (ids)
+  {
+    try 
+    {
+      let r;
+      Debug ("FillGuestsData.GetUsers (): ids=" + ids);
+      if (ids) r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
+      Debug ("FillGuestsData.GetUsers (): response");
+      Debug (r);
+      if (r) for (let i = 0; i < r.length; i++)
+      {
+        r[i].uid = r[i].id = uvl (r[i].id, r[i].uid);
+        Guests[r[i].id].user = r[i];
+      }
+    }
+    catch (e) { console.log (e); }
+  }
   Debug ("FillGuestsData ()");
   try
   {
-    let ids="",r;
-    for (let i in Guests) if (i && Guests[i]) if (!Guests[i].user || !Guests[i].user.id) ids += Guests[i].id + ",";
-    Debug ("FillGuestsData (): ids=" + ids);
-    if (ids) r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
-    Debug ("FillGuestsData (): response");
-    Debug (r);
-    if (r) for (let i = 0; i < r.length; i++)
-    {
-      r[i].uid = r[i].id = uvl (r[i].id, r[i].uid);
-      Guests[r[i].id].user = r[i];
+    let ids="",r,k=0;
+    for (let i in Guests) if (i && Guests[i] && (!Guests[i].user || !Guests[i].user.id))
+    { 
+      ids += Guests[i].id + ",";
+      if(++k==500) 
+      { 
+        GetUsers (ids);
+        k = 0;
+      }
     }
+    GetUsers (ids);
   }
   catch (e) { console.log (e); }
 }
@@ -1345,6 +1366,7 @@ async function GetGuestsOne (offset)
   {
     Trace (GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls));
     const response = await VKapiP ('execute', {"code": GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls)});
+    Debug ("GetGuestsOne (" + offset + ").response:");
     Debug (response);
     let res = response.res;
     for (let i=0; i<res.length; i++) if (res[i].obj[gr.type].date >= gr.date)
@@ -1353,12 +1375,14 @@ async function GetGuestsOne (offset)
       for (let j=0; j<l.likes.length; j++)
         for (let k=0,id=0; k<l.likes[j].length,id=l.likes[j][k]; k++)
         {
-          Debug (id);
-          Debug (Guests[id]);
-          if (Guests[id]) Guests[id].obj.push (res[i].obj); else Guests[id] = {"id":id,obj:[res[i].obj]};
-          if (!Guests[id].user) Guests[id].user = await GetUser (id);
+          Trace (id);
+          Trace (Guests[id]);
+          if (Guests[id]) Guests[id].obj.push (res[i].obj); else Guests[id] = {"id":id,obj:[res[i].obj],count:{all:0,post:0,photo:0,video:0}};
+          //if (!Guests[id].user) Guests[id].user = await GetUser (id);
+          Guests[id].count[res[i].obj.type] ++;
+          Guests[id].count.all ++;
           CountLikes ++;
-          Debug (Guests);
+          Trace (Guests);
         }
     }
     //if (Guests.length > 0) ShowGuests ();
@@ -1429,7 +1453,7 @@ async function GetGuestsAll (dat)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function ShowUser (id) 
 {
-  if (!User || User.id != id) User = await GetUser (id);
+  if (!User || (id && User.id != id) User = await GetUser (id);
   User.post_count = await GetPostsCount (User.id);
   if (id==undefined)
   {
@@ -1708,15 +1732,15 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function Process ()
 {
+  await LoadOptions ();
+  if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   await ShowUser ();
   await ShowFriends ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.60');
-  LoadOptions ();
-  if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
+  console.log ('InitOk.v1.3.61');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
