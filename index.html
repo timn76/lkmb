@@ -1040,17 +1040,17 @@ async function VKapi (method, params, timeout)
     try 
     {
       r = await VKapiP (method, params, timeout);
-      if (r.error_code==6) r = null;
+      //if (r.error_code==6) r = null;
     }
     catch (e)
     {
       Debug ("VKapi: e");
       Debug (e);
-      if (e.error_code==6) r = null; else r = e;  // error_code: 6, error_msg: "Too many requests per second"
+      if (e.error.error_code==6) r = null; else r = e.error;  // error_code: 6, error_msg: "Too many requests per second"
       return null;
     }
   }
-  while (!r && i--) await Promise.all ([f (), ASleep (500)]);
+  while (!r && i--) await Promise.all ([f (), ASleep (350)]);
   Debug ("VKapi: " + (new Date()).toStr(true) + ", i=" + i);
   Debug (r);
   if (r.error_code) throw (r);
@@ -1705,7 +1705,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.48');
+  console.log ('InitOk.v1.3.49');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
