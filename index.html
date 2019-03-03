@@ -1273,10 +1273,7 @@ function CreateGuestElement (i,guest)
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+friend.domain, child:  Create('img',{src:friend.photo_50, title:friend.first_name+' '+friend.last_name })})}));
   tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+friend.first_name + '<br />' + friend.last_name+'</p>'}));
   tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(friend.bdate,"n/a")+'</p>'}));
-  article.addEventListener ("click", function(event) { ShowGuestLikes ( event..currentTarget.tag ); }, false);
-
-  article.style.display = (CheckFilter(article)? "" : "none");
-
+  article.addEventListener ("click", function(event) { ShowGuestLikes ( event.currentTarget.tag ); }, false);
   return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
