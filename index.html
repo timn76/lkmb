@@ -1010,7 +1010,7 @@ function sleep (ms,start)
   for (let i = 0; i < 1e7; i++) if ((new Date().getTime() - start) > ms) break;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-function VKapiP (method, params, timeout=3000)
+function VKapiP (method, params, timeout=10000)
 {
 let ok = false;
   Trace ('VKapi' + '.' + method);
@@ -1030,7 +1030,7 @@ let ok = false;
     }
   );
 }
-
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function VKapi (method, params, timeout)
 {
   let r, i=5;
@@ -1039,18 +1039,23 @@ async function VKapi (method, params, timeout)
     Debug ("VKapi: " + (new Date()).toStr(true) + ", i=" + i);
     try 
     {
-      r = await VKapiP (method, params, timeout); 
-    } 
+      r = await VKapiP (method, params, timeout);
+      if (r.error_code==6) r = null;
+    }
     catch (e)
     {
-      if (e.error_code==6) r=null; else r=e;  // error_code: 6, error_msg: "Too many requests per second"
+      Debug ("VKapi: e");
+      Debug (e);
+      if (e.error_code==6) r = null; else r = e;  // error_code: 6, error_msg: "Too many requests per second"
+      return null;
     }
   }
   while (!r && i--) await Promise.all ([f (), ASleep (500)]);
+  Debug ("VKapi: " + (new Date()).toStr(true) + ", i=" + i);
+  Debug (r);
   if (r.error_code) throw (r);
   return r;
 }
-
 //------------------------------------------------------------------------------------------------------------------------------------------
 function PSleep (ms) { return new Promise (resolve => setTimeout(resolve, ms)); }
 async function ASleep (ms,start) { await PSleep(ms); }
@@ -1700,7 +1705,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.47');
+  console.log ('InitOk.v1.3.48');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
