@@ -1414,7 +1414,7 @@ async function GetUser (id)
     response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
     return response[0];
   }
-  catch (e) { console.log (e); }
+  catch (e) { console.log (e); console.log (response); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function StorageGet (key, glob=0) 
@@ -1657,7 +1657,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.35');
+  console.log('InitOk.v1.3.36');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
