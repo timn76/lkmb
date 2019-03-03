@@ -1453,7 +1453,7 @@ async function GetGuestsAll (dat)
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function ShowUser (id) 
 {
-  if (!User || (id && User.id != id) User = await GetUser (id);
+  if (!User || (id && User.id != id)) User = await GetUser (id);
   User.post_count = await GetPostsCount (User.id);
   if (id==undefined)
   {
