@@ -416,7 +416,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:false, trace:false, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:true, trace:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -1188,7 +1188,7 @@ async function GetLikesOne ()
       gr.sync2 = false;
       return;
     }
-    if (response.i < group.c && response.count > group.c)
+    if (response.i < group.c && (response.count > response.i || response.ls))
     {
       group.offset += response.i;
       group.c -= response.i;
@@ -1279,9 +1279,7 @@ function ShowGuests ()
   for (let i in Guests) g.push (Guests[i]);
   g.sort ( function(a, b) {return (b.obj.length-a.obj.length);} );
   gd.innerHTML = "";
-  if (!g.length) gd.innerHTML = "<p>Ничего не найдено.</p>";
   for (let i = 0; i < g.length; i++) gd.appendChild ( CreateGuestElement (i+1,g[i]) );
-
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function GetGuestsOne (offset)
@@ -1337,7 +1335,7 @@ async function GetGuestsOne (offset)
       gr.sync2 = false;
       return;
     }
-    if (response.i < group.c && response.count > group.c)
+    if (response.i < group.c && (response.count > response.i || response.ls))
     {
       group.offset += response.i;
       group.c -= response.i;
@@ -1388,6 +1386,7 @@ async function GetGuestsAll (dat)
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
   document.getElementById('count').innerHTML = CountLikes;
   Start (false);
+  if (!CountLikes) document.getElementById('guests_data').innerHTML = "<p>Ничего не найдено.</p>";
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 async function ShowUser (id) 
@@ -1406,9 +1405,10 @@ async function ShowUser (id)
 async function GetUser (id) 
 {
   Debug ("GetUser (" + id + ")");
+  let response;
   try 
   {
-    let response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
+    response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
     Debug ("GetUser - response");
     Debug (response);
     response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
@@ -1657,7 +1657,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.36');
+  console.log('InitOk.v1.3.38');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
