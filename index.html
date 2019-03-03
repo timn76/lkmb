@@ -1036,6 +1036,7 @@ async function VKapi (method, params, timeout)
   let r, i=5;
   async function f ()
   {
+    Debug ("VKapi: " + (new Date()).toStr(true) + ", i=" + i);
     try 
     {
       r = await VKapiP (method, params, timeout); 
@@ -1441,11 +1442,19 @@ async function GetUser (id)
     response = await VKapi ('users.get', {user_ids:id, fields:User_fields}, 30000);
     Debug ("GetUser - response");
     Debug (response);
-    if (response.error_code) throw (response);
+    if (response.error_code) throw response;
     else
     {
-      response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
-      return response[0];
+      if (!response[0])
+      {
+        Debug ("response[0] == null");
+        Debug (response);
+      }
+      else
+      {
+        response[0].uid = response[0].id = uvl (response[0].id, response[0].uid);
+        return response[0];
+      }
     }
   }
   catch (e) { console.log ("GetUser(" + id + ") Error!!!"); console.log (e); console.log (response); }
@@ -1691,7 +1700,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.46');
+  console.log ('InitOk.v1.3.47');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
