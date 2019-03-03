@@ -854,7 +854,7 @@ function AppendPost (like)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreatePost (like)
 {
-  Debug ("CreatePost");
+  Debug ("CreatePost ()");
   Debug (like);
   try 
   {
@@ -1251,6 +1251,7 @@ async function GetLikesAll (sl,date,f=false)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function ShowGuestLikes (id)
 {
+  Debug ("ShowGuestLikes (" + id + ")");
   let likes = [];
   let ld = document.getElementById('likes_data');
   for (let i=0; i<Guests[id].obj.length; i++)
@@ -1258,7 +1259,7 @@ function ShowGuestLikes (id)
     Guests[id].obj[i].group = Guests[id].user;
     likes.push ( Guests[id].obj[i] );
   }
-  likes.sort( function(a, b) {return (b[b.type].date-a[a.type].post.date);} );
+  likes.sort ( function(a, b) {return (b[b.type].date-a[a.type].date);} );
   ld.innerHTML = "";
   Select (null, 'likes_data','likes');
   for (let i = 0; i < likes.length; i++) ld.appendChild ( CreatePost ( likes[i] ) ); 
@@ -1669,7 +1670,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.43');
+  console.log ('InitOk.v1.3.44');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
