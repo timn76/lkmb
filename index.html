@@ -1700,13 +1700,18 @@ function test()
   post ('https://vk.com/friends',{act:'filter_friends',al:1,city:0,sex:0,age_from:1,age_to:80,uid:User.id}, function(uids){ console.log (uids); } );
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-async function Init ()
+async function Process ()
 {
-  console.log ('InitOk.v1.3.56');
-  await LoadOptions ();
-  if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   await ShowUser ();
   await ShowFriends ();
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function Init ()
+{
+  console.log ('InitOk.v1.3.57');
+  await LoadOptions ();
+  if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
+  Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
  
