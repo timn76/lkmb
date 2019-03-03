@@ -1309,7 +1309,6 @@ async function GetGuestsOne (offset)
     Trace (GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls));
     const response = await VKapiP ('execute', {"code": GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls)});
     Debug (response);
-    let likes = [];
     let res = response.res;
     for (let i=0; i<res.length; i++) if (res[i].obj[gr.type].date >= gr.date)
     {
@@ -1378,6 +1377,7 @@ async function GetGuestsAll (dat)
   let start;
   let finish;
   if(!User.id) return;
+  Guests = {};
   CountLikes = 0;
   console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
   await GetGuests ("post",  dat);
@@ -1655,7 +1655,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.32');
+  console.log('InitOk.v1.3.33');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
