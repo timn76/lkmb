@@ -1011,7 +1011,7 @@ function sleep (ms,start)
 function VKapiP (method, params, timeout=3000)
 {
 let ok = false;
-  //console.log ('VKapi' + '.' + method);
+  Trace ('VKapi' + '.' + method);
   return new Promise 
   (
     function (resolve, reject)
@@ -1031,7 +1031,7 @@ let ok = false;
 
 async function VKapi (method, params, timeout)
 {
-  let r, i=3;
+  let r, i=5;
   async function f ()
   {
     try 
@@ -1043,11 +1043,7 @@ async function VKapi (method, params, timeout)
       if (e.error_code==6) r=null; else r=e;  // error_code: 6, error_msg: "Too many requests per second"
     }
   }
-  while (!r && i)
-  {
-    await Promise.all ([f (), ASleep (350)]);
-    i--;
-  }
+  while (!r && i--) await Promise.all ([f (), ASleep (500)]);
   if (r.error_code) throw (r);
   return r;
 }
@@ -1222,7 +1218,7 @@ async function GetLikes (type,sl)
   console.log (type + ": " + (start = new Date()).toStr(true) + ": " + gr.g + " / " + gr.sl.length + ", c=" + gr.c);
   while (!Cancel && (gr.sl.length>0 || gr.err_groups.length>0))
   {
-    await Promise.all ([GetLikesOne (), GetLikesOne (), GetLikesOne (), ASleep (1030)]);
+    await Promise.all ([GetLikesOne (), GetLikesOne (), GetLikesOne (), ASleep (1050)]);
     document.getElementById('count').innerHTML = (par.me?(gr.g + '.' + (gr.sl[gr.g]==null?'':gr.sl[gr.g].offset)  + ':'):"") + gr.sl.length + '/' + gr.l + ':' + CountLikes;
   }
   console.log (type + ": " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
@@ -1367,7 +1363,7 @@ async function GetGuests (type,dat)
   Debug (gr.sl);
   while (!Cancel && gr.sl)
   {
-    await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1030)]);
+    await Promise.all ([GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), GetGuestsOne (gr.offset += gr.c), ASleep (1050)]);
     document.getElementById('count').innerHTML = type + ":" + gr.offset + ":" + CountLikes;
   }
   ShowGuests ();
@@ -1659,7 +1655,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log('InitOk.v1.3.39');
+  console.log('InitOk.v1.3.40');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
