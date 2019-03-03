@@ -585,7 +585,8 @@ async function AddFriends (ids)
         //Data.Friends.Count ++;
       }
     }
-    StorageSet ('friends', Data.sgFriends);
+    StorageSet ("friends", "");
+    StorageSet ("friends", Data.sgFriends);
   }
   catch (e)
   {
@@ -1013,7 +1014,7 @@ function sleep (ms,start)
 function VKapiP (method, params, timeout=10000)
 {
 let ok = false;
-  Trace ('VKapi' + '.' + method);
+  Trace ('VKapiP' + '.' + method);
   return new Promise 
   (
     function (resolve, reject)
@@ -1036,20 +1037,20 @@ async function VKapi (method, params, timeout)
   let r, i=5;
   async function f ()
   {
-    Debug ("VKapi.f: " + (new Date()).toStr(true) + ", i=" + i);
+    Debug ("VKapi." + method + ".f: " + (new Date()).toStr(true) + ", i=" + i);
     try 
     {
       r = await VKapiP (method, params, timeout);
     }
     catch (e)
     {
-      Debug ("VKapi: e");
+      Debug ("VKapi." + method + ".e");
       Debug (e);
       if (e.error.error_code==6 && i--) r = null; else r = e.error;  // error_code: 6, error_msg: "Too many requests per second"
     }
   }
   while (!r) await Promise.all ([f (), ASleep (350)]);
-  Debug ("VKapi.r: " + (new Date()).toStr(true) + ", i=" + i);
+  Debug ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i);
   Debug (r);
   if (r.error_code) throw (r);
   return r;
@@ -1704,7 +1705,7 @@ function test()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.53');
+  console.log ('InitOk.v1.3.54');
   LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   ShowUser ();
