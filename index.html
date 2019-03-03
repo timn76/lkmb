@@ -1709,7 +1709,7 @@ async function Process ()
 function Init ()
 {
   console.log ('InitOk.v1.3.57');
-  await LoadOptions ();
+  LoadOptions ();
   if (!par.mobile) VK.callMethod("resizeWindow", 800, 640); // Максимальное значение ширины окна — 1000 px, высоты — 4050.
   Process ();
 }
