@@ -883,17 +883,19 @@ function CreatePost (like)
     if (p != undefined)
     {
       if (p.sizes.length>0) for (let i=0; i<p.sizes.length; i++) if (p.sizes[i].type=='x') { r = p.sizes[i].url; break; }
-      if(!r && att.photo.photo_604) r = p.photo_604;  // 75,130,604,807
+      if (!r && att.photo.photo_604) r = p.photo_604;  // 75,130,604,807
     }
     return r;
   }
   let photo = null;
   let text = like[like.type].text;
+  let file;
   if (like.type == "photo") photo = GetPhoto (like[like.type]);
   if (like.type == "video")
   {
-    photo = like.video.photo_640 || like.video.photo_320 || like.video.image_medium;
-    text = text || like.video.title + "\n" + like.video.description;
+    photo = att.video.photo_800 || like.video.photo_640 || like.video.photo_320 || like.video.image_medium;
+    text  = text || like.video.title + "\n" + like.video.description;
+    file  = att.video.files.mp4_720 || att.video.files.mp4_480 || att.video.files.mp4_360 || att.video.files.external;
   }
   if (like.type == "post")
   {
@@ -937,8 +939,9 @@ function CreatePost (like)
         {
           if (att.video != undefined)
           {
-            photo = att.video.photo_640 || att.video.photo_320 || att.video.image_medium;
+            photo = att.video.photo_800 || att.video.photo_640 || att.video.photo_320 || att.video.image_medium;
             text = text || att.video.title + "\n" + att.video.description;
+            file  = att.video.files.mp4_720 || att.video.files.mp4_480 || att.video.files.mp4_360 || att.video.files.external;
           }
         }
         else if (att.type=="note")
@@ -977,7 +980,8 @@ function CreatePost (like)
       }
     }
   }
-  if (photo != null) td = tr.appendChild ( Create ('td', { width:180, child: Create ('img', {class:'post', src:photo}) }) );
+  if (photo) // td = tr.appendChild ( Create ('td', { width:180, child: Create ('img', {class:'post', src:photo}) }) );
+    td = tr.appendChild (Create('td', { width:180, child: Create ('a', {href:file, child:  Create ('img',{src:photo, title:file})})} ));
   else Debug (like);
   tr.appendChild (Create('td', { class:'text', child:Create('section', {height:td.offsetHeight, class:'text',html:'<p class="text">' + text + '</p>'})}));
   return (article);
@@ -1099,35 +1103,37 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
 {
   let nl = '\n';
   let Code =  ''
-        + (gr.type=="post" ?' var p = API.wall.get      ({ owner_id:' + id + ',             count:' + cnt + ', offset:' + offset + ' }); ':'')
-        + (gr.type=="photo"?' var p = API.photos.getAll ({ owner_id:' + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
-        + (gr.type=="video"?' var p = API.video.get     ({ owner_id:' + id + ', extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + nl + ' var ls   = ' + ls   + '; '
+        + nl + ' var type = ' + type + '; '
+        + nl + ' var id   = ' + id   + '; '
+        + (gr.type=="post" ?' var p = API.wall.get      ({ owner_id:id,             count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + (gr.type=="photo"?' var p = API.photos.getAll ({ owner_id:id, extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
+        + (gr.type=="video"?' var p = API.video.get     ({ owner_id:id, extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
         + nl + ' var obj = p; '
         + nl + ' var c = p.count; '
         + nl + ' var res=[];  '
         + nl + ' var all=[];  '
         + nl + ' var i=1;   '
         + nl + ' var e=1; '
-        + nl + ' var ls = ' + ls + '; '
         + nl + ' if (p.items.length>=0) { obj = p.items; i=0; } '
         + nl + ' while (i<obj.length && e<25) '
         + nl + ' { '
         + nl + '   var la = []; '
-        + nl + '   while (ls<obj[i].likes.count && e<25) '
+        + nl + '   while (ls<obj[i].likes.count && e<25 && (type!="video" || obj[i].owner_id==id)) ' // только загруженное видео
         + nl + '   { '
-        + nl + '     var likes = API.likes.getList ({ type:"' + type + '", owner_id: obj[i].owner_id, item_id: obj[i].id, friends_only:0, count:1000, skip_own:0, offset:ls }); '
+        + nl + '     var likes = API.likes.getList ({ "type":type, owner_id: obj[i].owner_id, item_id: obj[i].id, friends_only:0, count:1000, skip_own:0, offset:ls }); '
         + nl + (par.debug?'     all.push ({"i":i,"id":obj[i].id,"ls":ls,"' + type + '":obj[i],"likes":likes}); ':'')
         + nl + '     if (likes.items.length>0) la.push (likes.items); '
         + nl + '     ls = ls + 1000; '
         + nl + '     e = e + 1; '
         + nl + '   } '
-        + nl + '   if (la.length>0) res.push ({obj:{type:"' + type + '",' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + id + '_" + obj[i].id}, "likes":la }); '
+        + nl + '   if (la.length>0) res.push ({obj:{"type":type,' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + 'obj[i].owner_id + "_" + obj[i].id}, "likes":la }); '
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
         + nl + ' if (ls>obj[i-1].likes.count) ls = 0; else if (e==25) i = i - 1; '
         //+ nl + ((par.debug && !gr.fo)?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
-        + nl + ' return { "id":' + id + ',"date":obj[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
+        + nl + ' return { "id":id,"date":obj[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
   return Code;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1754,7 +1760,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.72');
+  console.log ('InitOk.v1.3.73');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
