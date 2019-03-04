@@ -1746,7 +1746,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.69');
+  console.log ('InitOk.v1.3.70');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1800,9 +1800,9 @@ function Init ()
   <button id="guests"   class="tablinks"        onclick="Select(event, 'guests_data','guests')">Гости</button>
   <label>Искать </label>
   <select id="target" size="1" title="Искать лайки в группах или на стенках друзей друга">
-    <option selected value="1">в группах</option>
+    <option selected value="3">гостей</option>
+    <option          value="1">в группах</option>
     <option          value="2">в друзьях</option>
-    <option          value="3">гостей</option>
   </select>
   <select id="period" size="1" title="Период поиска">
     <option selected value="1">За один день</option>
