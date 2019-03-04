@@ -1127,7 +1127,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + '     ls = ls + 1000; '
         + nl + '     e = e + 1; '
         + nl + '   } '
-        + nl + '   if (la.length>0) res.push ({obj:{"type":type,' + type + ':obj[i], id:"' + (type=="post"?'wall':type) + 'obj[i].owner_id + "_" + obj[i].id}, "likes":la }); '
+        + nl + '   if (la.length>0) res.push ({obj:{"type":type,' + type + ':obj[i], id:"' + (type=='post'?'wall':type) + '" + obj[i].owner_id + "_" + obj[i].id}, "likes":la }); '
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
@@ -1760,7 +1760,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.74');
+  console.log ('InitOk.v1.3.75');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
