@@ -1116,7 +1116,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
         + nl + '   i = i + 1; '
         + nl + '   if (i<obj.length && e<25) ls = 0; '
         + nl + ' }  '
-        + nl + ' if (ls>obj[i-1].likes.count) ls = 0; else i = i - 1; '
+        + nl + ' if (ls>0 && ls>obj[i-1].likes.count) ls = 0; else i = i - 1; '
         //+ nl + ((par.debug && !gr.fo)?' all.push ({"next":i,"id":posts[i].id,"ls":ls,"post":posts[i],"likes":{}}); ':'')
         + nl + ' return { "id":' + id + ',"date":obj[i-1].date, "count":c, "i":i, "ls":ls, "res":res' + (par.debug?', "e":e, "all":all, "obj": p, "cnt":' + cnt:'') + '}; ';
   return Code;
@@ -1743,7 +1743,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.66');
+  console.log ('InitOk.v1.3.67');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
