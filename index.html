@@ -895,7 +895,7 @@ function CreatePost (like)
   {
     photo = like.video.photo_800 || like.video.photo_640 || like.video.photo_320 || like.video.image_medium;
     text  = text || like.video.title + "\n" + like.video.description;
-    file  = like.video.files.mp4_720 || like.video.files.mp4_480 || like.video.files.mp4_360 || like.video.files.external;
+    if (like.video.files) file  = like.video.files.mp4_720 || like.video.files.mp4_480 || like.video.files.mp4_360 || like.video.files.external;
   }
   if (like.type == "post")
   {
@@ -1763,7 +1763,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.77');
+  console.log ('InitOk.v1.3.78');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
