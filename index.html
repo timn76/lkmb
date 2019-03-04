@@ -1038,18 +1038,18 @@ async function VKapi (method, params, timeout)
   let r, err=true, i=3;
   async function f ()
   {
-    Debug ("VKapi." + method + ".f: " + (new Date()).toStr(true) + ", i=" + i);
+    Trace ("VKapi." + method + ".f: " + (new Date()).toStr(true) + ", i=" + i);
     try  { r = await VKapiP (method, params, timeout); err = false; }
     catch (e)
     {
-      Debug ("VKapi." + method + ".e");
+      Debug ("VKapi." + method + ".e, i=" + i);
       Debug (e);
       if (e.error.error_code!=6) { i=0; r = e.error; } // error_code: 6, error_msg: "Too many requests per second"
     }
   }
   while (err && i--) await Promise.all ([f (), ASleep (350)]);
-  Debug ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i + ", err=" + err);
-  Debug (r);
+  Trace ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i + ", err=" + err);
+  Trace (r);
   if (err) throw (r);
   return r;
 }
@@ -1296,6 +1296,7 @@ async function FillGuestsData ()
     try 
     {
       let r;
+      ids = ids.substring (0, ids.length - 1);
       Debug ("FillGuestsData.GetUsers (): ids=" + ids);
       if (ids) r = await VKapi ('users.get', {user_ids:ids, fields:User_fields}, 30000);
       Debug ("FillGuestsData.GetUsers (): response");
@@ -1311,7 +1312,7 @@ async function FillGuestsData ()
   Debug ("FillGuestsData ()");
   try
   {
-    let ids="",r,k=0;
+    let ids="",k=0;
     for (let i in Guests) if (i && Guests[i] && (!Guests[i].user || !Guests[i].user.id))
     { 
       ids += Guests[i].id + ",";
@@ -1319,6 +1320,7 @@ async function FillGuestsData ()
       { 
         GetUsers (ids);
         k = 0;
+        ids = "";
       }
     }
     GetUsers (ids);
@@ -1740,7 +1742,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.61');
+  console.log ('InitOk.v1.3.62');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
