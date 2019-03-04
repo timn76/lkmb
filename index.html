@@ -883,7 +883,7 @@ function CreatePost (like)
     if (p != undefined)
     {
       if (p.sizes.length>0) for (let i=0; i<p.sizes.length; i++) if (p.sizes[i].type=='x') { r = p.sizes[i].url; break; }
-      if (!r && att.photo.photo_604) r = p.photo_604;  // 75,130,604,807
+      if (!r) r = p.photo_604 || p.photo_807 || p.photo_130;  // 75,130,604,807
     }
     return r;
   }
@@ -1763,7 +1763,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.78');
+  console.log ('InitOk.v1.3.79');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
