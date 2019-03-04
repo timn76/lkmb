@@ -893,9 +893,9 @@ function CreatePost (like)
   if (like.type == "photo") photo = GetPhoto (like[like.type]);
   if (like.type == "video")
   {
-    photo = att.video.photo_800 || like.video.photo_640 || like.video.photo_320 || like.video.image_medium;
+    photo = like.video.photo_800 || like.video.photo_640 || like.video.photo_320 || like.video.image_medium;
     text  = text || like.video.title + "\n" + like.video.description;
-    file  = att.video.files.mp4_720 || att.video.files.mp4_480 || att.video.files.mp4_360 || att.video.files.external;
+    file  = like.video.files.mp4_720 || like.video.files.mp4_480 || like.video.files.mp4_360 || like.video.files.external;
   }
   if (like.type == "post")
   {
@@ -1763,7 +1763,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.76');
+  console.log ('InitOk.v1.3.77');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
