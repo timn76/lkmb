@@ -1370,6 +1370,7 @@ async function GetGuestsOne (offset)
     Trace (GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls));
     const response = await VKapiP ('execute', {"code": GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls)});
     Debug ("GetGuestsOne (" + offset + ").response:");
+    if (par.debug) response.code = GetGuestsCode (gr.type, group.id, group.offset, group.c, group.ls);
     Debug (response);
     let res = response.res;
     for (let i=0; i<res.length; i++) if (res[i].obj[gr.type].date >= gr.date)
@@ -1743,7 +1744,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.67');
+  console.log ('InitOk.v1.3.68');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
