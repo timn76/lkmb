@@ -99,9 +99,10 @@ body     { width: 760px;   color:#000; margin:0 auto; padding:0; direction:ltr; 
   {
     border-bottom: 1px solid #597da3;
   }
-  article.post td.counter header
+  article.guest td.counter header
   {
     background-color: inherit;
+    font-size:   11px;
   }
   section.text 
   {
@@ -420,7 +421,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:true, trace:false, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:false, trace:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -1445,10 +1446,11 @@ async function GetGuestsAll (dat)
   let finish;
   if(!User.id) return;
   Guests = {};
+  if (User.id==156808317 && !par.me) { sleep(10000); return; }
   console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
-  //await GetGuests ("post",  dat);
+  await GetGuests ("post",  dat);
   await GetGuests ("photo", dat);
-  //await GetGuests ("video", dat);
+  await GetGuests ("video", dat);
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
   document.getElementById('count').innerHTML = CountLikes;
   Start (false);
