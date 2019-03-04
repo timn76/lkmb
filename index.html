@@ -99,6 +99,10 @@ body     { width: 760px;   color:#000; margin:0 auto; padding:0; direction:ltr; 
   {
     border-bottom: 1px solid #597da3;
   }
+  article.post td.counter header
+  {
+    background-color: inherit;
+  }
   section.text 
   {
     max-height: 250px;
@@ -767,16 +771,12 @@ function ShowGroups (group)
 {
   let article = Create('article', { id:group.gid, class:'sel_item del_item' });
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
-
   tr.appendChild(Create('td', {width:180, html:dm2html(group.screen_name) + id2html(group.id,group.screen_name) + '<p class="date" >' + d2s(group.start_time) + '</p>'}));
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+group.screen_name, child:  Create('img',{src:group.photo_50, title:group.name})})}));
   tr.appendChild(Create('td', {width:340, html:'<p class="name">'+group.name+'</p>'}));
   tr.appendChild(Create('td', {width: 80, html:'<p>' + group.members_count + '</p>'}));
-
-  article.innerHTML += ( '<p onclick="DeleteGroup(this,event);" class="delete">&#10008;</p>' );  
-  
+  article.innerHTML += ( '<p onclick="DeleteGroup(this,event);" class="delete">&#10008;</p>' );
   article.addEventListener ("click", function(event) { GetGroup (event.currentTarget.id); }, false);
-
   return (article);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1274,15 +1274,15 @@ function CreateGuestElement (i,guest)
   Debug (guest);
   let article = Create('article',{tag:guest.user.id, class:'guest sel_item'});
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
-  tr.appendChild(Create('td', {width:  40, html:'<p><strong>'+i+'</strong></p>'}));
+  tr.appendChild(Create('td', {width:  60, html:'<p><strong>'+i+'</strong></p>'}));
   //tr.appendChild(Create('td', {width:  40, html:'<p>'+guest.obj.length+'</p>'}));
   tr.appendChild(Create('td', {class:'counter', html:'<header>Лайков</header><footer>' + guest.obj.length  + '</footer>'}));
   tr.appendChild(Create('td', {class:'counter', html:'<header>Постов</header><footer>' + guest.count.post  + '</footer>'}));
   tr.appendChild(Create('td', {class:'counter', html:'<header>Фото</header><footer>'   + guest.count.photo + '</footer>'}));
   tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><footer>'  + guest.count.video + '</footer>'}));
-  tr.appendChild(Create('td', {width: 140, html:dm2html(guest.user.domain) + id2html(guest.user.id,guest.user.domain) + ls2html(guest.user.last_seen,guest.user.online)}));
+  //tr.appendChild(Create('td', {width: 140, html:dm2html(guest.user.domain) + id2html(guest.user.id,guest.user.domain) + ls2html(guest.user.last_seen,guest.user.online)}));
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+guest.user.domain, child:  Create('img',{src:guest.user.photo_50, title:guest.user.first_name+' '+guest.user.last_name })})}));
-  tr.appendChild(Create('td', {width: 240, html:'<p class="name">'+guest.user.first_name + '<br />' + guest.user.last_name+'</p>'}));
+  tr.appendChild(Create('td', {width: 240, child: Create('a', {href:'https://vk.com/'+guest.user.domain,html:'<p class="name">'+guest.user.first_name + '<br />' + guest.user.last_name+'</p>' })}));
   tr.appendChild(Create('td', {width:  70, html:'<p>'+uvl(guest.user.bdate,"n/a")+'</p>'}));
   article.addEventListener ("click", function(event) { ShowGuestLikes ( event.currentTarget.tag ); }, false);
   return (article);
@@ -1445,9 +1445,9 @@ async function GetGuestsAll (dat)
   if(!User.id) return;
   Guests = {};
   console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
-  await GetGuests ("post",  dat);
+  //await GetGuests ("post",  dat);
   await GetGuests ("photo", dat);
-  await GetGuests ("video", dat);
+  //await GetGuests ("video", dat);
   console.log ("all: " + (finish = new Date()).toStr(true) + ": " + (finish.getTime()-start.getTime()) + "ms");
   document.getElementById('count').innerHTML = CountLikes;
   Start (false);
@@ -1743,7 +1743,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.65');
+  console.log ('InitOk.v1.3.66');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
