@@ -1333,9 +1333,11 @@ async function ShowGuests ()
   Debug (Guests);
   let gd = document.getElementById('guests_data');
   await FillGuestsData ();
+  Debug (Guests);
   let g = [];
   for (let i in Guests) g.push (Guests[i]);
   g.sort ( function(a, b) {return (b.obj.length-a.obj.length);} );
+  Debug (g);
   if (!g.length) return;
   gd.innerHTML = "";
   for (let i = 0; i < g.length; i++) gd.appendChild ( CreateGuestElement (i+1,g[i]) );
@@ -1741,7 +1743,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.63');
+  console.log ('InitOk.v1.3.64');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
