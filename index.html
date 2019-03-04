@@ -917,7 +917,7 @@ function CreatePost (like)
         */
         if (att.type=="photo")
         {
-          if (att.photo != undefined)
+          if (att.photo)
           {
             text = text || att.photo.text;
             photo = GetPhoto (att.photo);
@@ -925,28 +925,28 @@ function CreatePost (like)
         }
         else if (att.type=="posted_photo")
         {
-          if (att.posted_photo != undefined && att.posted_photo.photo_604) photo = att.posted_photo.photo_604;
+          if (att.posted_photo && att.posted_photo.photo_604) photo = att.posted_photo.photo_604;
         }
         else if (att.type=="graffiti")
         {
-          if (att.graffiti != undefined && att.graffiti.photo_604) photo = att.graffiti.photo_604;
+          if (att.graffiti && att.graffiti.photo_604) photo = att.graffiti.photo_604;
         }
         else if (att.type=="doc")
         {
-          if (att.doc != undefined && att.doc.url) photo = att.doc.url;
+          if (att.doc && att.doc.url) photo = att.doc.url;
         }
         else if (att.type=="video")
         {
-          if (att.video != undefined)
+          if (att.video)
           {
             photo = att.video.photo_800 || att.video.photo_640 || att.video.photo_320 || att.video.image_medium;
             text = text || att.video.title + "\n" + att.video.description;
-            file  = att.video.files.mp4_720 || att.video.files.mp4_480 || att.video.files.mp4_360 || att.video.files.external;
+            if (att.video.files) file  = att.video.files.mp4_720 || att.video.files.mp4_480 || att.video.files.mp4_360 || att.video.files.external;
           }
         }
         else if (att.type=="note")
         {
-          if (att.note != undefined)
+          if (att.note)
           {
             photo = att.note.view_url;
             text = text || att.note.text;
@@ -954,7 +954,7 @@ function CreatePost (like)
         }
         else if (att.type=="page")
         {
-          if (att.page != undefined)
+          if (att.page)
           {
             if (att.page.view_url) photo = att.page.view_url;
             text = text || att.page.title + "\n" + att.page.html;
@@ -962,7 +962,7 @@ function CreatePost (like)
         }
         else if (att.type=="album")
         {
-          if (att.album != undefined)
+          if (att.album)
           {
             photo = GetPhoto (att.album.thumb);
             text = text || att.album.title + "\n" + att.album.description || att.album.thumb.text;
@@ -970,7 +970,7 @@ function CreatePost (like)
         }
         else if (att.type=="link")
         {
-          if (att.link != undefined)
+          if (att.link)
           {
             photo = GetPhoto (att.link.photo) || att.link.image_src;
             text = text || att.link.title + "\n" + att.link.description || att.link.photo.text;
@@ -980,8 +980,11 @@ function CreatePost (like)
       }
     }
   }
-  if (photo) // td = tr.appendChild ( Create ('td', { width:180, child: Create ('img', {class:'post', src:photo}) }) );
-    td = tr.appendChild (Create('td', { width:180, child: Create ('a', {href:file, child:  Create ('img',{src:photo, title:file})})} ));
+  if (photo)
+  {
+     if (file) td = tr.appendChild ( Create ("td", { width:180, child: Create ("a", {href:file, child:  Create ("img",{class:"post",src:photo, title:file}) }) }) );  
+     else      td = tr.appendChild ( Create ('td', { width:180, child: Create ('img', {class:'post', src:photo}) }) );
+  }
   else Debug (like);
   tr.appendChild (Create('td', { class:'text', child:Create('section', {height:td.offsetHeight, class:'text',html:'<p class="text">' + text + '</p>'})}));
   return (article);
@@ -1760,7 +1763,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.75');
+  console.log ('InitOk.v1.3.76');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
