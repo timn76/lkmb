@@ -1104,7 +1104,7 @@ function GetGuestsCode (type,id,offset,cnt,ls=0)
   let nl = '\n';
   let Code =  ''
         + nl + ' var ls   = ' + ls   + '; '
-        + nl + ' var type = ' + type + '; '
+        + nl + ' var type = "' + type + '"; '
         + nl + ' var id   = ' + id   + '; '
         + (gr.type=="post" ?' var p = API.wall.get      ({ owner_id:id,             count:' + cnt + ', offset:' + offset + ' }); ':'')
         + (gr.type=="photo"?' var p = API.photos.getAll ({ owner_id:id, extended:1, count:' + cnt + ', offset:' + offset + ' }); ':'')
@@ -1760,7 +1760,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.73');
+  console.log ('InitOk.v1.3.74');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
