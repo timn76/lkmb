@@ -421,7 +421,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:true, trace:false, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:false, trace:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -1763,7 +1763,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.79');
+  console.log ('InitOk.v1.3.80');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
