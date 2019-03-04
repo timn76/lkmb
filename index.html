@@ -1270,7 +1270,7 @@ function ShowGuestLikes (id)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function CreateGuestElement (i,guest)
 {
-  Debug ("CreateGuestElement (" + i + ", id=" + guest.user.id + ")");
+  Debug ("CreateGuestElement (" + i + ")");
   Debug (guest);
   let article = Create('article',{tag:guest.user.id, class:'guest sel_item'});
   let tr = article.appendChild(document.createElement('table')).appendChild(document.createElement('tr'));
@@ -1315,14 +1315,14 @@ async function FillGuestsData ()
     for (let i in Guests) if (i && Guests[i] && (!Guests[i].user || !Guests[i].user.id))
     { 
       ids += Guests[i].id + ",";
-      if(++k==500) 
+      if(++k==1000) 
       { 
-        GetUsers (ids);
+        await GetUsers (ids);
         k = 0;
         ids = "";
       }
     }
-    GetUsers (ids);
+    await GetUsers (ids);
   }
   catch (e) { console.log (e); }
 }
@@ -1743,7 +1743,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.64');
+  console.log ('InitOk.v1.3.65');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
