@@ -421,7 +421,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:false, trace:false, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:true, trace:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -691,8 +691,16 @@ function CreateUserElement (user)
   tr.appendChild(Create('td', {child: Create('a', {href:'https://vk.com/'+user.domain, child:  Create('img',{src:user.photo_50, title:user.first_name+' '+user.last_name })})}));
   tr.appendChild(Create('td', {width:140, html:'<p class="name">'+user.first_name + '<br/>' + user.last_name+'</p>'}));
   tr.appendChild(Create('td', {width:60,  html:'<p>'+uvl(user.bdate,"n/a")+'</p>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<button onclick="ShowFriends('+user.id+')">Друзей</button><footer>' + user.counters.friends + '</footer>'}));
-  tr.appendChild(Create('td', {class:'counter', html:'<button onclick="GetGroups('+user.id+',1)">Групп</button><footer>'  + ((typeof user.groups)!='undefined'?user.counters.groups:user.counters.pages) + '</footer>'}));
+  if (par.me)
+  {
+    tr.appendChild(Create('td', {class:'counter', html:'<button onclick="ShowFriends('+user.id+')">Друзей</button><footer>' + user.counters.friends + '</footer>'}));
+    tr.appendChild(Create('td', {class:'counter', html:'<button onclick="GetGroups('+user.id+',1)">Групп</button><footer>'  + ((typeof user.groups)!='undefined'?user.counters.groups:user.counters.pages) + '</footer>'}));
+  }
+  else
+  {
+    tr.appendChild(Create('td', {class:'counter', html:'<header>Друзей</header><footer>' + user.counters.friends + '</footer>'}));
+    tr.appendChild(Create('td', {class:'counter', html:'<header>Групп</header><footer>'  + ((typeof user.groups)!='undefined'?user.counters.groups:user.counters.pages) + '</footer>'}));
+  }
   tr.appendChild(Create('td', {class:'counter', html:'<header>Аудио</header><footer>'  + uvl(user.counters.audios,'-') + '</footer>'}));
   tr.appendChild(Create('td', {class:'counter', html:'<header>Видео</header><footer>'  + uvl(user.counters.videos,'-') + '</footer>'}));
   tr.appendChild(Create('td', {class:'counter', html:'<header>Фото</header><footer>'   + uvl(user.counters.photos,'-') + '</footer>'}));
@@ -1446,6 +1454,7 @@ async function GetGuestsAll (dat)
   let finish;
   if(!User.id) return;
   Guests = {};
+  CountLikes = 0;
   if (User.id==156808317 && !par.me) { sleep(10000); return; }
   console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
   await GetGuests ("post",  dat);
@@ -1463,7 +1472,7 @@ async function ShowUser (id)
   User.post_count = await GetPostsCount (User.id);
   if (id==undefined)
   {
-    if (User.id==156808317) par.me = true;
+    if (User.id==156808317 /* || && User.id==484889973 */) par.me = true;
     Owner = Copy (User);
     SetRunCount  (Owner.id);
   }
