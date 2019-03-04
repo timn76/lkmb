@@ -1244,7 +1244,7 @@ async function GetLikesAll (sl,date,f=false)
   let start;
   let finish;
   Likes.length = 0;
-  if (User.id==156808317 && !par.me) { sleep(10000); return; }
+  if (User.id==156808317 && !par.me) { sleep(10000); Start (false); return; }
   gr.f    = f;
   gr.date = date;
   gr.uid  = User.id;
@@ -1452,10 +1452,9 @@ async function GetGuestsAll (dat)
   Debug ("GetGuestsAll (" + User.id + ", " + dat + ")");
   let start;
   let finish;
-  if(!User.id) return;
   Guests = {};
   CountLikes = 0;
-  if (User.id==156808317 && !par.me) { sleep(10000); return; }
+  if (!User.id || (User.id==156808317 && !par.me)) { sleep(5000); Start (false); return; }
   console.log ("all: " + (start = new Date()).toStr(true) + ", c=" + par.cnt);
   await GetGuests ("post",  dat);
   await GetGuests ("photo", dat);
@@ -1472,7 +1471,7 @@ async function ShowUser (id)
   User.post_count = await GetPostsCount (User.id);
   if (id==undefined)
   {
-    if (User.id==156808317 /* || && User.id==484889973 */) par.me = true;
+    if (User.id==156808317 || par.debug/* || && User.id==484889973 */) par.me = true;
     Owner = Copy (User);
     SetRunCount  (Owner.id);
   }
@@ -1755,7 +1754,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.71');
+  console.log ('InitOk.v1.3.72');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
