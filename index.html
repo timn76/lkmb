@@ -715,8 +715,8 @@ async function GetPostsCount (id)
   try
   {
     const response = await VKapi ('wall.get', {owner_id:id, count:1});
-    Debug ("GetPostsCount - response");
-    Debug (response);
+    Debug  ("GetPostsCount - response");
+    Debug  (response);
     return (response.count);
   } 
   catch (e) { console.log (e); }
@@ -810,8 +810,11 @@ async function AddGroups (ids)
     let response = await VKapi ('groups.getById', { group_ids:ids, fields:Group_fields });
     for (let i = 0; i < response.length; i++)
     {
+      console.log (SetGid(response[i]).id);
+      console.log (SetGid(response[i]));
       let s = Groups.indexOf (SetGid(response[i]).id);
       // let s=-1; for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
+      Debug ("s=["+s+"]");
       Debug (response[i]);
       if (s == -1)
       {
@@ -1763,7 +1766,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.3.80');
+  console.log ('InitOk.v1.4.1');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1784,8 +1787,8 @@ function Init ()
       <li>&#128270; Фильтр:</li>
       <input type="text" placeholder="Имя ..." id="name-filter" onkeyup="ChangeOptions('friends')">
       <li>Показывать:</li>
-      <label><input type="checkbox" name="show" id="men"        onchange="ChangeOptions('friends')" checked>Мужчин</label>
-      <label><input type="checkbox" name="show" id="women"      onchange="ChangeOptions('friends')" checked>Женщин</label>
+      <label><input type="checkbox" name="show" id="men"        onchange="ChangeOptions('friends')" checked>&#9794; Мужчин</label>
+      <label><input type="checkbox" name="show" id="women"      onchange="ChangeOptions('friends')" checked>&#9792; Женщин</label>
       <label><input type="checkbox" name="show" id="unknown"    onchange="ChangeOptions('friends')" checked>Не задано</label>
       <label><input type="checkbox" name="show" id="addedonly"  onchange="ChangeOptions('friends')">Только добавленных</label>
       <label><input type="checkbox"             id="autoload1"  onchange="ChangeOptions('friends')">Автозагрузка фильтра</label>
