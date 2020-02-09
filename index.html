@@ -425,7 +425,7 @@ var par = { id:false, me:false, others:false, debug:false, trace:false, mobile:f
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
-var Data = {sgGroups:"", sgFriends:"", Friends: {Count:0, Step:500}};
+var Data = {sgGroups:"", sgFriends:"", Friends: {Count:0, Step:500}, level:0};
 //------------------------------------------------------------------------------------------------------------------------------------------
 if (!Date.prototype.toStr) 
 {
@@ -810,12 +810,9 @@ async function AddGroups (ids)
     let response = await VKapi ('groups.getById', { group_ids:ids, fields:Group_fields });
     for (let i = 0; i < response.length; i++)
     {
-      console.log (SetGid(response[i]).id);
-      console.log (SetGid(response[i]));
-      let s = Groups.indexOf (SetGid(response[i]).id);
-      // let s=-1; for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
-      Debug ("s=["+s+"]");
-      Debug (response[i]);
+      //let s = Groups.indexOf (SetGid(response[i]).gid);
+      SetGid(response[i])
+      let s=-1; for (let j=0; j<Groups.length; j++) if (response[i].id == Groups[j].id) { s = j; break; }
       if (s == -1)
       {
         response[i].added  = true;
@@ -1483,7 +1480,7 @@ async function ShowUser (id)
   User.post_count = await GetPostsCount (User.id);
   if (id==undefined)
   {
-    if (User.id==156808317 || par.debug/* || && User.id==484889973 */) par.me = true;
+    if (User.id==156808317 || par.debug) par.me = true;
     Owner = Copy (User);
     SetRunCount  (Owner.id);
   }
@@ -1543,6 +1540,49 @@ async function SetRunCount (id)
   if (!par.me) StorageSet ('RunCount',++rc,1);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
+//
+//    1 — достигнут новый уровень, работает аналогично secure.setUserLevel;
+//    2 — заработано новое число очков;
+//    положительное число, отличное от 1 и 2 — выполнена миссия с идентификатором activity_id.
+//
+async function SetAppEvent (activity_id,value=null)
+{
+  Debug ('secure.addAppEvent, user_id=' + Owner.id + ', activity_id=' + activity_id + ', value=' + value);
+  try 
+  { 
+    const response = VKapi ('secure.addAppEvent', {"user_id":Owner.id,"activity_id":activity_id,"value":value});
+    Debug (response);
+    return (true);    
+  }
+  catch(e) { console.log (e); return (false);}
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+async function GetUserLevel ()
+{
+  if (Data.level>0) return (Data.level);
+  Debug ('secure.secure.getUserLevel, user_id=' + Owner.id);
+  try 
+  { 
+    const response = await VKapi ('secure.getUserLevel', {"user_ids":Owner.id});
+    Debug (response);
+    Data.level = response[0].level;
+    return (response[0].level);    
+  }
+  catch(e) { console.log (e); return (null); }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function SetNextLevel ()
+{
+  return (SetAppEvent (1, GetUserLevel () + 1));
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+function MissionOrLevelUp (mission_id)
+{
+  if (debug) 
+  return (SetAppEvent (mission_id) || SetAppEvent (1, GetUserLevel () + 1));
+  return (false);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 async function Start (state)
 {
   let btn = document.getElementById ('start');
@@ -1550,6 +1590,7 @@ async function Start (state)
   {
     let dt = new Date();
     let sl = [];
+    let mission_id;
     Cancel = false;
     btn.innerHTML = 'Стоп';
     document.getElementById("ml").style.display = "block";
@@ -1561,6 +1602,7 @@ async function Start (state)
     {  
       document.getElementById('guests_data').innerHTML = '<p>Идёт поиск...</p>';
       GetGuestsAll (dat);
+      MissionOrLevelUp ((User.id==Owner.id?6:4)); // 6. Найти всех кто ставит тебе лайки 5 баллов // 4. Найти кто лайкает друга 5 баллов
       Select (null, 'guests_data','guests');
     }
     else
@@ -1568,15 +1610,19 @@ async function Start (state)
       if (document.getElementById('target').value==2) // в друзьях
       {
         sl = await GetFriendsAll (User.id);
+        mission_id = 5; // 5. Найти лайки своего друга у его друзей 5 баллов
       }
       else  // в группах
       {
         if (Groups.length==0) return; 
         if (Group!=null) sl.push(Group);
         else sl = Groups.slice();
+        mission_id = 3; // 3. Найти лайки своего друга в группах 5 баллов
+
       }
       document.getElementById('likes_data').innerHTML = '<p>Идёт поиск...</p>';
       GetLikesAll (sl,dat,(document.getElementById('target').value==2));
+      MissionOrLevelUp (mission_id);
       Select (null, 'likes_data','likes');
     }
   }
@@ -1645,7 +1691,7 @@ function KeyPress (e)
   if (e.charCode==100 && e.ctrlKey && e.altKey) // d
   {
     if (!par.debug) par.debug = true;
-    if (!par.trace) par.trace = true;
+    elsif (!par.trace) par.trace = true;
     else par.debug = par.trace = false;
     console.log ('par.debug=' + par.debug);
     console.log ('par.trace=' + par.trace);
@@ -1766,7 +1812,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.4.1');
+  console.log ('InitOk.v1.5.0');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
