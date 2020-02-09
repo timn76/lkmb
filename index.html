@@ -1691,7 +1691,7 @@ function KeyPress (e)
   if (e.charCode==100 && e.ctrlKey && e.altKey) // d
   {
     if (!par.debug) par.debug = true;
-    elsif (!par.trace) par.trace = true;
+    else if (!par.trace) par.trace = true;
     else par.debug = par.trace = false;
     console.log ('par.debug=' + par.debug);
     console.log ('par.trace=' + par.trace);
