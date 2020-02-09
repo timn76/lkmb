@@ -1519,7 +1519,7 @@ async function StorageGet (key, glob=0)
   try
   {
     Debug ('StorageGet.' + key + ', id=' + Owner.id);
-    const response = await VKapi ('storage.get', {"key":key,"user_id":Owner.id,"global":glob});
+    const response = await VKapi ('storage.get', {"key":key/*,"user_id":Owner.id*/,"global":glob});
     Debug (response);
     return (response);
   } 
@@ -1529,7 +1529,7 @@ async function StorageGet (key, glob=0)
 async function StorageSet (key,val,glob=0)
 {
   Debug ('StorageSet.' + key + ', id=' + Owner.id + ', val=' + val);
-  try { const response = VKapi ('storage.set', {"key":key,"value":val,"user_id":Owner.id,"global":glob}); }
+  try { const response = VKapi ('storage.set', {"key":key,"value":val/*,"user_id":Owner.id*/,"global":glob}); }
   catch(e) { console.log (e); }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
