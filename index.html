@@ -421,7 +421,7 @@ var Friends = [];
 var Groups = [];
 var Likes = [];
 var Guests = {};
-var par = { id:false, me:false, others:false, debug:false, trace:false, mobile:false, cnt:24 }
+var par = { id:false, me:false, others:false, debug:true, trace:false, mobile:false, cnt:24 }
 var Options = { friends: {load:false, "filter":"", addedonly:false, "men": true, "women":true, "unknown":true}
               , likes:   {load:false, "groupby":"ByDate"}
               , include: {post:true, photo: false, video:false, comments:false} };
@@ -1030,7 +1030,7 @@ function sleep (ms,start)
 //------------------------------------------------------------------------------------------------------------------------------------------
 function VKapiP (method, params, timeout=10000)
 {
-let ok = false;
+  let ok = false;
   Trace ('VKapiP' + '.' + method);
   return new Promise 
   (
@@ -1067,7 +1067,7 @@ async function VKapi (method, params, timeout)
   Trace ("VKapi." + method + ".r: " + (new Date()).toStr(true) + ", i=" + i + ", err=" + err);
   Trace (r);
   if (err) throw (r);
-  return r;
+  return (r);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 function PSleep (ms) { return new Promise (resolve => setTimeout(resolve, ms)); }
@@ -1662,7 +1662,6 @@ function Select (evt, TabName, id)
 function KeyPress (e) 
 {
   Debug
-  //console.log
         ( e.type +
           ' keyCode=' + e.keyCode +
           ' which=' + e.which +
@@ -1812,7 +1811,7 @@ async function Process ()
 //------------------------------------------------------------------------------------------------------------------------------------------
 function Init ()
 {
-  console.log ('InitOk.v1.5.1');
+  console.log ('InitOk.v1.5.1d');
   Process ();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
